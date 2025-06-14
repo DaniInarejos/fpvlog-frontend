@@ -1,0 +1,79 @@
+/* Estilos para formularios */
+.drone-form, .flight-form {
+  padding: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--sky-text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid rgba(116, 185, 255, 0.3);
+  border-radius: 15px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--sky-primary);
+  box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.15);
+  transform: translateY(-2px);
+  background: white;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(116, 185, 255, 0.2);
+}
+
+.error-message {
+  background: rgba(232, 67, 147, 0.1);
+  color: var(--sky-error);
+  padding: 1rem 1.5rem;
+  border-radius: 15px;
+  margin: 1rem 0;
+  border: 1px solid rgba(232, 67, 147, 0.3);
+  text-align: center;
+  font-weight: 500;
+}
+
+.success-message {
+  background: rgba(0, 184, 148, 0.1);
+  color: var(--sky-success);
+  padding: 1rem 1.5rem;
+  border-radius: 15px;
+  margin: 1rem 0;
+  border: 1px solid rgba(0, 184, 148, 0.3);
+  text-align: center;
+  font-weight: 500;
+}

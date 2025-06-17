@@ -1,18 +1,7 @@
 <template>
   <div class="dashboard">
     <div class="clouds-bg"></div>
-    <header class="dashboard-header">
-      <h1>Dashboard - FPV Log</h1>
-      <div class="user-info">
-        <span v-if="authStore.user">Bienvenido, {{ authStore.user.username }}</span>
-        <button @click="$router.push('/profile')" class="btn btn-outline">
-          Mi Perfil
-        </button>
-        <button @click="handleLogout" class="btn btn-secondary">
-          Cerrar Sesión
-        </button>
-      </div>
-    </header>
+    <AppHeader />
     
     <main class="dashboard-content">
       <!-- Sección de Estadísticas -->
@@ -386,6 +375,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
 import ItemCard from '@/components/ItemCard.vue'
+import AppHeader from '@/components/AppHeader.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

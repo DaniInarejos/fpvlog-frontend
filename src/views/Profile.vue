@@ -1,14 +1,10 @@
 <template>
   <div class="profile">
-    <header class="profile-header">
-      <h1>Mi Perfil</h1>
-      <button @click="$router.push('/dashboard')" class="btn btn-secondary">
-        Volver al Dashboard
-      </button>
-    </header>
+    <AppHeader />
     
     <main class="profile-content">
       <div class="profile-form-container">
+        <h1>👤 Mi Perfil</h1>
         <form @submit.prevent="handleUpdateProfile" class="profile-form">
           <div class="form-section">
             <h2>Información Personal</h2>
@@ -108,6 +104,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import AppHeader from '@/components/AppHeader.vue'
 
 const authStore = useAuthStore()
 

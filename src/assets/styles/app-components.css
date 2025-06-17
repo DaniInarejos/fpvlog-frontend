@@ -1,0 +1,238 @@
+/* Botones unificados */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: var(--sky-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--sky-shadow-lg);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--sky-primary);
+  border: 2px solid var(--sky-primary);
+}
+
+.btn-outline:hover {
+  background: var(--sky-primary);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--sky-error);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* Cards unificadas */
+.card {
+  background: var(--sky-cloud);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: 0 8px 32px var(--sky-shadow);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--sky-light);
+}
+
+.card-title {
+  color: var(--sky-text);
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-content {
+  color: var(--sky-text-light);
+  line-height: 1.5;
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--sky-light);
+}
+
+/* Formularios unificados */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--sky-text);
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--sky-light);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--sky-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Secciones unificadas */
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  color: var(--sky-text);
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Grid unificado */
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+/* Estados de mensajes */
+.message {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-md) 0;
+  font-weight: 500;
+  text-align: center;
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--sky-success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--sky-error);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.message.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--sky-warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Estados vacíos */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--sky-text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Modales unificados */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--sky-cloud);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-title {
+  color: var(--sky-text);
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+}

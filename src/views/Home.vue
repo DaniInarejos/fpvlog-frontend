@@ -1,9 +1,10 @@
 <template>
   <div class="home">
+    <AppHeader />
     <div class="clouds-bg"></div>
     <div class="hero">
       <div class="hero-content">
-        <h1>FPV Log</h1>
+        <h1>🚁 FPV Log</h1>
         <p>Registra tus aventuras en el cielo</p>
         <p class="subtitle">La aplicación definitiva para pilotos FPV</p>
         
@@ -22,6 +23,7 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import AppHeader from '@/components/AppHeader.vue'
 
 const authStore = useAuthStore()
 </script>

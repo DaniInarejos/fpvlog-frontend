@@ -12,21 +12,11 @@
           </button>
         </div>
         
-        <!-- Filtro moderno -->
-        <FilterSection
-          v-model:search-term="searchTerm"
-          search-placeholder="Buscar vuelos por título o ubicación..."
-          :filters="flightFilters"
-          :result-count="filteredFlights.length"
-          @update:filter="updateFilter"
-          @clear-all="clearAllFilters"
-        />
-        
         <!-- Estadísticas rápidas -->
         <div class="stats-grid">
           <div class="stat-card">
             <h3>Total de Vuelos</h3>
-            <p class="stat-number">{{ filteredFlights.length }}</p>
+            <p class="stat-number">{{ flights.length }}</p>
           </div>
           <div class="stat-card">
             <h3>Tiempo Total</h3>
@@ -38,17 +28,16 @@
           </div>
         </div>
         
-        <div v-if="filteredFlights.length === 0" class="no-flights">
-          <p v-if="flights.length === 0">No tienes vuelos registrados aún.</p>
-          <p v-else>No se encontraron vuelos con los filtros aplicados.</p>
+        <div v-if="flights.length === 0" class="no-flights">
+          <p>No tienes vuelos registrados aún.</p>
           <button @click="showAddFlightModal = true" class="btn btn-outline">
-            {{ flights.length === 0 ? 'Registrar tu primer vuelo' : 'Añadir nuevo vuelo' }}
+            Registrar tu primer vuelo
           </button>
         </div>
         
         <div v-else class="flights-grid">
           <ItemCard
-            v-for="flight in filteredFlights"
+            v-for="flight in flights"
             :key="flight._id"
             :item="flight"
             :title="flight.title || flight.location"
@@ -80,7 +69,6 @@
 import { ref, computed, onMounted } from 'vue'
 import AppHeader from '../components/AppHeader.vue'
 import ItemCard from '../components/ItemCard.vue'
-import FilterSection from '../components/FilterSection.vue'
 import FlightModal from '../components/FlightModal.vue'
 import api from '../services/api.js'
 
@@ -91,59 +79,15 @@ const error = ref('')
 const success = ref('')
 const showAddFlightModal = ref(false)
 const editingFlight = ref(null)
-const searchTerm = ref('')
-const filterDrone = ref('')
-const filterDate = ref('')
-
-const flightFilters = computed(() => [
-  {
-    key: 'drone',
-    value: filterDrone.value,
-    placeholder: 'Todos los drones',
-    options: drones.value.map(drone => ({ value: drone._id, label: drone.name }))
-  },
-  {
-    key: 'date',
-    value: filterDate.value,
-    placeholder: 'Filtrar por fecha',
-    options: [],
-    type: 'date'
-  }
-])
-
-const filteredFlights = computed(() => {
-  return flights.value.filter(flight => {
-    const matchesSearch = flight.title?.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-                         flight.location?.toLowerCase().includes(searchTerm.value.toLowerCase())
-    const matchesDrone = !filterDrone.value || flight.droneId === filterDrone.value
-    const matchesDate = !filterDate.value || flight.date?.startsWith(filterDate.value)
-    
-    return matchesSearch && matchesDrone && matchesDate
-  })
-})
 
 const totalFlightTime = computed(() => {
-  return filteredFlights.value.reduce((total, flight) => total + (flight.duration || 0), 0)
+  return flights.value.reduce((total, flight) => total + (flight.duration || 0), 0)
 })
 
 const averageFlightTime = computed(() => {
-  if (filteredFlights.value.length === 0) return 0
-  return Math.round(totalFlightTime.value / filteredFlights.value.length)
+  if (flights.value.length === 0) return 0
+  return Math.round(totalFlightTime.value / flights.value.length)
 })
-
-const updateFilter = (key, value) => {
-  if (key === 'drone') {
-    filterDrone.value = value
-  } else if (key === 'date') {
-    filterDate.value = value
-  }
-}
-
-const clearAllFilters = () => {
-  searchTerm.value = ''
-  filterDrone.value = ''
-  filterDate.value = ''
-}
 
 const loadFlights = async () => {
   try {

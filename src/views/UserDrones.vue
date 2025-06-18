@@ -12,27 +12,16 @@
           </button>
         </div>
         
-        <!-- Filtro moderno -->
-        <FilterSection
-          v-model:search-term="searchTerm"
-          search-placeholder="Buscar drones por nombre o modelo..."
-          :filters="droneFilters"
-          :result-count="filteredDrones.length"
-          @update:filter="updateFilter"
-          @clear-all="clearAllFilters"
-        />
-        
-        <div v-if="filteredDrones.length === 0" class="no-drones">
-          <p v-if="drones.length === 0">No tienes drones registrados aún.</p>
-          <p v-else>No se encontraron drones con los filtros aplicados.</p>
+        <div v-if="drones.length === 0" class="no-drones">
+          <p>No tienes drones registrados aún.</p>
           <button @click="showAddDroneModal = true" class="btn btn-outline">
-            {{ drones.length === 0 ? 'Añadir tu primer drone' : 'Añadir nuevo drone' }}
+            Añadir tu primer drone
           </button>
         </div>
         
         <div v-else class="drones-grid">
           <ItemCard
-            v-for="drone in filteredDrones"
+            v-for="drone in drones"
             :key="drone._id"
             :item="drone"
             :title="drone.name"
@@ -60,10 +49,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import AppHeader from '../components/AppHeader.vue'
 import ItemCard from '../components/ItemCard.vue'
-import FilterSection from '../components/FilterSection.vue'
 import DroneModal from '../components/DroneModal.vue'
 import api from '../services/api.js'
 
@@ -73,53 +61,6 @@ const error = ref('')
 const success = ref('')
 const showAddDroneModal = ref(false)
 const editingDrone = ref(null)
-const searchTerm = ref('')
-const filterType = ref('')
-const filterBrand = ref('')
-
-const uniqueBrands = computed(() => {
-  const brands = drones.value.map(drone => drone.brand).filter(Boolean)
-  return [...new Set(brands)].sort()
-})
-
-const droneFilters = computed(() => [
-  {
-    key: 'type',
-    value: filterType.value,
-    placeholder: 'Todos los tipos',
-    options: [
-      { value: 'Racing', label: 'Racing' },
-      { value: 'Freestyle', label: 'Freestyle' },
-      { value: 'Cinematic', label: 'Cinematic' },
-      { value: 'Micro', label: 'Micro' }
-    ]
-  },
-  {
-    key: 'brand',
-    value: filterBrand.value,
-    placeholder: 'Todas las marcas',
-    options: uniqueBrands.value.map(brand => ({ value: brand, label: brand }))
-  }
-])
-
-const filteredDrones = computed(() => {
-  return drones.value.filter(drone => {
-    const matchesSearch = drone.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-                         drone.model?.toLowerCase().includes(searchTerm.value.toLowerCase())
-    const matchesType = !filterType.value || drone.type === filterType.value
-    const matchesBrand = !filterBrand.value || drone.brand === filterBrand.value
-    
-    return matchesSearch && matchesType && matchesBrand
-  })
-})
-
-const updateFilter = (key, value) => {
-  if (key === 'type') {
-    filterType.value = value
-  } else if (key === 'brand') {
-    filterBrand.value = value
-  }
-}
 
 const loadDrones = async () => {
   try {
@@ -191,12 +132,6 @@ const closeModal = () => {
   editingDrone.value = null
   error.value = ''
   success.value = ''
-}
-
-const clearAllFilters = () => {
-  searchTerm.value = ''
-  filterType.value = ''
-  filterBrand.value = ''
 }
 
 onMounted(async () => {

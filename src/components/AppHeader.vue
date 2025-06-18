@@ -41,13 +41,6 @@
             Mis Vuelos
           </button>
           <button 
-            v-if="$route.name !== 'DroneManagement'" 
-            @click="navigateTo('/drone-management')" 
-            class="menu-item"
-          >
-            Gestión de Drones
-          </button>
-          <button 
             v-if="$route.name !== 'Profile'" 
             @click="navigateTo('/profile')" 
             class="menu-item"

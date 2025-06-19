@@ -45,6 +45,18 @@
       @submit="submitDrone"
       @close="closeModal"
     />
+    
+    <!-- Modal de confirmación -->
+    <ConfirmModal
+      :show="showConfirmModal"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      @confirm="handleConfirm"
+      @close="closeConfirmModal"
+    />
   </div>
 </template>
 
@@ -54,6 +66,7 @@ import AppHeader from '../components/AppHeader.vue'
 import ItemCard from '../components/ItemCard.vue'
 import DroneModal from '../components/DroneModal.vue'
 import api from '../services/api.js'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const drones = ref([])
 const loading = ref(false)
@@ -104,17 +117,61 @@ const editDrone = (drone) => {
   showAddDroneModal.value = true
 }
 
+// Variables para el modal de confirmación
+const showConfirmModal = ref(false)
+const confirmModal = ref({
+  title: '',
+  message: '',
+  type: 'warning',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  action: null,
+  data: null
+})
+
+// Función actualizada para eliminar drone
 const deleteDrone = async (droneId) => {
-  if (!confirm('¿Estás seguro de que quieres eliminar este drone?')) {
-    return
+  confirmModal.value = {
+    title: 'Eliminar Drone',
+    message: '¿Estás seguro de que quieres eliminar este drone? Esta acción no se puede deshacer.',
+    type: 'danger',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    action: 'deleteDrone',
+    data: droneId
+  }
+  showConfirmModal.value = true
+}
+
+// Manejar confirmación
+const handleConfirm = async () => {
+  const { action, data } = confirmModal.value
+  
+  if (action === 'deleteDrone') {
+    try {
+      await api.delete(`/drones/${data}`)
+      await loadDrones()
+      // Mostrar mensaje de éxito si quieres
+    } catch (error) {
+      console.error('Error al eliminar drone:', error)
+      // Aquí podrías mostrar otro modal de error en lugar de alert
+    }
   }
   
-  try {
-    await api.delete(`/drones/${droneId}`)
-    await loadDrones()
-  } catch (error) {
-    console.error('Error al eliminar drone:', error)
-    alert('Error al eliminar el drone')
+  closeConfirmModal()
+}
+
+// Cerrar modal de confirmación
+const closeConfirmModal = () => {
+  showConfirmModal.value = false
+  confirmModal.value = {
+    title: '',
+    message: '',
+    type: 'warning',
+    confirmText: 'Confirmar',
+    cancelText: 'Cancelar',
+    action: null,
+    data: null
   }
 }
 

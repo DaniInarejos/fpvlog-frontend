@@ -62,6 +62,18 @@
       @submit="submitFlight"
       @close="closeModal"
     />
+    
+    <!-- Modal de confirmación -->
+    <ConfirmModal
+      :show="showConfirmModal"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      @confirm="handleConfirm"
+      @close="closeConfirmModal"
+    />
   </div>
 </template>
 
@@ -70,6 +82,7 @@ import { ref, computed, onMounted } from 'vue'
 import AppHeader from '../components/AppHeader.vue'
 import ItemCard from '../components/ItemCard.vue'
 import FlightModal from '../components/FlightModal.vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 import api from '../services/api.js'
 
 const flights = ref([])
@@ -107,16 +120,29 @@ const loadDrones = async () => {
   }
 }
 
+const editFlight = (flight) => {
+  console.log('editFlight called with:', flight) // Debug: verificar que flight tiene _id
+  editingFlight.value = flight
+  showAddFlightModal.value = true
+}
+
 const submitFlight = async (flightData) => {
+  console.log('submitFlight called with flightData:', flightData) // Debug: verificar que flightData tiene _id
+  console.log('editingFlight.value:', editingFlight.value) // Debug: verificar editingFlight
+  
   loading.value = true
   error.value = ''
   success.value = ''
   
   try {
-    if (editingFlight.value) {
-      await api.put(`/flights/${editingFlight.value._id}`, flightData)
+    if (flightData._id) {
+     alert('Updating flight with ID:', flightData._id) // Debug: confirmar el _id
+      const { _id, ...updateData } = flightData
+      console.log('Update data:', updateData) // Debug: verificar datos de actualización
+      await api.patch(`/flights/${_id}`, updateData)
       success.value = 'Vuelo actualizado correctamente'
     } else {
+      console.log('Creating new flight') // Debug: confirmar creación
       await api.post('/flights', flightData)
       success.value = 'Vuelo añadido correctamente'
     }
@@ -135,22 +161,61 @@ const submitFlight = async (flightData) => {
   }
 }
 
-const editFlight = (flight) => {
-  editingFlight.value = flight
-  showAddFlightModal.value = true
+// Variables para el modal de confirmación
+const showConfirmModal = ref(false)
+const confirmModal = ref({
+  title: '',
+  message: '',
+  type: 'warning',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  action: null,
+  data: null
+})
+
+// Función actualizada para eliminar vuelo
+const deleteFlight = async (flightId) => {
+  confirmModal.value = {
+    title: 'Eliminar Vuelo',
+    message: '¿Estás seguro de que quieres eliminar este vuelo? Esta acción no se puede deshacer.',
+    type: 'danger',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    action: 'deleteFlight',
+    data: flightId
+  }
+  showConfirmModal.value = true
 }
 
-const deleteFlight = async (flightId) => {
-  if (!confirm('¿Estás seguro de que quieres eliminar este vuelo?')) {
-    return
+// Manejar confirmación
+const handleConfirm = async () => {
+  const { action, data } = confirmModal.value
+  
+  if (action === 'deleteFlight') {
+    try {
+      await api.delete(`/flights/${data}`)
+      await loadFlights()
+      // Mostrar mensaje de éxito si quieres
+    } catch (error) {
+      console.error('Error al eliminar vuelo:', error)
+      // Aquí podrías mostrar otro modal de error en lugar de alert
+    }
   }
   
-  try {
-    await api.delete(`/flights/${flightId}`)
-    await loadFlights()
-  } catch (error) {
-    console.error('Error al eliminar vuelo:', error)
-    alert('Error al eliminar el vuelo')
+  closeConfirmModal()
+}
+
+// Cerrar modal de confirmación
+const closeConfirmModal = () => {
+  showConfirmModal.value = false
+  confirmModal.value = {
+    title: '',
+    message: '',
+    type: 'warning',
+    confirmText: 'Confirmar',
+    cancelText: 'Cancelar',
+    action: null,
+    data: null
   }
 }
 
@@ -170,8 +235,10 @@ const getFlightDetails = (flight) => {
   const details = []
   details.push({ label: 'Duración', value: `${flight.duration || 0} min` })
   if (flight.droneId) details.push({ label: 'Drone', value: getDroneName(flight.droneId) })
+  if (flight.distance) details.push({ label: 'Distancia', value: `${flight.distance} km` })
+  if (flight.maxSpeed) details.push({ label: 'Vel. Máx', value: `${flight.maxSpeed} km/h` })
+  if (flight.maxAltitude) details.push({ label: 'Alt. Máx', value: `${flight.maxAltitude} m` })
   if (flight.weather) details.push({ label: 'Clima', value: flight.weather })
-  if (flight.batteryUsed) details.push({ label: 'Baterías', value: flight.batteryUsed })
   return details
 }
 

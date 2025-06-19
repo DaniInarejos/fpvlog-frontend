@@ -98,11 +98,11 @@ export const useAuthStore = defineStore('auth', {
     
     async updateProfile(profileData) {
       try {
-        if (!this.user?.id) {
+        if (!this.user || !this.user._id) {
           throw new Error('Usuario no encontrado')
         }
         
-        const response = await api.patch(`/users/${this.user.id}`, profileData)
+        const response = await api.patch(`/users/${this.user._id}`, profileData)
         
         // Actualizar los datos del usuario en el store
         this.user = { ...this.user, ...response.data }

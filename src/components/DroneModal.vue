@@ -2,11 +2,11 @@
   <div class="modal-overlay" @click="handleOverlayClick">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h3>{{ editingDrone ? 'Editar Drone' : 'Añadir Nuevo Drone' }}</h3>
+        <h3>{{ drone ? 'Editar Drone' : 'Añadir Nuevo Drone' }}</h3>
         <button @click="$emit('close')" class="close-btn">&times;</button>
       </div>
       
-      <form @submit.prevent="$emit('submit')" class="modal-form">
+      <form @submit.prevent="handleSubmit" class="modal-form">
         <div class="form-group">
           <label for="drone-name">Nombre del Drone:</label>
           <input
@@ -20,14 +20,12 @@
         
         <div class="form-group">
           <label for="drone-type">Tipo:</label>
-          <select id="drone-type" v-model="droneForm.type" required>
-            <option value="">Selecciona un tipo</option>
-            <option value="Racing">Racing</option>
-            <option value="Freestyle">Freestyle</option>
-            <option value="Cinematic">Cinematic</option>
-            <option value="Photography">Photography</option>
-            <option value="Other">Otro</option>
-          </select>
+          <input
+            id="drone-type"
+            v-model="droneForm.type"
+            type="text"
+            placeholder="Ej: Racing, Freestyle, Cinematic"
+          />
         </div>
         
         <div class="form-group">
@@ -51,13 +49,57 @@
         </div>
         
         <div class="form-group">
-          <label for="drone-description">Descripción:</label>
-          <textarea
-            id="drone-description"
-            v-model="droneForm.description"
-            placeholder="Descripción opcional del drone"
-            rows="3"
-          ></textarea>
+          <label for="drone-serial">Número de Serie:</label>
+          <input
+            id="drone-serial"
+            v-model="droneForm.serialNumber"
+            type="text"
+            placeholder="Número de serie del drone"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="drone-weight">Peso (gramos):</label>
+          <input
+            id="drone-weight"
+            v-model.number="droneForm.weight"
+            type="number"
+            min="1"
+            placeholder="Ej: 250"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="drone-frame">Tamaño del Frame (mm):</label>
+          <input
+            id="drone-frame"
+            v-model.number="droneForm.frameSize"
+            type="number"
+            min="1"
+            placeholder="Ej: 250"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="drone-battery">Capacidad de Batería (mAh):</label>
+          <input
+            id="drone-battery"
+            v-model.number="droneForm.batteryCapacity"
+            type="number"
+            min="1"
+            placeholder="Ej: 1500"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="drone-flight-time">Tiempo de Vuelo (minutos):</label>
+          <input
+            id="drone-flight-time"
+            v-model.number="droneForm.flightTime"
+            type="number"
+            min="1"
+            placeholder="Ej: 8"
+          />
         </div>
         
         <div v-if="error" class="error-message">
@@ -73,7 +115,7 @@
             Cancelar
           </button>
           <button type="submit" :disabled="loading" class="btn btn-primary">
-            {{ loading ? 'Guardando...' : (editingDrone ? 'Actualizar' : 'Guardar') }}
+            {{ loading ? 'Guardando...' : (drone ? 'Actualizar' : 'Guardar') }}
           </button>
         </div>
       </form>
@@ -82,14 +124,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, watch } from 'vue'
 
-defineProps({
-  droneForm: {
-    type: Object,
-    required: true
-  },
-  editingDrone: {
+const props = defineProps({
+  drone: {
     type: Object,
     default: null
   },
@@ -109,6 +147,61 @@ defineProps({
 
 const emit = defineEmits(['submit', 'close'])
 
+// Formulario reactivo
+const droneForm = reactive({
+  name: '',
+  type: '',
+  brand: '',
+  model: '',
+  serialNumber: '',
+  weight: null,
+  frameSize: null,
+  batteryCapacity: null,
+  flightTime: null
+})
+
+// Llenar formulario cuando se edita
+watch(() => props.drone, (newDrone) => {
+  if (newDrone) {
+    Object.assign(droneForm, {
+      name: newDrone.name || '',
+      type: newDrone.type || '',
+      brand: newDrone.brand || '',
+      model: newDrone.model || '',
+      serialNumber: newDrone.serialNumber || '',
+      weight: newDrone.weight || null,
+      frameSize: newDrone.frameSize || null,
+      batteryCapacity: newDrone.batteryCapacity || null,
+      flightTime: newDrone.flightTime || null
+    })
+  } else {
+    // Limpiar formulario para nuevo drone
+    Object.assign(droneForm, {
+      name: '',
+      type: '',
+      brand: '',
+      model: '',
+      serialNumber: '',
+      weight: null,
+      frameSize: null,
+      batteryCapacity: null,
+      flightTime: null
+    })
+  }
+}, { immediate: true })
+
+const handleSubmit = () => {
+  // Filtrar campos vacíos
+  const cleanData = {}
+  Object.keys(droneForm).forEach(key => {
+    if (droneForm[key] !== '' && droneForm[key] !== null && droneForm[key] !== undefined) {
+      cleanData[key] = droneForm[key]
+    }
+  })
+  
+  emit('submit', cleanData)
+}
+
 // Variables para manejar el doble clic
 const clickCount = ref(0)
 const clickTimer = ref(null)
@@ -119,7 +212,7 @@ const handleOverlayClick = () => {
   if (clickCount.value === 1) {
     clickTimer.value = setTimeout(() => {
       clickCount.value = 0
-    }, 300) // 300ms para detectar doble clic
+    }, 300)
   } else if (clickCount.value === 2) {
     clearTimeout(clickTimer.value)
     clickCount.value = 0

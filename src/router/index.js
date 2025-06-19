@@ -4,6 +4,8 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Profile from '@/views/Profile.vue'
+import UserDrones from '@/views/UserDrones.vue'
+import UserFlights from '@/views/UserFlights.vue'
 
 const routes = [
   {
@@ -15,7 +17,7 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { requiresGuest: true } // Solo para usuarios no autenticados
+    meta: { requiresGuest: true }
   },
   {
     path: '/dashboard',
@@ -27,6 +29,18 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/my-drones',
+    name: 'UserDrones',
+    component: UserDrones,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/my-flights',
+    name: 'UserFlights',
+    component: UserFlights,
     meta: { requiresAuth: true }
   }
 ]

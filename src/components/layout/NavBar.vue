@@ -3,16 +3,25 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import BaseButton from '../base/BaseButton.vue'
-import UserAvatar from '../base/UserAvatar.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
 const showMobileMenu = ref(false)
 const showUserMenu = ref(false)
+const isRotating = ref(false)
 
 const handleLogout = async () => {
   await userStore.logout()
   router.push('/login')
+}
+
+const toggleUserMenu = () => {
+  isRotating.value = true
+  showUserMenu.value = !showUserMenu.value
+  // Resetear la animación después de que termine
+  setTimeout(() => {
+    isRotating.value = false
+  }, 500) // 500ms es la duración de la animación
 }
 </script>
 
@@ -46,26 +55,37 @@ const handleLogout = async () => {
 
         <!-- Botones de acción -->
         <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-          <BaseButton
-            v-if="userStore.isAuthenticated"
-            variant="primary"
-            size="sm"
-            @click="router.push('/flights/new')"
-          >
-            Nuevo Vuelo
-          </BaseButton>
+         
 
           <!-- Menú de usuario -->
           <div class="relative" v-if="userStore.isAuthenticated">
             <button
-              @click="showUserMenu = !showUserMenu"
-              class="flex items-center space-x-2 focus:outline-none"
+              @click="toggleUserMenu"
+              class="flex items-center space-x-2 focus:outline-none group"
             >
-              <UserAvatar
-                :src="userStore.user?.profilePicture"
-                :alt="userStore.user?.name || 'Usuario'"
-                size="sm"
-              />
+              <svg
+                :class="[
+                  'w-6 h-6 text-gray-600 transition-all duration-500 hover:text-primary-600 group-hover:animate-wiggle',
+                  { 'rotate-360': isRotating }
+                ]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
             </button>
 
             <!-- Dropdown menú -->
@@ -79,6 +99,18 @@ const handleLogout = async () => {
               >
                 Mi Perfil
               </router-link>
+              <button
+                @click="handleLogout"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                Marcas Drones
+              </button>
+              <button
+                @click="handleLogout"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                Tipos de Drones
+              </button>
               <button
                 @click="handleLogout"
                 class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -194,3 +226,29 @@ const handleLogout = async () => {
     </div>
   </nav>
 </template>
+
+<style>
+.rotate-360 {
+  transform: rotate(360deg);
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.3s ease-in-out;
+}
+
+/* Asegurarse de que la animación solo se ejecute una vez al hacer hover */
+.group:hover .group-hover\:animate-wiggle {
+  animation: wiggle 0.3s ease-in-out;
+}
+
+/* Reiniciar la animación cuando el mouse sale del elemento */
+.group:not(:hover) .group-hover\:animate-wiggle {
+  animation: none;
+}
+</style>

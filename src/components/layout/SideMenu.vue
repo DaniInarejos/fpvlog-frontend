@@ -63,7 +63,7 @@ const isActive = (path, exact = false) => {
     <div class="p-4 border-b">
       <div class="flex items-center space-x-3">
         <UserAvatar 
-          :src="userStore.user?.avatar" 
+          :src="userStore.user?.profilePicture"
           :alt="userStore.user?.name || 'Usuario'" 
           size="md" 
           status="online"

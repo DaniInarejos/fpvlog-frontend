@@ -1,84 +1,81 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
-import Dashboard from '@/views/Dashboard.vue'
-import Profile from '@/views/Profile.vue'
-import UserDrones from '@/views/UserDrones.vue'
-import UserFlights from '@/views/UserFlights.vue'
+import { useUserStore } from '../stores/user'
+
+// Vistas
+import HomeView from '../views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'home',
+    component: HomeView,
+    meta: {
+      requiresAuth: true,
+      title: 'Inicio'
+    }
   },
   {
     path: '/login',
-    name: 'Login',
-    component: Login,
-    meta: { requiresGuest: true }
+    name: 'login',
+    component: () => import('../views/LoginView.vue'),
+    meta: {
+      layout: 'auth',
+      title: 'Iniciar Sesión'
+    }
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: true }
+    path: '/register',
+    name: 'register',
+    component: () => import('../views/RegisterView.vue'),
+    meta: {
+      layout: 'auth',
+      title: 'Registro'
+    }
   },
   {
     path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    meta: { requiresAuth: true }
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Perfil'
+    }
   },
   {
-    path: '/my-drones',
-    name: 'UserDrones',
-    component: UserDrones,
-    meta: { requiresAuth: true }
+    path: '/flights',
+    name: 'flights',
+    component: () => import('../views/FlightView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Vuelos'
+    }
   },
   {
-    path: '/my-flights',
-    name: 'UserFlights',
-    component: UserFlights,
-    meta: { requiresAuth: true }
+    path: '/drones',
+    name: 'drones',
+    component: () => import('../views/DroneView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Mis Drones'
+    }
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
-// Guard de navegación mejorado
+// Navegación protegida
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  
-  // Esperar a que termine la inicialización si está en proceso
-  if (authStore.isLoading) {
-    // Esperar un poco para que termine la verificación
-    await new Promise(resolve => {
-      const checkLoading = () => {
-        if (!authStore.isLoading) {
-          resolve()
-        } else {
-          setTimeout(checkLoading, 100)
-        }
-      }
-      checkLoading()
-    })
-  }
-  
-  const isAuthenticated = authStore.isLoggedIn
-  const requiresAuth = to.meta.requiresAuth
-  const requiresGuest = to.meta.requiresGuest
-  
-  if (requiresAuth && !isAuthenticated) {
-    // Ruta protegida y usuario no autenticado
+  const userStore = useUserStore()
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+  // Esperar a que se inicialice la autenticación
+  await userStore.initAuth()
+
+  if (requiresAuth && !userStore.isAuthenticated) {
     next('/login')
-  } else if (requiresGuest && isAuthenticated) {
-    // Ruta para invitados y usuario autenticado
-    next('/dashboard')
   } else {
     next()
   }

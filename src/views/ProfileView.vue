@@ -29,16 +29,31 @@ const form = ref({
 const loadProfile = async () => {
   try {
     loading.value = true
-    await userStore.fetchCurrentUser() 
-    const profile = userStore.user 
-    user.value = profile
-    form.value = {
-      username: profile.username,
-      name: profile.name,
-      lastName: profile.lastName,
-      email: profile.email,
-      profilePicture: profile.profilePicture,
-      privacySettings: { ...profile.privacySettings }
+    // Si el usuario ya está en el store, usamos esos datos
+    if (userStore.user) {
+      const profile = userStore.user
+      user.value = profile
+      form.value = {
+        username: profile.username,
+        name: profile.name,
+        lastName: profile.lastName,
+        email: profile.email,
+        profilePicture: profile.profilePicture,
+        privacySettings: { ...profile.privacySettings }
+      }
+    } else {
+      // Solo si no hay datos en el store, hacemos la petición
+      await userStore.fetchCurrentUser()
+      const profile = userStore.user
+      user.value = profile
+      form.value = {
+        username: profile.username,
+        name: profile.name,
+        lastName: profile.lastName,
+        email: profile.email,
+        profilePicture: profile.profilePicture,
+        privacySettings: { ...profile.privacySettings }
+      }
     }
   } catch (err) {
     error.value = 'Error cargando perfil'

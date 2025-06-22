@@ -20,7 +20,7 @@ onMounted(async () => {
   <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
     <!-- Layout para páginas de autenticación -->
     <template v-if="isAuthPage">
-      <main class="container mx-auto px-4 py-8">
+      <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <router-view />
       </main>
     </template>
@@ -28,9 +28,9 @@ onMounted(async () => {
     <!-- Layout principal con navegación -->
     <template v-else>
       <NavBar />
-      <div class="flex">
-        <SideMenu v-if="isAuthenticated" />
-        <main class="flex-1 container mx-auto px-4 py-8">
+      <div class="flex flex-col sm:flex-row">
+        <SideMenu v-if="isAuthenticated" class="w-full sm:w-64 sm:sticky sm:top-0 sm:h-screen" />
+        <main class="flex-1 container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <router-view />
         </main>
       </div>

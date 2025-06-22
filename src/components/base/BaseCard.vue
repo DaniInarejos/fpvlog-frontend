@@ -22,7 +22,7 @@ const cardClasses = computed(() => ({
 </script>
 
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md" :class="cardClasses">
-    <slot />
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <slot></slot>
   </div>
 </template>

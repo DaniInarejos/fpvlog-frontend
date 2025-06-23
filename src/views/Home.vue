@@ -22,17 +22,17 @@ const stats = ref({
 const loading = ref(true)
 const error = ref(null)
 
-const formatDuration = (seconds) => {
-  if (!seconds) return '0h 0m'
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  return `${hours}h ${minutes}m`
+const formatDuration = (minutes) => {
+  if (!minutes) return '0h 0m'
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  return `${hours}h ${mins}m`
 }
 
 const calculateAverageFlightTime = (flights) => {
   if (!flights.length) return 0
   const totalTime = flights.reduce((acc, flight) => acc + (flight.duration || 0), 0)
-  return Math.floor(totalTime / flights.length)
+  return totalTime / flights.length // Dividir el tiempo total entre el número de vuelos
 }
 
 const loadDashboardData = async () => {
@@ -47,16 +47,19 @@ const loadDashboardData = async () => {
     drones.value = userDrones
 
     // Calcular estadísticas
+    const totalTime = userFlights.reduce((acc, flight) => acc + (flight.duration || 0), 0)
+    
     stats.value = {
-      totalFlightTime: userFlights.reduce((acc, flight) => acc + (flight.duration || 0), 0),
+      totalFlightTime: totalTime,
       totalFlights: userFlights.length,
       totalDrones: userDrones.length,
-      averageFlightTime: calculateAverageFlightTime(userFlights)
+      averageFlightTime: totalTime / userFlights.length
     }
 
-    // Aquí se cargarían los seguidores y seguidos cuando el backend lo soporte
+    // Actualizar seguidores y siguiendo desde el perfil del usuario
+    following.value = userStore.user.following || []
+    // Como followers no está en el objeto de perfil, lo inicializamos como array vacío por ahora
     followers.value = []
-    following.value = []
   } catch (err) {
     error.value = 'Error cargando datos del perfil'
   } finally {

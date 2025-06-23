@@ -14,18 +14,6 @@ const menuItems = computed(() => [
     exact: true
   },
   {
-    name: 'Mis Vuelos',
-    path: '/flights',
-    icon: 'flight',
-    count: userStore.flightCount
-  },
-  {
-    name: 'Mis Drones',
-    path: '/drones',
-    icon: 'drone',
-    count: userStore.droneCount
-  },
-  {
     name: 'Seguidores',
     path: '/followers',
     icon: 'users',

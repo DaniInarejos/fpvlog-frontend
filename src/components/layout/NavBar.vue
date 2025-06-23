@@ -56,7 +56,7 @@ onUnmounted(() => {
           <div class="flex space-x-4">
             <router-link
               v-for="item in [
-                { name: 'Inicio', path: '/' },
+                { name: 'Mi Perfil', path: '/' },
                 { name: 'Vuelos', path: '/flights' },
                 { name: 'Drones', path: '/drones' },
               ]"
@@ -109,7 +109,7 @@ onUnmounted(() => {
               to="/profile"
               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
             >
-              Mi Perfil
+              Mis Datos
             </router-link>
             <button
               @click="handleLogout"

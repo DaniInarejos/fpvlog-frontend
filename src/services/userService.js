@@ -55,6 +55,15 @@ const userService = {
    */
   async searchUsers(options = { page: 1, limit: 20 }) {
     return api.get('/users', { params: options })
+  },
+
+  /**
+   * Obtener datos del dashboard de un usuario
+   * @param {string} username - Nombre de usuario
+   * @returns {Promise<Object>} - Datos del dashboard
+   */
+  async getDashboard(username) {
+    return api.get(`/users/dashboard/${username}`)
   }
 }
 

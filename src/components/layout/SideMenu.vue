@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue'
+import {  computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import UserAvatar from '../base/UserAvatar.vue'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 const menuItems = computed(() => [
   {
@@ -43,13 +45,20 @@ const isActive = (path, exact = false) => {
   if (exact) return route.path === path
   return route.path.startsWith(path)
 }
+
+const navigateToProfile = () => {
+  router.push(`/dashboard/${userStore.user?.username}`)
+}
 </script>
 
 <template>
   <aside class="bg-white shadow-md overflow-y-auto border-b sm:border-b-0">
     <!-- Perfil del usuario -->
     <div class="p-3 sm:p-4 border-b">
-      <div class="flex items-center space-x-3">
+      <div 
+        class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+        @click="navigateToProfile"
+      >
         <UserAvatar 
           :src="userStore.user?.profilePicture"
           :alt="userStore.user?.name || 'Usuario'" 

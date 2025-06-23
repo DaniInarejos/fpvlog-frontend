@@ -317,7 +317,7 @@ const showDroneDetails = async (droneId) => {
       <BaseCard v-for="flight in flights" :key="flight._id" class="overflow-hidden">
         <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
           <img
-            :src="flight.imageUrl || '/placeholder.png'"
+            :src="flight.imageUrl || '/src/assets/images/placeholder.png'"
             :alt="flight.title"
             class="w-full h-full object-cover"
           />
@@ -406,7 +406,7 @@ const showDroneDetails = async (droneId) => {
     <div v-if="selectedDroneInfo" class="space-y-4">
       <div class="relative aspect-[4/3] overflow-hidden rounded-lg mb-4">
         <img
-          :src="selectedDroneInfo.imageUrl || '/placeholder.png'"
+          :src="selectedDroneInfo.imageUrl || '/src/assets/images/placeholder.png'"
           :alt="selectedDroneInfo.name"
           class="w-full h-full object-cover"
         />

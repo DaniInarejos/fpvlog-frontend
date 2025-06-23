@@ -153,7 +153,7 @@ onMounted(() => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="drone in drones.slice(0, 3)" :key="drone._id" class="relative group">
             <img 
-              :src="drone.imageUrl || '/placeholder.png'" 
+              :src="drone.imageUrl || '/src/assets/images/placeholder.png'" 
               :alt="drone.name"
               class="w-full h-48 object-cover rounded-lg"
             >

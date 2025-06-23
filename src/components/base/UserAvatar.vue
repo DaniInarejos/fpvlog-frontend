@@ -10,29 +10,21 @@ const props = defineProps({
   },
   alt: {
     type: String,
-    default: 'Usuario' // Valor por defecto para alt
+    required: true
   },
   size: {
-    type: [String, Number], // Permitir números también
+    type: String,
     default: 'md',
-    validator: (value) => {
-      if (typeof value === 'number') return true
-      return ['sm', 'md', 'lg', 'xl'].includes(value)
-    }
+    validator: (value) => ['sm', 'md', 'lg', 'xl'].includes(value)
   }
 })
 
-const sizeClasses = computed(() => {
-  if (typeof props.size === 'number') {
-    return { [`w-${props.size} h-${props.size}`]: true }
-  }
-  return {
-    'w-8 h-8': props.size === 'sm',
-    'w-12 h-12': props.size === 'md',
-    'w-16 h-16': props.size === 'lg',
-    'w-24 h-24': props.size === 'xl'
-  }
-})
+const sizeClasses = computed(() => ({
+  'w-8 h-8': props.size === 'sm',
+  'w-12 h-12': props.size === 'md',
+  'w-16 h-16': props.size === 'lg',
+  'w-24 h-24': props.size === 'xl'
+}))
 
 const initials = computed(() => {
   return props.alt
@@ -49,7 +41,7 @@ const handleImageError = () => {
 
 const imageSrc = computed(() => {
   if (!props.src || imageError.value) {
-    return '/assets/placeholder.png' // Imagen por defecto
+    return '/src/assets/images/placeholder.png'
   }
   return props.src
 })
@@ -57,7 +49,8 @@ const imageSrc = computed(() => {
 
 <template>
   <div
-    :class="[sizeClasses, 'relative rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700']">
+    :class="[sizeClasses, 'relative rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700']"
+  >
     <img
       :src="imageSrc"
       :alt="alt"
@@ -65,8 +58,8 @@ const imageSrc = computed(() => {
       @error="handleImageError"
     />
     <div
-      v-if="imageError || !props.src"
-      class="absolute inset-0 flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800"
+      v-if="imageError && !props.src"
+      class="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium"
     >
       {{ initials }}
     </div>

@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import userService from '../services/userService'
+import followerService from '../services/followerService'
 import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
+import BaseButton from '../components/base/BaseButton.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -12,6 +14,19 @@ const userStore = useUserStore()
 const dashboard = ref(null)
 const loading = ref(true)
 const error = ref('')
+const isFollowing = ref(false)
+const followLoading = ref(false)
+
+// Computed properties para manejar valores por defecto
+const stats = computed(() => ({
+  dronesCount: dashboard.value?.stats?.dronesCount || 0,
+  flightsCount: dashboard.value?.stats?.flightsCount || 0,
+  followersCount: dashboard.value?.stats?.followersCount || 0,
+  followingCount: dashboard.value?.stats?.followingCount || 0
+}))
+
+const recentFlights = computed(() => dashboard.value?.recentFlights || [])
+const drones = computed(() => dashboard.value?.drones || [])
 
 const loadDashboard = async () => {
   try {
@@ -25,10 +40,34 @@ const loadDashboard = async () => {
 
     const response = await userService.getDashboard(username)
     dashboard.value = response
+
+    // Verificar si seguimos a este usuario
+    if (userStore.user?._id !== dashboard.value.user._id) {
+      const followStatus = await followerService.checkIfFollowing(dashboard.value.user._id)
+      isFollowing.value = followStatus.isFollowing
+    }
   } catch (err) {
     error.value = 'Error cargando el dashboard'
   } finally {
     loading.value = false
+  }
+}
+
+const toggleFollow = async () => {
+  try {
+    followLoading.value = true
+    if (isFollowing.value) {
+      await followerService.unfollowUser(dashboard.value.user._id)
+      dashboard.value.stats.followersCount--
+    } else {
+      await followerService.followUser(dashboard.value.user._id)
+      dashboard.value.stats.followersCount++
+    }
+    isFollowing.value = !isFollowing.value
+  } catch (err) {
+    error.value = isFollowing.value ? 'Error al dejar de seguir' : 'Error al seguir'
+  } finally {
+    followLoading.value = false
   }
 }
 
@@ -38,88 +77,108 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <div v-if="loading" class="flex justify-center py-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  <div class="container mx-auto px-4 py-4">
+    <div v-if="loading" class="text-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
     </div>
 
-    <div v-else-if="error" class="text-red-500 text-center py-4">
-      {{ error }}
+    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <span class="block sm:inline">{{ error }}</span>
     </div>
 
-    <div v-else-if="dashboard" class="space-y-8">
-      <!-- Perfil del Usuario -->
-      <BaseCard>
-        <div class="flex items-center space-x-6">
-          <UserAvatar 
-            :src="dashboard.user.profilePicture" 
-            :alt="dashboard.user.username"
-            :size="24" 
+    <div v-else-if="dashboard" class="space-y-4">
+      <!-- Perfil Header -->
+      <BaseCard class="p-4">
+        <div class="flex items-center gap-4">
+          <UserAvatar
+            :src="dashboard.user.profilePicture || '/src/assets/images/placeholder.png'"
+            :size="'lg'"
+            class="w-20 h-20"
           />
-          <div>
-            <h1 class="text-2xl font-bold">{{ dashboard.user.name }} {{ dashboard.user.lastName }}</h1>
-            <p class="text-gray-600">@{{ dashboard.user.username }}</p>
-            <p class="text-primary font-semibold mt-2">{{ dashboard.user.points }} puntos</p>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 class="text-xl font-bold text-gray-900">{{ dashboard.user.name }} {{ dashboard.user.lastName }}</h1>
+                <p class="text-sm text-gray-600">@{{ dashboard.user.username }}</p>
+              </div>
+              <div v-if="userStore.user?._id !== dashboard.user._id">
+                <BaseButton
+                  :variant="isFollowing ? 'danger' : 'primary'"
+                  :disabled="followLoading"
+                  @click="toggleFollow"
+                  size="sm"
+                >
+                  {{ isFollowing ? 'Dejar de seguir' : 'Seguir' }}
+                </BaseButton>
+              </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="grid grid-cols-4 gap-2 mt-3">
+              <div class="text-center p-2 bg-gray-50 rounded">
+                <div class="text-lg font-bold text-primary-600">{{ stats.dronesCount }}</div>
+                <div class="text-xs text-gray-500">Drones</div>
+              </div>
+              <div class="text-center p-2 bg-gray-50 rounded">
+                <div class="text-lg font-bold text-primary-600">{{ stats.flightsCount }}</div>
+                <div class="text-xs text-gray-500">Vuelos</div>
+              </div>
+              <div class="text-center p-2 bg-gray-50 rounded">
+                <div class="text-lg font-bold text-primary-600">{{ stats.followersCount }}</div>
+                <div class="text-xs text-gray-500">Seguidores</div>
+              </div>
+              <div class="text-center p-2 bg-gray-50 rounded">
+                <div class="text-lg font-bold text-primary-600">{{ stats.followingCount }}</div>
+                <div class="text-xs text-gray-500">Siguiendo</div>
+              </div>
+            </div>
           </div>
         </div>
       </BaseCard>
 
-      <!-- Estadísticas -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <BaseCard>
-          <div class="text-center">
-            <h3 class="text-lg font-semibold">Drones</h3>
-            <p class="text-3xl font-bold text-primary">{{ dashboard.stats.dronesCount }}</p>
-          </div>
-        </BaseCard>
-        <BaseCard>
-          <div class="text-center">
-            <h3 class="text-lg font-semibold">Vuelos</h3>
-            <p class="text-3xl font-bold text-primary">{{ dashboard.stats.flightsCount }}</p>
-          </div>
-        </BaseCard>
-        <BaseCard>
-          <div class="text-center">
-            <h3 class="text-lg font-semibold">Seguidores</h3>
-            <p class="text-3xl font-bold text-primary">{{ dashboard.stats.followersCount }}</p>
-          </div>
-        </BaseCard>
-        <BaseCard>
-          <div class="text-center">
-            <h3 class="text-lg font-semibold">Siguiendo</h3>
-            <p class="text-3xl font-bold text-primary">{{ dashboard.stats.followingCount }}</p>
-          </div>
-        </BaseCard>
-      </div>
-
       <!-- Vuelos Recientes -->
-      <BaseCard v-if="dashboard.recentFlights.length > 0">
-        <template #header>
-          <h2 class="text-xl font-bold">Vuelos Recientes</h2>
-        </template>
-        <div class="space-y-4">
-          <div v-for="flight in dashboard.recentFlights" :key="flight._id"
-               class="p-4 hover:bg-gray-50 rounded-lg transition-colors">
-            <!-- Aquí puedes reutilizar tu componente de vuelo o crear una versión simplificada -->
-            <h3 class="font-semibold">{{ flight.title }}</h3>
-            <p class="text-gray-600">{{ flight.description }}</p>
+      <BaseCard v-if="recentFlights.length > 0" class="p-4">
+        <h2 class="text-lg font-bold mb-3">Vuelos Recientes</h2>
+        <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div v-for="flight in dashboard.recentFlights" :key="flight._id" class="bg-gray-50 p-3 rounded">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-medium">{{ flight.title }}</h3>
+              <span class="text-xs text-gray-500">{{ new Date(flight.date).toLocaleDateString() }}</span>
+            </div>
+            <p class="text-gray-600 text-xs mb-2">{{ flight.description }}</p>
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>🕒 {{ flight.duration }}min</span>
+              <span>📍 {{ flight.location }}</span>
+            </div>
           </div>
         </div>
+      </BaseCard>
+      <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
+        <p>No hay vuelos recientes</p>
       </BaseCard>
 
       <!-- Drones -->
-      <BaseCard v-if="dashboard.drones.length > 0">
-        <template #header>
-          <h2 class="text-xl font-bold">Mis Drones</h2>
-        </template>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="drone in dashboard.drones" :key="drone._id"
-               class="p-4 hover:bg-gray-50 rounded-lg transition-colors">
-            <!-- Aquí puedes reutilizar tu componente de drone o crear una versión simplificada -->
-            <h3 class="font-semibold">{{ drone.name }}</h3>
-            <p class="text-gray-600">{{ drone.description }}</p>
+      <BaseCard v-if="drones.length > 0" class="p-4">
+        <h2 class="text-lg font-bold mb-3">Drones</h2>
+        <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div v-for="drone in drones" :key="drone._id" class="bg-gray-50 p-3 rounded">
+            <div class="flex items-center space-x-3">
+              <img 
+                :src="drone.image || '/src/assets/images/placeholder.png'" 
+                :alt="drone.name" 
+                class="w-12 h-12 object-cover rounded" 
+                @error="$event.target.src = '/src/assets/images/placeholder.png'"
+              />
+              <div>
+                <h3 class="font-medium">{{ drone.name }}</h3>
+                <p class="text-xs text-gray-500">{{ drone.model }}</p>
+              </div>
+            </div>
           </div>
         </div>
+      </BaseCard>
+      <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
+        <p>No hay drones registrados</p>
       </BaseCard>
     </div>
   </div>

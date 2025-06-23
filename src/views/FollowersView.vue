@@ -61,49 +61,53 @@ const navigateToDashboard = (username) => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <BaseCard>
+  <div class="container mx-auto px-4 py-4">
+    <BaseCard class="p-3">
       <template #header>
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-2">
           <div>
-            <h1 class="text-2xl font-bold">Seguidores</h1>
-            <p class="text-sm text-gray-500 mt-1" v-if="pagination.total > 0">
+            <h1 class="text-lg font-bold">Seguidores</h1>
+            <p class="text-xs text-gray-500" v-if="pagination.total > 0">
               Total: {{ pagination.total }}
             </p>
           </div>
-          <div class="relative w-64">
+          <div class="relative w-48">
             <input
               v-model="searchQuery"
               type="text"
               placeholder="Buscar por username..."
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              class="w-full px-3 py-1.5 text-sm border rounded focus:ring-1 focus:ring-primary focus:border-transparent"
             />
           </div>
         </div>
       </template>
       
-      <div v-if="loading" class="flex justify-center py-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div v-if="loading" class="flex justify-center py-4">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
       </div>
 
-      <div v-else-if="error" class="text-red-500 text-center py-4">
+      <div v-else-if="error" class="text-red-500 text-center py-3 text-sm">
         {{ error }}
       </div>
 
-      <div v-else-if="filteredFollowers.length === 0" class="text-center py-4 text-gray-500">
+      <div v-else-if="filteredFollowers.length === 0" class="text-center py-3 text-sm text-gray-500">
         {{ searchQuery ? 'No se encontraron usuarios' : 'No tienes seguidores aún' }}
       </div>
 
-      <div v-else class="space-y-4">
+      <div v-else class="space-y-2">
         <div v-for="follower in filteredFollowers" 
              :key="follower._id" 
-             class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer border border-gray-100 hover:border-primary"
+             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded transition-colors cursor-pointer border border-gray-100 hover:border-primary"
              @click="navigateToDashboard(follower.username)">
-          <div class="flex items-center space-x-4">
-            <UserAvatar :alt="follower.username" :size="12" />
+          <div class="flex items-center space-x-3">
+            <UserAvatar 
+              :alt="follower.username" 
+              :size="8"
+              class="w-8 h-8"
+            />
             <div>
-              <h3 class="font-semibold text-lg">@{{ follower.username }}</h3>
-              <p class="text-sm text-gray-500">Te sigue desde {{ new Date(follower.followedAt).toLocaleDateString() }}</p>
+              <h3 class="font-medium text-sm">@{{ follower.username }}</h3>
+              <p class="text-xs text-gray-500">Te sigue desde {{ new Date(follower.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>
         </div>

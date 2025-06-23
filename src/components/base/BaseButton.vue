@@ -44,7 +44,8 @@ const buttonClasses = computed(() => ({
       'text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 active:scale-95 active:shadow-inner',
       'touch-manipulation select-none',
-      'focus:ring-primary-500 dark:focus:ring-primary-400'
+      'focus:ring-primary-500 dark:focus:ring-primary-400',
+      'border border-gray-200 shadow-sm'
     ]"
     :disabled="disabled || loading"
   >

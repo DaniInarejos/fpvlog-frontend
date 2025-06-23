@@ -323,7 +323,7 @@ const openDeleteModal = (drone) => {
       <BaseCard v-for="drone in drones" :key="drone._id" class="overflow-hidden">
         <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
           <img
-            :src="drone.imageUrl || '/placeholder.png'"
+            :src="drone.imageUrl || '/src/assets/images/placeholder.png'"
             :alt="drone.name"
             class="w-full h-full object-cover"
           />

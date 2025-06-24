@@ -47,7 +47,7 @@ onUnmounted(() => {
         <div class="flex items-center space-x-4 sm:space-x-8">
           <div class="flex-shrink-0 flex items-center">
             <router-link to="/" class="flex items-center space-x-2">
-              <img src="/src/assets/images/SkySphereLOGOsin.png" alt="SkySphere Logo" class="h-8 w-8" />
+              <img src="/src/assets/images/logoSkySphere.png" alt="SkySphere Logo" class="h-14 w-14" />
               <span class="text-lg sm:text-xl font-bold text-primary-600 dark:text-primary-400">SkySphere</span>
             </router-link>
           </div>

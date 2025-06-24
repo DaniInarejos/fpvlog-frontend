@@ -8,6 +8,7 @@ import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 
+const DEFAULT_IMAGE = '/images/placeholder.png'
 const route = useRoute()
 const userStore = useUserStore()
 
@@ -91,7 +92,7 @@ onMounted(() => {
       <BaseCard class="p-4">
         <div class="flex items-center gap-4">
           <UserAvatar
-            :src="dashboard.user.profilePicture || '/src/assets/images/placeholder.png'"
+            :src="dashboard.user.profilePicture || DEFAULT_IMAGE"
             :size="'lg'"
             class="w-20 h-20"
           />
@@ -164,10 +165,9 @@ onMounted(() => {
           <div v-for="drone in drones" :key="drone._id" class="bg-gray-50 p-3 rounded">
             <div class="flex items-center space-x-3">
               <img 
-                :src="drone.image || '/src/assets/images/placeholder.png'" 
+                :src="drone.image || DEFAULT_IMAGE" 
                 :alt="drone.name" 
                 class="w-12 h-12 object-cover rounded" 
-                @error="$event.target.src = '/src/assets/images/placeholder.png'"
               />
               <div>
                 <h3 class="font-medium">{{ drone.name }}</h3>

@@ -41,7 +41,7 @@ const handleImageError = () => {
 
 const imageSrc = computed(() => {
   if (!props.src || imageError.value) {
-    return '/src/assets/images/placeholder.png'
+    return '/images/placeholder.png'
   }
   return props.src
 })

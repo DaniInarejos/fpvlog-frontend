@@ -93,11 +93,16 @@ const routes = [
       requiresAuth: true,
       title: 'Dashboard'
     }
-  }
+  },
+  {
+  path: '/:pathMatch(.*)*',
+  redirect: '/'
+}
+
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory('/'),//createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 

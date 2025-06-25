@@ -95,6 +95,14 @@ const routes = [
     }
   },
   {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/About.vue'),
+    meta: {
+      title: 'Acerca de'
+    }
+  },
+  {
   path: '/:pathMatch(.*)*',
   redirect: '/'
 }

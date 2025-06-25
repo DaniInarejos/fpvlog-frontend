@@ -59,6 +59,7 @@ onUnmounted(() => {
                 { name: 'Mi Perfil', path: '/' },
                 { name: 'Vuelos', path: '/flights' },
                 { name: 'Drones', path: '/drones' },
+                { name: 'Acerca de', path: '/about' },  
               ]"
               :key="item.path"
               :to="item.path"

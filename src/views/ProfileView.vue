@@ -107,17 +107,57 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-6">Mi Perfil</h1>
+  <div class="min-h-[85vh] max-w-4xl mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold mb-8 bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent animate-fade-in">
+      Mi Perfil
+    </h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Estadísticas y foto de perfil -->
+      <div class="md:col-span-1 order-1 md:order-none">
+        <BaseCard class="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 border border-gray-200/20 dark:border-gray-700/20 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] p-8">
+          <div class="relative group mb-8">
+            <UserAvatar
+              :src="form.profilePicture || user?.profilePicture"
+              :alt="user?.name || 'Usuario'"
+              size="2xl"
+              class="mx-auto ring-4 ring-sky-500/30 transition-transform duration-300 group-hover:scale-105"
+            />
+            <label class="absolute bottom-0 left-1/2 -translate-x-1/2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+              <input
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="handleProfilePictureUpload"
+              >
+              Cambiar foto
+            </label>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6">
+            <div class="transform hover:scale-105 transition-transform duration-300">
+              <div class="text-2xl font-bold text-sky-500">{{ user?.flightCount || 0 }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">Vuelos</div>
+            </div>
+            <div class="transform hover:scale-105 transition-transform duration-300">
+              <div class="text-2xl font-bold text-indigo-500">{{ user?.followers?.length || 0 }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">Seguidores</div>
+            </div>
+            <div class="transform hover:scale-105 transition-transform duration-300">
+              <div class="text-2xl font-bold text-purple-500">{{ user?.following?.length || 0 }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">Siguiendo</div>
+            </div>
+          </div>
+        </BaseCard>
+      </div>
+
       <!-- Información del perfil -->
       <div class="md:col-span-2">
-        <BaseCard padding="large">
+        <BaseCard class="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 border border-gray-200/20 dark:border-gray-700/20 shadow-xl p-8">
           <BaseAlert
             v-if="error"
             type="error"
-            class="mb-4"
+            class="mb-6 animate-shake"
             dismissible
             @close="error = ''"
           >
@@ -127,76 +167,76 @@ onMounted(() => {
           <BaseAlert
             v-if="success"
             type="success"
-            class="mb-4"
+            class="mb-6 animate-fade-in"
             dismissible
             @close="success = false"
           >
             Perfil actualizado correctamente
           </BaseAlert>
 
-          <form @submit.prevent="handleSubmit" class="space-y-6">
-            <BaseInput
-              v-model="form.username"
-              label="Nombre de usuario"
-              required
-            />
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form @submit.prevent="handleSubmit" class="space-y-8">
+            <div class="space-y-6">
               <BaseInput
-                v-model="form.name"
-                label="Nombre"
+                v-model="form.username"
+                label="Nombre de usuario"
                 required
+                class="transition-all duration-300 focus-within:scale-[1.02]"
               />
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <BaseInput
+                  v-model="form.name"
+                  label="Nombre"
+                  required
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                <BaseInput
+                  v-model="form.lastName"
+                  label="Apellido"
+                  required
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+              </div>
+
               <BaseInput
-                v-model="form.lastName"
-                label="Apellido"
+                v-model="form.email"
+                type="email"
+                label="Correo electrónico"
                 required
+                disabled
+                class="opacity-70"
               />
             </div>
 
-            <BaseInput
-              v-model="form.email"
-              type="email"
-              label="Correo electrónico"
-              required
-              disabled
-            />
-
-            <BaseInput
-              v-model="form.profilePicture"
-              type="url"
-              label="Imagen Perfil"
-            />
-
             <!-- Configuración de privacidad -->
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium">Privacidad</h3>
+            <div class="space-y-6">
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Privacidad</h3>
               
-              <div class="space-y-2">
-                <label class="flex items-center">
+              <div class="space-y-4">
+                <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-300">
                   <input
                     type="checkbox"
                     v-model="form.privacySettings.allowFollowersToSeeFlights"
-                    class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    class="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500 transition-colors duration-300"
                   />
-                  <span class="ml-2">Permitir que seguidores vean mis vuelos</span>
+                  <span class="text-gray-700 dark:text-gray-300">Permitir que seguidores vean mis vuelos</span>
                 </label>
 
-                <label class="flex items-center">
+                <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-300">
                   <input
                     type="checkbox"
                     v-model="form.privacySettings.allowFollowersToSeeDrones"
-                    class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    class="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500 transition-colors duration-300"
                   />
-                  <span class="ml-2">Permitir que seguidores vean mis drones</span>
+                  <span class="text-gray-700 dark:text-gray-300">Permitir que seguidores vean mis drones</span>
                 </label>
               </div>
 
-              <div>
-                <label class="block text-sm font-medium mb-1">Visibilidad del perfil</label>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Visibilidad del perfil</label>
                 <select
                   v-model="form.privacySettings.profileVisibility"
-                  class="input"
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
                 >
                   <option value="public">Público</option>
                   <option value="followers">Solo seguidores</option>
@@ -205,11 +245,12 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end pt-6">
               <BaseButton
                 type="submit"
                 variant="primary"
                 :loading="loading"
+                class="min-w-[150px]"
               >
                 Guardar Cambios
               </BaseButton>
@@ -217,35 +258,28 @@ onMounted(() => {
           </form>
         </BaseCard>
       </div>
-
-      <!-- Estadísticas y foto de perfil -->
-      <div>
-        <BaseCard class="text-center p-6">
-          <div class="mb-6">
-            <UserAvatar
-              :src="form.profilePicture || user?.profilePicture"
-              :alt="user?.name || 'Usuario'"
-              size="xl"
-              class="mx-auto"
-            />
-          </div>
-
-          <div class="grid grid-cols-3 gap-4">
-            <div>
-              <div class="text-2xl font-bold">{{ user?.flightCount || 0 }}</div>
-              <div class="text-sm text-gray-500">Vuelos</div>
-            </div>
-            <div>
-              <div class="text-2xl font-bold">{{ user?.followers?.length || 0 }}</div>
-              <div class="text-sm text-gray-500">Seguidores</div>
-            </div>
-            <div>
-              <div class="text-2xl font-bold">{{ user?.following?.length || 0 }}</div>
-              <div class="text-sm text-gray-500">Siguiendo</div>
-            </div>
-          </div>
-        </BaseCard>
-      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+</style>

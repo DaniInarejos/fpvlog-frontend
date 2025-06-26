@@ -11,6 +11,7 @@ import Drones from '../views/DroneView.vue'
 import Followers from '../views/FollowersView.vue'
 import Following from '../views/FollowingView.vue'
 import Dashboard from '../views/DashboardView.vue'
+import About from '../views/About.vue'
 
 const routes = [
   {
@@ -90,14 +91,13 @@ const routes = [
     name: 'dashboard',
     component: Dashboard,
     meta: {
-      requiresAuth: true,
       title: 'Dashboard'
     }
   },
   {
     path: '/about',
     name: 'about',
-    component: () => import('../views/About.vue'),
+    component: About,
     meta: {
       title: 'Acerca de'
     }
@@ -118,11 +118,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isDashboard = to.name === 'dashboard'
 
   // Esperar a que se inicialice la autenticación
   await userStore.initAuth()
 
-  if (requiresAuth && !userStore.isAuthenticated) {
+  if (requiresAuth && !userStore.isAuthenticated && !isDashboard) {
     next('/login')
   } else {
     next()

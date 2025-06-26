@@ -15,6 +15,10 @@ const handleLogout = async () => {
   router.push('/login')
 }
 
+const handleAboutOf = async () => {
+  router.push('/about')
+}
+
 const toggleUserMenu = () => {
   isRotating.value = true
   showUserMenu.value = !showUserMenu.value
@@ -37,50 +41,62 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+const showToast = ref(false)
+const handleDroneOptions = (item) => {
+  if (item === 'Marcas Drones' || item === 'Tipos de Drones') {
+    showToast.value = true
+    showUserMenu.value = false
+    setTimeout(() => {
+      showToast.value = false
+    }, 2000)
+  } else if (item === 'Acerca de') {
+    handleAboutOf()
+  } else {
+    handleLogout()
+  }
+}
 </script>
 
 <template>
-  <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
-    <div >
-      <div class="flex justify-between h-14 sm:h-16">
-        <!-- Logo y navegación principal agrupados -->
-        <div class="flex items-center space-x-4 sm:space-x-8">
+  <nav class="bg-white/30 dark:bg-gray-800/30 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 sticky top-0 z-50 transition-all duration-300">
+    <div class="px-4">
+      <div class="flex justify-between h-16">
+        <!-- Logo y navegación principal -->
+        <div class="flex items-center space-x-8">
           <div class="flex-shrink-0 flex items-center">
-            <router-link to="/" class="flex items-center space-x-2">
-              <img src="/src/assets/images/logoSkySphere.png" alt="SkySphere Logo" class="h-14 w-14" />
-              <span class="text-lg sm:text-xl font-bold text-primary-600 dark:text-primary-400">SkySphere</span>
+            <router-link to="/" class="flex items-center space-x-3 group">
+              <img src="/src/assets/images/logoSkySphere.png" alt="SkySphere Logo" class="h-12 w-12 transform transition-transform duration-300 group-hover:scale-110" />
+              <span class="text-xl font-bold bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">SkySphere</span>
             </router-link>
           </div>
           
-          <!-- Enlaces de navegación siempre visibles -->
-          <div class="flex space-x-4">
+          <!-- Enlaces de navegación -->
+          <div class="flex space-x-6">
             <router-link
               v-for="item in [
                 { name: 'Mi Perfil', path: '/' },
                 { name: 'Vuelos', path: '/flights' },
                 { name: 'Drones', path: '/drones' },
-                { name: 'Acerca de', path: '/about' },  
               ]"
               :key="item.path"
               :to="item.path"
-              class="px-2 py-1 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400"
+              class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-300 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
             >
               {{ item.name }}
             </router-link>
           </div>
         </div>
 
-        <!-- Menú de usuario a la derecha -->
+        <!-- Menú de usuario -->
         <div class="flex items-center" v-if="userStore.isAuthenticated" ref="menuRef">
           <button
             @click="toggleUserMenu"
-            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none group"
+            class="p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-700/50 focus:outline-none group transition-all duration-300"
           >
             <svg
-              :class="[
-                'w-5 h-5 sm:w-6 sm:h-6 text-gray-600 transition-all duration-500 hover:text-primary-600 group-hover:animate-wiggle',
-                { 'rotate-360': isRotating }
-              ]"
+              class="w-6 h-6 text-gray-600 dark:text-gray-300 transition-all duration-500 hover:text-sky-500 dark:hover:text-sky-400 group-hover:animate-wiggle"
+              :class="{ 'rotate-360': isRotating }"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -104,37 +120,42 @@ onUnmounted(() => {
           <!-- Dropdown menú -->
           <div
             v-show="showUserMenu"
-            class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 text-sm top-full"
+            class="absolute right-4 top-14 mt-1 w-48 rounded-xl shadow-lg py-1 bg-white/80 dark:bg-gray-700/80 backdrop-blur-md ring-1 ring-black/5 transform transition-all duration-300 origin-top-right animate-fade-in"
           >
             <router-link
               to="/profile"
-              class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+              class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
             >
               Mis Datos
             </router-link>
             <button
-              @click="handleLogout"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+              v-for="(item, index) in ['Marcas Drones', 'Tipos de Drones', 'Acerca de', 'Cerrar Sesión']"
+              :key="index"
+              @click="handleDroneOptions(item)"
+              class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
             >
-              Marcas Drones
-            </button>
-            <button
-              @click="handleLogout"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              Tipos de Drones
-            </button>
-            <button
-              @click="handleLogout"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              Cerrar Sesión
+              {{ item }}
             </button>
           </div>
         </div>
       </div>
     </div>
   </nav>
+
+  <!-- Toast de Work in Progress -->
+  <div
+    v-if="showToast"
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-6 rounded-xl shadow-lg z-50 min-w-[300px] text-center border border-sky-500/20 animate-fade-in"
+  >
+    <div class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-900 dark:text-white">
+      <svg class="w-6 h-6 text-sky-500 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>🚧 Work in Progress</span>
+    </div>
+    <p class="mt-2 text-gray-600 dark:text-gray-300">Esta funcionalidad estará disponible próximamente</p>
+  </div>
 </template>
 
 <style>
@@ -152,7 +173,16 @@ onUnmounted(() => {
   animation: wiggle 0.3s ease-in-out;
 }
 
-/* Asegurarse de que la animación solo se ejecute una vez al hacer hover */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Asegurarse de que la animación solo se ejecute una vez al hover */
 .group:hover .group-hover\:animate-wiggle {
   animation: wiggle 0.3s ease-in-out;
 }

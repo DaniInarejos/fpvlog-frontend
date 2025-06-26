@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+  import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'  // Añadir useRouter
 import { useUserStore } from '../stores/user'
 import userService from '../services/userService'
 import followerService from '../services/followerService'
@@ -10,6 +10,7 @@ import BaseButton from '../components/base/BaseButton.vue'
 
 const DEFAULT_IMAGE = '/images/placeholder.png'
 const route = useRoute()
+const router = useRouter()  // Añadir esta línea
 const userStore = useUserStore()
 
 const dashboard = ref(null)
@@ -43,7 +44,7 @@ const loadDashboard = async () => {
     dashboard.value = response
 
     // Verificar si seguimos a este usuario
-    if (userStore.user?._id !== dashboard.value.user._id) {
+    if (userStore.user && userStore.user?._id !== dashboard.value.user._id) {
       const followStatus = await followerService.checkIfFollowing(dashboard.value.user._id)
       isFollowing.value = followStatus.isFollowing
     }
@@ -55,6 +56,12 @@ const loadDashboard = async () => {
 }
 
 const toggleFollow = async () => {
+  // Verificar si el usuario está autenticado
+  if (!userStore.isAuthenticated) {
+    router.push('/login')
+    return
+  }
+
   try {
     followLoading.value = true
     if (isFollowing.value) {

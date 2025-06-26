@@ -63,7 +63,15 @@ const userService = {
    * @returns {Promise<Object>} - Datos del dashboard
    */
   async getDashboard(username) {
-    return api.get(`/users/dashboard/${username}`)
+    try {
+      return await api.get(`/users/dashboard/${username}`)
+    } catch (error) {
+      if (error.response?.status === 401) {
+        // Si no está autenticado, devolver datos públicos
+        return await api.get(`/users/public-dashboard/${username}`)
+      }
+      throw error
+    }
   }
 }
 

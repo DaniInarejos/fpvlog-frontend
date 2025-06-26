@@ -17,10 +17,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="min-h-screen bg-gradient-to-br from-sky-500/20 to-indigo-500/20 dark:from-gray-900 dark:to-gray-800">
     <!-- Layout para páginas de autenticación -->
     <template v-if="isAuthPage">
-      <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 min-h-screen">
         <router-view />
       </main>
     </template>

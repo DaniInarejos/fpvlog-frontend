@@ -81,27 +81,6 @@ const formatDuration = (duration) => {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
-const handleSubmit = async () => {
-  if (!validateForm()) return
-  
-  isLoading.value = true
-  try {
-    if (selectedFlight.value) {
-      await flightService.updateFlight(selectedFlight.value._id, formData.value)
-    } else {
-      await flightService.createFlight(formData.value)
-    }
-    
-    showForm.value = false
-    resetForm()
-    await fetchFlights()
-  } catch (error) {
-    errors.value.submit = error.message
-  } finally {
-    isLoading.value = false
-  }
-}
-
 const resetForm = () => {
   formData.value = {
     title: '',
@@ -163,6 +142,60 @@ const showDroneDetails = async (droneId) => {
     showDroneModal.value = true
   } catch (error) {
     errors.value.droneInfo = 'Error al cargar la información del drone'
+  }
+}
+
+const handleFlightImageUpload = async (event) => {
+  try {
+    const file = event.target.files[0]
+    if (!file) return
+
+    isLoading.value = true
+    errors.value = {}
+    
+    const formData = new FormData()
+    formData.append('image', file)
+    
+    if (selectedFlight.value) {
+      await flightService.uploadFlightImage(selectedFlight.value._id, formData)
+      await fetchFlights()
+    } else {
+      // Si es un nuevo vuelo, guardamos el archivo para subirlo después de crear el vuelo
+      formData.value.imageFile = file
+    }
+  } catch (error) {
+    errors.value.image = 'Error al subir la imagen del vuelo'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Modificar handleSubmit para incluir la subida de imagen
+const handleSubmit = async () => {
+  if (!validateForm()) return
+  
+  isLoading.value = true
+  try {
+    let response
+    if (selectedFlight.value) {
+      response = await flightService.updateFlight(selectedFlight.value._id, formData.value)
+    } else {
+      response = await flightService.createFlight(formData.value)
+      // Si hay una imagen seleccionada, la subimos después de crear el vuelo
+      if (formData.value.imageFile) {
+        const imageFormData = new FormData()
+        imageFormData.append('image', formData.value.imageFile)
+        await flightService.uploadFlightImage(response.data._id, imageFormData)
+      }
+    }
+    
+    showForm.value = false
+    resetForm()
+    await fetchFlights()
+  } catch (error) {
+    errors.value.submit = error.message
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -268,6 +301,27 @@ const showDroneDetails = async (droneId) => {
               />
             </div>
 
+            <!-- Añadir campo de imagen aquí -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Imagen del Vuelo
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                @change="handleFlightImageUpload"
+                class="block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100"
+              />
+              <p v-if="errors.image" class="mt-1 text-sm text-red-600">
+                {{ errors.image }}
+              </p>
+            </div>
+
             <div class="md:col-span-2 space-y-2">
               <label class="flex items-center">
                 <input
@@ -317,7 +371,7 @@ const showDroneDetails = async (droneId) => {
       <BaseCard v-for="flight in flights" :key="flight._id" class="overflow-hidden">
         <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
           <img
-            :src="flight.imageUrl || '/images/placeholder.png'"
+            :src="flight.image || '/images/placeholder.png'"
             :alt="flight.title"
             class="w-full h-full object-cover"
           />
@@ -406,7 +460,7 @@ const showDroneDetails = async (droneId) => {
     <div v-if="selectedDroneInfo" class="space-y-4">
       <div class="relative aspect-[4/3] overflow-hidden rounded-lg mb-4">
         <img
-          :src="selectedDroneInfo.imageUrl || '/src/assets/images/placeholder.png'"
+          :src="selectedDroneInfo.image || '/src/assets/images/placeholder.png'"
           :alt="selectedDroneInfo.name"
           class="w-full h-full object-cover"
         />

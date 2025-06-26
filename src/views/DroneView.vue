@@ -78,10 +78,20 @@ const handleSubmit = async () => {
   
   isLoading.value = true
   try {
+    let droneId
     if (selectedDrone.value) {
       await droneService.updateDrone(selectedDrone.value._id, formData.value)
+      droneId = selectedDrone.value._id
     } else {
-      await droneService.createDrone(formData.value)
+      const newDrone = await droneService.createDrone(formData.value)
+      droneId = newDrone._id
+    }
+    
+    // Si hay una imagen seleccionada, la subimos
+    if (imageFile.value) {
+      const imageFormData = new FormData()
+      imageFormData.append('image', imageFile.value)
+      await droneService.uploadDroneImage(droneId, imageFormData)
     }
     
     showForm.value = false
@@ -94,21 +104,13 @@ const handleSubmit = async () => {
   }
 }
 
-const deleteDrone = async (droneId) => {
-  if (!confirm('¿Estás seguro de que quieres eliminar este drone?')) return
-  
-  try {
-    await droneService.deleteDrone(droneId)
-    await fetchDrones()
-  } catch (error) {
-    errors.value.delete = error.message
-  }
-}
+const imageFile = ref(null)
 
-const editDrone = (drone) => {
-  selectedDrone.value = drone
-  formData.value = { ...drone }
-  showForm.value = true
+const handleImageSelect = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    imageFile.value = file
+  }
 }
 
 const resetForm = () => {
@@ -127,8 +129,26 @@ const resetForm = () => {
       isPublic: false
     }
   }
+  imageFile.value = null
   selectedDrone.value = null
   errors.value = {}
+}
+
+const deleteDrone = async (droneId) => {
+  if (!confirm('¿Estás seguro de que quieres eliminar este drone?')) return
+  
+  try {
+    await droneService.deleteDrone(droneId)
+    await fetchDrones()
+  } catch (error) {
+    errors.value.delete = error.message
+  }
+}
+
+const editDrone = (drone) => {
+  selectedDrone.value = drone
+  formData.value = { ...drone }
+  showForm.value = true
 }
 
 onMounted(() => {
@@ -156,6 +176,28 @@ const confirmDelete = async () => {
 const openDeleteModal = (drone) => {
   droneToDelete.value = drone
   showDeleteModal.value = true
+}
+// En la sección de script setup, añadir:
+const handleDroneImageUpload = async (event, droneId) => {
+  try {
+    const file = event.target.files[0]
+    if (!file) return
+
+    isLoading.value = true
+    error.value = ''
+    
+    const formData = new FormData()
+    formData.append('image', file)
+    
+    await droneService.uploadDroneImage(droneId, formData)
+    await fetchDrones()
+    success.value = true
+    setTimeout(() => success.value = false, 3000)
+  } catch (err) {
+    errors.value.submit = 'Error subiendo la imagen del drone'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -312,6 +354,18 @@ const openDeleteModal = (drone) => {
             </BaseButton>
           </div>
         </form>
+        
+        <div class="col-span-full">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            Imagen del Drone
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            @change="handleImageSelect"
+            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 dark:file:bg-sky-900 dark:file:text-sky-300 dark:text-gray-300"
+          />
+        </div>
       </BaseCard>
     </div>
 
@@ -323,7 +377,7 @@ const openDeleteModal = (drone) => {
       <BaseCard v-for="drone in drones" :key="drone._id" class="overflow-hidden">
         <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
           <img
-            :src="drone.imageUrl || '/images/placeholder.png'"
+            :src="drone.image || '/images/placeholder.png'"
             :alt="drone.name"
             class="w-full h-full object-cover"
           />

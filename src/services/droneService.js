@@ -34,6 +34,15 @@ const droneService = {
   // Obtener marcas de drones
   getDroneBrands() {
     return api.get('/drone-brands')
+  },
+
+  // Subir imagen de drone
+  uploadDroneImage(droneId, formData) {
+    return api.post(`/drones/${droneId}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }
 

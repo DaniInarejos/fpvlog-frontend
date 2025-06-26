@@ -123,6 +123,20 @@ export const useUserStore = defineStore('user', {
       } finally {
         this.isLoading = false
       }
-    }
+    },
+    async uploadProfilePicture(userId,formData) {
+      this.isLoading = true
+      
+      try {
+        const updatedUser = await userService.uploadProfilePicture(userId,formData)
+        this.user = { ...this.user, ...updatedUser }
+        return { success: true }
+      } catch (error) {
+        this.error = error.message
+        return { success: false, error: this.error }
+      } finally {
+        this.isLoading = false
+      }
+    },
   }
 })

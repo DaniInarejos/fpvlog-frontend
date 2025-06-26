@@ -72,7 +72,20 @@ const userService = {
       }
       throw error
     }
-  }
+  },
+
+  /**
+   * Subir imagen de perfil
+   * @param {FormData} formData - Datos de la imagen
+   * @returns {Promise<Object>} - Usuario actualizado
+   */
+  async uploadProfilePicture(userId,formData) {
+    return api.post(`/users/${userId}/image-profile`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
 }
 
 export default userService

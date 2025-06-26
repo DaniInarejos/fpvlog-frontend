@@ -88,10 +88,10 @@ const handleProfilePictureUpload = async (event) => {
     error.value = ''
     
     const formData = new FormData()
-    formData.append('profilePicture', file)
+    formData.append('image', file)
     
-    await userStore.uploadProfilePicture(formData)
-    await loadProfile() // Recargar perfil para obtener la nueva foto
+    await userStore.uploadProfilePicture(user.value._id,formData)
+    await loadProfile() 
     success.value = true
     setTimeout(() => success.value = false, 3000)
   } catch (err) {

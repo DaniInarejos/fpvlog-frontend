@@ -24,6 +24,15 @@ const flightService = {
   // Eliminar un vuelo
   deleteFlight: async (id) => {
     return api.delete(`/flights/${id}`)
+  },
+
+  // Subir imagen de vuelo
+  uploadFlightImage: async (flightId, formData) => {
+    return api.post(`/flights/${flightId}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }
 

@@ -11,9 +11,6 @@ const userStore = useUserStore()
 const isAuthPage = computed(() => route.meta.layout === 'auth')
 const isAuthenticated = computed(() => userStore.isAuthenticated)
 
-onMounted(async () => {
-  await userStore.initAuth()
-})
 </script>
 
 <template>

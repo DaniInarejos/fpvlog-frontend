@@ -101,8 +101,9 @@ const navigateToDashboard = (username) => {
              @click="navigateToDashboard(follower.username)">
           <div class="flex items-center space-x-3">
             <UserAvatar 
+              :src="follower.profilePicture" 
               :alt="follower.username" 
-              :size="8"
+              size="sm"
               class="w-8 h-8"
             />
             <div>

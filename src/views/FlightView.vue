@@ -37,7 +37,7 @@ const errors = ref({})
 
 const fetchDrones = async () => {
   try {
-    drones.value = await droneService.getDrones()
+    drones.value = await droneService.getUserDrones(userStore.user._id)
   } catch (error) {
     errors.value.drones = 'Error cargando drones'
   }
@@ -367,6 +367,10 @@ const handleSubmit = async () => {
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
     </div>
 
+    <div v-else-if="flights.length === 0" class="text-center py-12">
+      <p class="text-gray-500 mb-4">Aún no tienes ningún vuelo registrado</p>
+    </div>
+
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <BaseCard v-for="flight in flights" :key="flight._id" class="overflow-hidden">
         <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
@@ -455,7 +459,8 @@ const handleSubmit = async () => {
     :show="showDroneModal"
     title="Detalles del Drone"
     @close="showDroneModal = false"
-    :showConfirmButton="false"
+    :showAcceptButton="false"
+    :showCancelButton="true"
   >
     <div v-if="selectedDroneInfo" class="space-y-4">
       <div class="relative aspect-[4/3] overflow-hidden rounded-lg mb-4">

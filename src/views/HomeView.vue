@@ -40,7 +40,7 @@ const loadDashboardData = async () => {
     loading.value = true
     const [userFlights, userDrones] = await Promise.all([
       flightService.getUserFlights(userStore.user._id),
-      droneService.getDrones()
+      droneService.getUserDrones(userStore.user._id)
     ])
 
     flights.value = userFlights
@@ -58,7 +58,6 @@ const loadDashboardData = async () => {
 
     // Actualizar seguidores y siguiendo desde el perfil del usuario
     following.value = userStore.user.following || []
-    // Como followers no está en el objeto de perfil, lo inicializamos como array vacío por ahora
     followers.value = []
   } catch (err) {
     error.value = 'Error cargando datos del perfil'
@@ -91,6 +90,7 @@ onMounted(() => {
           <UserAvatar
             :src="userStore.user?.profilePicture"
             :size="'xl'"
+            :alt="userStore.user?.name + ' ' + userStore.user?.lastName"
             class="w-32 h-32"
           />
           <div class="flex-1 text-center md:text-left">

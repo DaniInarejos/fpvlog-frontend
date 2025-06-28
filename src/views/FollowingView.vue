@@ -96,7 +96,7 @@ onMounted(() => {
             <UserAvatar 
               :src="user.profilePicture" 
               :alt="user.username"
-              :size="8" 
+              size="sm"
               class="w-8 h-8"
             />
             <div>
@@ -106,7 +106,7 @@ onMounted(() => {
           </div>
           <BaseButton
             variant="danger"
-            size="xs"
+            size="sm"
             class="hover:scale-105 transition-transform"
             @click="(event) => handleUnfollow(event, user._id)"
           >

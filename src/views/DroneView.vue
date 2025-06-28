@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
+
 import BaseInput from '../components/base/BaseInput.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import BaseAlert from '../components/base/BaseAlert.vue'
@@ -8,7 +10,7 @@ import BaseCard from '../components/base/BaseCard.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 import droneService from '../services/droneService'
 
-const router = useRouter()
+const userStore = useUserStore()
 const drones = ref([])
 const droneTypes = ref([])
 const droneBrands = ref([])
@@ -53,7 +55,7 @@ const fetchDroneBrands = async () => {
 const fetchDrones = async () => {
   isLoading.value = true
   try {
-    drones.value = await droneService.getDrones()
+    drones.value = await droneService.getUserDrones(userStore.user._id)
   } catch (error) {
     errors.value.fetch = error.message
   } finally {
@@ -371,6 +373,10 @@ const handleDroneImageUpload = async (event, droneId) => {
 
     <div v-else-if="isLoading" class="text-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+    </div>
+
+    <div v-else-if="drones.length === 0" class="text-center py-12">
+      <p class="text-gray-500 mb-4">Aún no tienes ningún drone registrado</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

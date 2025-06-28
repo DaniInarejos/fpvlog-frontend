@@ -6,6 +6,11 @@ const droneService = {
     return api.get('/drones')
   },
 
+  // Obtener drones de un usuario específico
+  getUserDrones(userId) {
+    return api.get(`/users/${userId}/drones`)
+  },
+
   // Obtener un drone específico
   getDrone(id) {
     return api.get(`/drones/${id}`)

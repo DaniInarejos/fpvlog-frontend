@@ -100,6 +100,7 @@ onMounted(() => {
         <div class="flex items-center gap-4">
           <UserAvatar
             :src="dashboard.user.profilePicture || DEFAULT_IMAGE"
+            :alt="dashboard.user.name + ' ' + dashboard.user.lastName"
             :size="'lg'"
             class="w-20 h-20"
           />

@@ -120,7 +120,7 @@ onMounted(() => {
             <UserAvatar
               :src="form.profilePicture || user?.profilePicture"
               :alt="user?.name || 'Usuario'"
-              size="2xl"
+              size="xl"
               class="mx-auto ring-4 ring-sky-500/30 transition-transform duration-300 group-hover:scale-105"
             />
             <label class="absolute bottom-0 left-1/2 -translate-x-1/2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 text-white px-3 py-1 rounded-full text-sm">

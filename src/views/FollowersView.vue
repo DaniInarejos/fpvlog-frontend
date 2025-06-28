@@ -2,12 +2,14 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 import followerService from '../services/followerService'
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 const followers = ref([])
 const loading = ref(true)
 const error = ref('')
@@ -18,7 +20,7 @@ const filteredFollowers = computed(() => {
     user.username.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
-// Añadimos estado para la paginación
+
 const pagination = ref({
   page: 1,
   limit: 20,
@@ -32,7 +34,7 @@ const loadFollowers = async () => {
     await userStore.initAuth()
     
     if (!userStore.user?._id) {
-      error.value = 'Usuario no encontrado'
+      error.value = t('message.followers.error.userNotFound')
       return
     }
     
@@ -45,7 +47,7 @@ const loadFollowers = async () => {
       pages: 0
     }
   } catch (err) {
-    error.value = 'Error cargando seguidores'
+    error.value = t('message.followers.error.loading')
   } finally {
     loading.value = false
   }
@@ -66,16 +68,16 @@ const navigateToDashboard = (username) => {
       <template #header>
         <div class="flex justify-between items-center mb-2">
           <div>
-            <h1 class="text-lg font-bold">Seguidores</h1>
+            <h1 class="text-lg font-bold">{{ t('message.followers.title') }}</h1>
             <p class="text-xs text-gray-500" v-if="pagination.total > 0">
-              Total: {{ pagination.total }}
+              {{ t('message.followers.total') }}: {{ pagination.total }}
             </p>
           </div>
           <div class="relative w-48">
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Buscar por username..."
+              :placeholder="t('message.followers.searchPlaceholder')"
               class="w-full px-3 py-1.5 text-sm border rounded focus:ring-1 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -91,7 +93,7 @@ const navigateToDashboard = (username) => {
       </div>
 
       <div v-else-if="filteredFollowers.length === 0" class="text-center py-3 text-sm text-gray-500">
-        {{ searchQuery ? 'No se encontraron usuarios' : 'No tienes seguidores aún' }}
+        {{ searchQuery ? t('message.followers.noUsersFound') : t('message.followers.noFollowers') }}
       </div>
 
       <div v-else class="space-y-2">
@@ -108,7 +110,7 @@ const navigateToDashboard = (username) => {
             />
             <div>
               <h3 class="font-medium text-sm">@{{ follower.username }}</h3>
-              <p class="text-xs text-gray-500">Te sigue desde {{ new Date(follower.createdAt).toLocaleDateString() }}</p>
+              <p class="text-xs text-gray-500">{{ t('message.followers.followsSince') }} {{ new Date(follower.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>
         </div>

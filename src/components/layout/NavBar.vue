@@ -2,6 +2,8 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -56,6 +58,23 @@ const handleDroneOptions = (item) => {
     handleLogout()
   }
 }
+
+const { locale } = useI18n()
+const currentLanguage = computed(() => locale.value)
+
+const toggleLanguage = () => {
+  locale.value = locale.value === 'es' ? 'en' : 'es'
+  // Opcional: guardar la preferencia en localStorage
+  localStorage.setItem('language', locale.value)
+}
+
+// Cargar el idioma preferido al iniciar
+onMounted(() => {
+  const savedLanguage = localStorage.getItem('language')
+  if (savedLanguage) {
+    locale.value = savedLanguage
+  }
+})
 </script>
 
 <template>
@@ -75,9 +94,9 @@ const handleDroneOptions = (item) => {
           <div class="flex space-x-6">
             <router-link
               v-for="item in [
-                { name: 'Mi Perfil', path: '/' },
-                { name: 'Vuelos', path: '/flights' },
-                { name: 'Drones', path: '/drones' },
+                { name: $t('message.nav.profile'), path: '/' },
+                { name: $t('message.nav.flights'), path: '/flights' },
+                { name: $t('message.nav.drones'), path: '/drones' },
               ]"
               :key="item.path"
               :to="item.path"
@@ -90,6 +109,16 @@ const handleDroneOptions = (item) => {
 
         <!-- Menú de usuario -->
         <div class="flex items-center" v-if="userStore.isAuthenticated" ref="menuRef">
+          <!-- Botón de idioma -->
+          <button
+            @click="toggleLanguage"
+            class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-300"
+            :title="currentLanguage === 'es' ? 'Switch to English' : 'Cambiar a Español'"
+          >
+            {{ currentLanguage === 'es' ? 'ES' : 'EN' }}
+          </button>
+          
+          <!-- Botón de menú existente -->
           <button
             @click="toggleUserMenu"
             class="p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-700/50 focus:outline-none group transition-all duration-300"
@@ -126,15 +155,20 @@ const handleDroneOptions = (item) => {
               to="/profile"
               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
             >
-              Mis Datos
+              {{ $t('message.nav.profile') }}
             </router-link>
             <button
-              v-for="(item, index) in ['Marcas Drones', 'Tipos de Drones', 'Acerca de', 'Cerrar Sesión']"
+              v-for="(item, index) in [
+                { name: $t('message.nav.droneBrands'), action: 'Marcas Drones' },
+                { name: $t('message.nav.droneTypes'), action: 'Tipos de Drones' },
+                { name: $t('message.nav.about'), action: 'Acerca de' },
+                { name: $t('message.nav.logout'), action: 'Cerrar Sesión' }
+              ]"
               :key="index"
-              @click="handleDroneOptions(item)"
+              @click="handleDroneOptions(item.action)"
               class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
             >
-              {{ item }}
+              {{ item.name }}
             </button>
           </div>
         </div>

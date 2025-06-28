@@ -63,15 +63,19 @@ const fetchDrones = async () => {
   }
 }
 
+// Añadir useI18n al inicio del script
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const validateForm = () => {
   errors.value = {}
-  if (!formData.value.name) errors.value.name = 'El nombre es requerido'
-  if (!formData.value.typeId) errors.value.typeId = 'El tipo de drone es requerido'
-  if (!formData.value.brandId) errors.value.brandId = 'La marca es requerida'
-  if (!formData.value.model) errors.value.model = 'El modelo es requerido'
-  if (!formData.value.serialNumber) errors.value.serialNumber = 'El número de serie es requerido'
-  if (!formData.value.weight) errors.value.weight = 'El peso es requerido'
-  if (!formData.value.frameSize) errors.value.frameSize = 'El tamaño del frame es requerido'
+  if (!formData.value.name) errors.value.name = t('message.drones.validation.name')
+  if (!formData.value.typeId) errors.value.typeId = t('message.drones.validation.type')
+  if (!formData.value.brandId) errors.value.brandId = t('message.drones.validation.brand')
+  if (!formData.value.model) errors.value.model = t('message.drones.validation.model')
+  if (!formData.value.serialNumber) errors.value.serialNumber = t('message.drones.validation.serialNumber')
+  if (!formData.value.weight) errors.value.weight = t('message.drones.validation.weight')
+  if (!formData.value.frameSize) errors.value.frameSize = t('message.drones.validation.frameSize')
   return Object.keys(errors.value).length === 0
 }
 
@@ -206,12 +210,12 @@ const handleDroneImageUpload = async (event, droneId) => {
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Mis Drones</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('message.drones.title') }}</h1>
       <BaseButton
         v-if="!showForm"
         @click="showForm = true"
       >
-        Añadir Drone
+        {{ $t('message.drones.addDrone') }}
       </BaseButton>
     </div>
 
@@ -230,7 +234,7 @@ const handleDroneImageUpload = async (event, droneId) => {
     <div v-if="showForm" class="mb-8">
       <BaseCard class="p-6">
         <h2 class="text-xl font-semibold mb-4">
-          {{ selectedDrone ? 'Editar Drone' : 'Nuevo Drone' }}
+          {{ selectedDrone ? $t('message.drones.editDrone') : $t('message.drones.newDrone') }}
         </h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -243,7 +247,7 @@ const handleDroneImageUpload = async (event, droneId) => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <BaseInput
               v-model="formData.name"
-              label="Nombre"
+              :label="$t('message.drones.form.name')"
               :error="errors.name"
               required
             />
@@ -254,7 +258,7 @@ const handleDroneImageUpload = async (event, droneId) => {
               :class="{ 'border-red-500': errors.typeId }"
               required
             >
-              <option value="">Selecciona un tipo</option>
+              <option value="">{{ $t('message.drones.form.type') }}</option>
               <option v-for="type in droneTypes" :key="type._id" :value="type._id">
                 {{ type.name }}
               </option>
@@ -266,7 +270,7 @@ const handleDroneImageUpload = async (event, droneId) => {
               :class="{ 'border-red-500': errors.brandId }"
               required
             >
-              <option value="">Selecciona una marca</option>
+              <option value="">{{ $t('message.drones.form.brand') }}</option>
               <option v-for="brand in droneBrands" :key="brand._id" :value="brand._id">
                 {{ brand.name }}
               </option>
@@ -274,21 +278,21 @@ const handleDroneImageUpload = async (event, droneId) => {
 
             <BaseInput
               v-model="formData.model"
-              label="Modelo"
+              :label="$t('message.drones.form.model')"
               :error="errors.model"
               required
             />
 
             <BaseInput
               v-model="formData.serialNumber"
-              label="Número de Serie"
+              :label="$t('message.drones.form.serialNumber')"
               :error="errors.serialNumber"
               required
             />
 
             <BaseInput
               v-model="formData.weight"
-              label="Peso (g)"
+              :label="$t('message.drones.form.weight')"
               type="number"
               :error="errors.weight"
               required
@@ -296,7 +300,7 @@ const handleDroneImageUpload = async (event, droneId) => {
 
             <BaseInput
               v-model="formData.frameSize"
-              label="Tamaño del Frame (mm)"
+              :label="$t('message.drones.form.frameSize')"
               type="number"
               :error="errors.frameSize"
               required
@@ -305,7 +309,7 @@ const handleDroneImageUpload = async (event, droneId) => {
             <div class="md:col-span-2">
               <BaseInput
                 v-model="formData.description"
-                label="Descripción"
+                :label="$t('message.drones.form.description')"
                 type="textarea"
               />
             </div>
@@ -313,7 +317,7 @@ const handleDroneImageUpload = async (event, droneId) => {
             <div class="md:col-span-2">
               <BaseInput
                 v-model="formData.notes"
-                label="Notas"
+                :label="$t('message.drones.form.notes')"
                 type="textarea"
               />
             </div>
@@ -325,7 +329,7 @@ const handleDroneImageUpload = async (event, droneId) => {
                   v-model="formData.visibility.isVisibleToFollowers"
                   class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span class="ml-2">Visible para seguidores</span>
+                <span class="ml-2">{{ $t('message.drones.form.visibility.followers') }}</span>
               </label>
 
               <label class="flex items-center">
@@ -334,7 +338,7 @@ const handleDroneImageUpload = async (event, droneId) => {
                   v-model="formData.visibility.isPublic"
                   class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span class="ml-2">Público</span>
+                <span class="ml-2">{{ $t('message.drones.form.visibility.public') }}</span>
               </label>
             </div>
           </div>
@@ -345,21 +349,21 @@ const handleDroneImageUpload = async (event, droneId) => {
               variant="secondary"
               @click="showForm = false; resetForm()"
             >
-              Cancelar
+              {{ $t('message.common.cancel') }}
             </BaseButton>
 
             <BaseButton
               type="submit"
               :loading="isLoading"
             >
-              {{ selectedDrone ? 'Guardar Cambios' : 'Crear Drone' }}
+              {{ selectedDrone ? $t('message.common.save') : $t('message.drones.addDrone') }}
             </BaseButton>
           </div>
         </form>
         
         <div class="col-span-full">
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-            Imagen del Drone
+            {{ $t('message.drones.form.image') }}
           </label>
           <input
             type="file"
@@ -376,7 +380,7 @@ const handleDroneImageUpload = async (event, droneId) => {
     </div>
 
     <div v-else-if="drones.length === 0" class="text-center py-12">
-      <p class="text-gray-500 mb-4">Aún no tienes ningún drone registrado</p>
+      <p class="text-gray-500 mb-4">{{ $t('message.drones.noDrones') }}</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -389,7 +393,6 @@ const handleDroneImageUpload = async (event, droneId) => {
           />
         </div>
 
-        <!-- Información del drone -->
         <div class="p-4">
           <div class="flex justify-between items-start mb-2">
             <div>
@@ -401,46 +404,43 @@ const handleDroneImageUpload = async (event, droneId) => {
           <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.weight }}g</span>
-              <span class="text-gray-400">peso</span>
+              <span class="text-gray-400">{{ $t('message.drones.specs.weight') }}</span>
             </div>
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.frameSize }}mm</span>
-              <span class="text-gray-400">frame</span>
+              <span class="text-gray-400">{{ $t('message.drones.specs.frame') }}</span>
             </div>
           </div>
 
-          <!-- Botones de acción -->
           <div class="flex justify-end space-x-2">
             <BaseButton
               size="sm"
               variant="secondary"
               @click="editDrone(drone)"
             >
-              Editar
+              {{ $t('message.common.edit') }}
             </BaseButton>
-            <!-- Reemplazar el botón de eliminar existente con: -->
             <BaseButton
               size="sm"
               variant="danger"
               @click="openDeleteModal(drone)"
             >
-              Eliminar
+              {{ $t('message.common.delete') }}
             </BaseButton>
-            
-            <!-- Añadir el modal al final del template -->
-            <BaseModal
-              :show="showDeleteModal"
-              title="Eliminar Drone"
-              @close="showDeleteModal = false"
-              @confirm="confirmDelete"
-            >
-              <p class="text-sm text-gray-500">
-                ¿Estás seguro de que quieres eliminar el drone "{{ droneToDelete?.name }}"? Esta acción no se puede deshacer.
-              </p>
-            </BaseModal>
           </div>
         </div>
       </BaseCard>
     </div>
+
+    <BaseModal
+      :show="showDeleteModal"
+      :title="$t('message.drones.delete.title')"
+      @close="showDeleteModal = false"
+      @confirm="confirmDelete"
+    >
+      <p class="text-sm text-gray-500">
+        {{ $t('message.drones.delete.confirmation', { name: droneToDelete?.name }) }}
+      </p>
+    </BaseModal>
   </div>
 </template>

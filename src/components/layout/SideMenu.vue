@@ -10,9 +10,15 @@ const router = useRouter()
 const userStore = useUserStore()
 const menuItems = computed(() => [
   {
-    name: 'Feed',
+    name: 'Home',
     path: '/',
     icon: 'home',
+    exact: true
+  },
+  {
+    name: 'Feed',
+    path: '/feed',
+    icon: 'feed',
     exact: true
   },
   {
@@ -33,6 +39,7 @@ const getIcon = (icon) => {
   // Mapa de iconos a caracteres o componentes
   const icons = {
     home: '🏠',
+    feed: '🌐',
     flight: '✈️',
     drone: '🚁',
     users: '👥',

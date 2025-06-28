@@ -2,6 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 import BaseButton from '../components/base/BaseButton.vue'
@@ -9,6 +10,7 @@ import followerService from '../services/followerService'
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 const following = ref([])
 const loading = ref(true)
 const error = ref('')
@@ -26,14 +28,14 @@ const loadFollowing = async () => {
     await userStore.initAuth()
     
     if (!userStore.user?._id) {
-      error.value = 'Usuario no encontrado'
+      error.value = t('message.following.error.userNotFound')
       return
     }
     
     const response = await followerService.getUserFollowing(userStore.user._id)
-    following.value = response.following || [] // Actualizamos para usar response.following
+    following.value = response.following || []
   } catch (err) {
-    error.value = 'Error cargando usuarios seguidos'
+    error.value = t('message.following.error.loading')
   } finally {
     loading.value = false
   }
@@ -44,12 +46,12 @@ const navigateToDashboard = (username) => {
 }
 
 const handleUnfollow = async (event, userId) => {
-  event.stopPropagation() // Evitar navegación al hacer unfollow
+  event.stopPropagation()
   try {
     await followerService.unfollowUser(userId)
     following.value = following.value.filter(user => user._id !== userId)
   } catch (err) {
-    error.value = 'Error al dejar de seguir al usuario'
+    error.value = t('message.following.error.unfollow')
   }
 }
 
@@ -63,12 +65,12 @@ onMounted(() => {
     <BaseCard class="p-3">
       <template #header>
         <div class="flex justify-between items-center mb-2">
-          <h1 class="text-lg font-bold">Siguiendo</h1>
+          <h1 class="text-lg font-bold">{{ t('message.following.title') }}</h1>
           <div class="relative w-48">
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Buscar por username..."
+              :placeholder="t('message.following.searchPlaceholder')"
               class="w-full px-3 py-1.5 text-sm border rounded focus:ring-1 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -84,7 +86,7 @@ onMounted(() => {
       </div>
 
       <div v-else-if="filteredFollowing.length === 0" class="text-center py-3 text-sm text-gray-500">
-        {{ searchQuery ? 'No se encontraron usuarios' : 'No sigues a ningún usuario aún' }}
+        {{ searchQuery ? t('message.following.noUsersFound') : t('message.following.noFollowing') }}
       </div>
 
       <div v-else class="space-y-2">
@@ -101,7 +103,7 @@ onMounted(() => {
             />
             <div>
               <h3 class="font-medium text-sm">@{{ user.username }}</h3>
-              <p class="text-xs text-gray-500">Seguido desde {{ new Date(user.createdAt).toLocaleDateString() }}</p>
+              <p class="text-xs text-gray-500">{{ t('message.following.followedSince') }} {{ new Date(user.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>
           <BaseButton
@@ -110,7 +112,7 @@ onMounted(() => {
             class="hover:scale-105 transition-transform"
             @click="(event) => handleUnfollow(event, user._id)"
           >
-            Dejar de seguir
+            {{ t('message.following.unfollowButton') }}
           </BaseButton>
         </div>
       </div>

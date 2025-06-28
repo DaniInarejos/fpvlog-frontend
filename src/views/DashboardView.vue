@@ -2,6 +2,7 @@
   import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'  // Añadir useRouter
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import userService from '../services/userService'
 import followerService from '../services/followerService'
 import BaseCard from '../components/base/BaseCard.vue'
@@ -12,6 +13,7 @@ const DEFAULT_IMAGE = '/images/placeholder.png'
 const route = useRoute()
 const router = useRouter()  // Añadir esta línea
 const userStore = useUserStore()
+const { t } = useI18n()
 
 const dashboard = ref(null)
 const loading = ref(true)
@@ -36,7 +38,7 @@ const loadDashboard = async () => {
     const username = route.params.username || userStore.user?.username
     
     if (!username) {
-      error.value = 'Usuario no encontrado'
+      error.value = t('dashboard.error.userNotFound')
       return
     }
 
@@ -49,7 +51,7 @@ const loadDashboard = async () => {
       isFollowing.value = followStatus.isFollowing
     }
   } catch (err) {
-    error.value = 'Error cargando el dashboard'
+    error.value = t('dashboard.error.loading')
   } finally {
     loading.value = false
   }
@@ -73,7 +75,7 @@ const toggleFollow = async () => {
     }
     isFollowing.value = !isFollowing.value
   } catch (err) {
-    error.value = isFollowing.value ? 'Error al dejar de seguir' : 'Error al seguir'
+    error.value = isFollowing.value ? t('message.dashboard.error.unfollowError') : t('message.dashboard.error.followError')
   } finally {
     followLoading.value = false
   }
@@ -117,7 +119,7 @@ onMounted(() => {
                   @click="toggleFollow"
                   size="sm"
                 >
-                  {{ isFollowing ? 'Dejar de seguir' : 'Seguir' }}
+                  {{ isFollowing ? t('message.dashboard.follow.unfollow') : t('message.dashboard.follow.follow') }}
                 </BaseButton>
               </div>
             </div>
@@ -126,19 +128,19 @@ onMounted(() => {
             <div class="grid grid-cols-4 gap-2 mt-3">
               <div class="text-center p-2 bg-gray-50 rounded">
                 <div class="text-lg font-bold text-primary-600">{{ stats.dronesCount }}</div>
-                <div class="text-xs text-gray-500">Drones</div>
+                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.drones') }}</div>
               </div>
               <div class="text-center p-2 bg-gray-50 rounded">
                 <div class="text-lg font-bold text-primary-600">{{ stats.flightsCount }}</div>
-                <div class="text-xs text-gray-500">Vuelos</div>
+                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.flights') }}</div>
               </div>
               <div class="text-center p-2 bg-gray-50 rounded">
                 <div class="text-lg font-bold text-primary-600">{{ stats.followersCount }}</div>
-                <div class="text-xs text-gray-500">Seguidores</div>
+                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.followers') }}</div>
               </div>
               <div class="text-center p-2 bg-gray-50 rounded">
                 <div class="text-lg font-bold text-primary-600">{{ stats.followingCount }}</div>
-                <div class="text-xs text-gray-500">Siguiendo</div>
+                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.following') }}</div>
               </div>
             </div>
           </div>
@@ -147,7 +149,7 @@ onMounted(() => {
 
       <!-- Vuelos Recientes -->
       <BaseCard v-if="recentFlights.length > 0" class="p-4">
-        <h2 class="text-lg font-bold mb-3">Vuelos Recientes</h2>
+        <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.recentFlights.title') }}</h2>
         <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <div v-for="flight in dashboard.recentFlights" :key="flight._id" class="bg-gray-50 p-3 rounded">
             <div class="flex items-center justify-between mb-1">
@@ -156,19 +158,19 @@ onMounted(() => {
             </div>
             <p class="text-gray-600 text-xs mb-2">{{ flight.description }}</p>
             <div class="flex justify-between text-xs text-gray-500">
-              <span>🕒 {{ flight.duration }}min</span>
+              <span>🕒 {{ flight.duration }}{{ t('message.dashboard.recentFlights.duration') }}</span>
               <span>📍 {{ flight.location }}</span>
             </div>
           </div>
         </div>
       </BaseCard>
       <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-        <p>No hay vuelos recientes</p>
+        <p>{{ t('message.dashboard.recentFlights.noFlights') }}</p>
       </BaseCard>
 
       <!-- Drones -->
       <BaseCard v-if="drones.length > 0" class="p-4">
-        <h2 class="text-lg font-bold mb-3">Drones</h2>
+        <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.drones.title') }}</h2>
         <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <div v-for="drone in drones" :key="drone._id" class="bg-gray-50 p-3 rounded">
             <div class="flex items-center space-x-3">
@@ -186,7 +188,7 @@ onMounted(() => {
         </div>
       </BaseCard>
       <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-        <p>No hay drones registrados</p>
+        <p>{{ t('message.dashboard.drones.noDrones') }}</p>
       </BaseCard>
     </div>
   </div>

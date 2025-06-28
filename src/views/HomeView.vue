@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import flightService from '../services/flightService'
 import droneService from '../services/droneService'
 import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 
 const userStore = useUserStore()
+const { t } = useI18n()
 const flights = ref([])
 const drones = ref([])
 const followers = ref([])
@@ -23,17 +25,12 @@ const loading = ref(true)
 const error = ref(null)
 
 const formatDuration = (minutes) => {
-  if (!minutes) return '0h 0m'
+  if (!minutes) return `0${t('message.home.time.hours')} 0${t('message.home.time.minutes')}`
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
-  return `${hours}h ${mins}m`
+  return `${hours}${t('message.home.time.hours')} ${mins}${t('message.home.time.minutes')}`
 }
 
-const calculateAverageFlightTime = (flights) => {
-  if (!flights.length) return 0
-  const totalTime = flights.reduce((acc, flight) => acc + (flight.duration || 0), 0)
-  return totalTime / flights.length // Dividir el tiempo total entre el número de vuelos
-}
 
 const loadDashboardData = async () => {
   try {
@@ -46,7 +43,6 @@ const loadDashboardData = async () => {
     flights.value = userFlights
     drones.value = userDrones
 
-    // Calcular estadísticas
     const totalTime = userFlights.reduce((acc, flight) => acc + (flight.duration || 0), 0)
     
     stats.value = {
@@ -56,11 +52,10 @@ const loadDashboardData = async () => {
       averageFlightTime: totalTime / userFlights.length
     }
 
-    // Actualizar seguidores y siguiendo desde el perfil del usuario
     following.value = userStore.user.following || []
     followers.value = []
   } catch (err) {
-    error.value = 'Error cargando datos del perfil'
+    error.value = t('message.home.error.loading')
   } finally {
     loading.value = false
   }
@@ -84,7 +79,6 @@ onMounted(() => {
     </div>
 
     <div v-else class="space-y-8">
-      <!-- Perfil Header -->
       <BaseCard class="p-6">
         <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
           <UserAvatar
@@ -97,59 +91,56 @@ onMounted(() => {
             <h1 class="text-3xl font-bold text-gray-900">{{ userStore.user?.name }} {{ userStore.user?.lastName }}</h1>
             <p class="text-lg text-gray-600 mb-4">@{{ userStore.user?.username }}</p>
             
-            <!-- Bio y Estadísticas Sociales -->
             <div class="flex flex-wrap gap-6 justify-center md:justify-start mb-4">
               <div class="text-center">
                 <span class="block text-2xl font-bold">{{ followers.length }}</span>
-                <span class="text-gray-600">Seguidores</span>
+                <span class="text-gray-600">{{ t('message.home.profile.followers') }}</span>
               </div>
               <div class="text-center">
                 <span class="block text-2xl font-bold">{{ following.length }}</span>
-                <span class="text-gray-600">Siguiendo</span>
+                <span class="text-gray-600">{{ t('message.home.profile.following') }}</span>
               </div>
             </div>
 
             <p class="text-gray-700">
-              {{ userStore.user?.bio || 'Piloto FPV apasionado por los drones' }}
+              {{ userStore.user?.bio || t('message.home.profile.bio') }}
             </p>
           </div>
         </div>
       </BaseCard>
 
-      <!-- Estadísticas de Vuelo -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">Tiempo Total</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.totalTime') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ formatDuration(stats.totalFlightTime) }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">Vuelos</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.flights') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ stats.totalFlights }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">Drones</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.drones') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ stats.totalDrones }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">Tiempo Promedio</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.averageTime') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ formatDuration(stats.averageFlightTime) }}</p>
           </div>
         </BaseCard>
       </div>
 
-      <!-- Últimos Drones -->
       <BaseCard class="p-6">
-        <h2 class="text-2xl font-bold mb-6">Mis Drones</h2>
+        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.myDrones') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="drone in drones.slice(0, 3)" :key="drone._id" class="relative group">
             <img 
@@ -165,9 +156,8 @@ onMounted(() => {
         </div>
       </BaseCard>
 
-      <!-- Últimos Vuelos -->
       <BaseCard class="p-6">
-        <h2 class="text-2xl font-bold mb-6">Últimos Vuelos</h2>
+        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.recentFlights') }}</h2>
         <div class="space-y-4">
           <div v-for="flight in flights.slice(0, 3)" :key="flight._id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>

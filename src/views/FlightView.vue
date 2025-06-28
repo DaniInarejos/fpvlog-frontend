@@ -54,14 +54,18 @@ const fetchFlights = async () => {
   }
 }
 
+// Añadir useI18n al inicio del script
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const validateForm = () => {
   errors.value = {}
-  if (!formData.value.title) errors.value.title = 'El título es requerido'
-  if (!formData.value.date) errors.value.date = 'La fecha es requerida'
-  if (!formData.value.location) errors.value.location = 'La ubicación es requerida'
-  if (!formData.value.duration) errors.value.duration = 'La duración es requerida'
-  if (!formData.value.batteryUsed) errors.value.batteryUsed = 'El número de baterías es requerido'
-  if (!formData.value.droneId) errors.value.droneId = 'El drone es requerido'
+  if (!formData.value.title) errors.value.title = t('message.flights.validation.title')
+  if (!formData.value.date) errors.value.date = t('message.flights.validation.date')
+  if (!formData.value.location) errors.value.location = t('message.flights.validation.location')
+  if (!formData.value.duration) errors.value.duration = t('message.flights.validation.duration')
+  if (!formData.value.batteryUsed) errors.value.batteryUsed = t('message.flights.validation.batteryUsed')
+  if (!formData.value.droneId) errors.value.droneId = t('message.flights.validation.droneId')
   return Object.keys(errors.value).length === 0
 }
 
@@ -203,12 +207,12 @@ const handleSubmit = async () => {
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Mis Vuelos</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('message.flights.title') }}</h1>
       <BaseButton
         v-if="!showForm"
         @click="showForm = true"
       >
-        Añadir Vuelo
+        {{ $t('message.flights.addFlight') }}
       </BaseButton>
     </div>
 
@@ -227,7 +231,7 @@ const handleSubmit = async () => {
     <div v-if="showForm" class="mb-8">
       <BaseCard class="p-6">
         <h2 class="text-xl font-semibold mb-4">
-          {{ selectedFlight ? 'Editar Vuelo' : 'Nuevo Vuelo' }}
+          {{ selectedFlight ? $t('message.flights.editFlight') : $t('message.flights.newFlight') }}
         </h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -240,14 +244,14 @@ const handleSubmit = async () => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <BaseInput
               v-model="formData.title"
-              label="Título"
+              :label="$t('message.flights.form.title')"
               :error="errors.title"
               required
             />
 
             <BaseInput
               v-model="formData.date"
-              label="Fecha"
+              :label="$t('message.flights.form.date')"
               type="date"
               :error="errors.date"
               required
@@ -259,7 +263,7 @@ const handleSubmit = async () => {
               :class="{ 'border-red-500': errors.droneId }"
               required
             >
-              <option value="">Selecciona un drone</option>
+              <option value="">{{ $t('message.flights.form.drone') }}</option>
               <option v-for="drone in drones" :key="drone._id" :value="drone._id">
                 {{ drone.name }}
               </option>
@@ -267,14 +271,14 @@ const handleSubmit = async () => {
 
             <BaseInput
               v-model="formData.location"
-              label="Ubicación"
+              :label="$t('message.flights.form.location')"
               :error="errors.location"
               required
             />
 
             <BaseInput
               v-model="formData.duration"
-              label="Duración (segundos)"
+              :label="$t('message.flights.form.duration')"
               type="number"
               :error="errors.duration"
               required
@@ -282,7 +286,7 @@ const handleSubmit = async () => {
 
             <BaseInput
               v-model="formData.batteryUsed"
-              label="Baterías Usadas"
+              :label="$t('message.flights.form.batteryUsed')"
               type="number"
               :error="errors.batteryUsed"
               required
@@ -290,21 +294,20 @@ const handleSubmit = async () => {
 
             <BaseInput
               v-model="formData.weather"
-              label="Clima"
+              :label="$t('message.flights.form.weather')"
             />
 
             <div class="md:col-span-2">
               <BaseInput
                 v-model="formData.notes"
-                label="Notas"
+                :label="$t('message.flights.form.notes')"
                 type="textarea"
               />
             </div>
 
-            <!-- Añadir campo de imagen aquí -->
             <div class="md:col-span-2">
               <label class="block text-sm font-medium text-gray-700 mb-2">
-                Imagen del Vuelo
+                {{ $t('message.flights.form.image') }}
               </label>
               <input
                 type="file"
@@ -318,7 +321,7 @@ const handleSubmit = async () => {
                   hover:file:bg-blue-100"
               />
               <p v-if="errors.image" class="mt-1 text-sm text-red-600">
-                {{ errors.image }}
+                {{ $t('message.flights.validation.image') }}
               </p>
             </div>
 
@@ -329,7 +332,7 @@ const handleSubmit = async () => {
                   v-model="formData.visibility.isVisibleToFollowers"
                   class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span class="ml-2">Visible para seguidores</span>
+                <span class="ml-2">{{ $t('message.flights.form.visibility.followers') }}</span>
               </label>
 
               <label class="flex items-center">
@@ -338,7 +341,7 @@ const handleSubmit = async () => {
                   v-model="formData.visibility.isPublic"
                   class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span class="ml-2">Público</span>
+                <span class="ml-2">{{ $t('message.flights.form.visibility.public') }}</span>
               </label>
             </div>
           </div>
@@ -349,14 +352,14 @@ const handleSubmit = async () => {
               variant="secondary"
               @click="showForm = false; resetForm()"
             >
-              Cancelar
+              {{ $t('message.common.cancel') }}
             </BaseButton>
 
             <BaseButton
               type="submit"
               :loading="isLoading"
             >
-              {{ selectedFlight ? 'Guardar Cambios' : 'Crear Vuelo' }}
+              {{ selectedFlight ? $t('message.common.save') : $t('message.flights.addFlight') }}
             </BaseButton>
           </div>
         </form>
@@ -368,7 +371,7 @@ const handleSubmit = async () => {
     </div>
 
     <div v-else-if="flights.length === 0" class="text-center py-12">
-      <p class="text-gray-500 mb-4">Aún no tienes ningún vuelo registrado</p>
+      <p class="text-gray-500 mb-4">{{ $t('message.flights.noFlights') }}</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -391,14 +394,14 @@ const handleSubmit = async () => {
           <div class="text-sm text-gray-600 mb-4">
             <p class="mb-1 flex items-center justify-between">
               <span>
-                <span class="font-medium">Drone:</span>
-                {{ drones.find(d => d._id === flight.droneId)?.name || 'No especificado' }}
+                <span class="font-medium">{{ $t('message.flights.details.drone') }}:</span>
+                {{ drones.find(d => d._id === flight.droneId)?.name || $t('message.flights.details.notSpecified') }}
               </span>
               <button
                 v-if="flight.droneId && drones.find(d => d._id === flight.droneId)"
                 @click="showDroneDetails(flight.droneId)"
                 class="text-primary-600 hover:text-primary-700 transition-colors"
-                title="Ver detalles del drone"
+                :title="$t('message.flights.details.viewDrone')"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -407,17 +410,17 @@ const handleSubmit = async () => {
               </button>
             </p>
             <p class="mb-1">
-              <span class="font-medium">Ubicación:</span>
+              <span class="font-medium">{{ $t('message.flights.details.location') }}:</span>
               {{ flight.location }}
             </p>
             <div class="flex items-center gap-4">
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ formatDuration(flight.duration) }}</span>
-                <span class="text-gray-400">duración</span>
+                <span class="text-gray-400">{{ $t('message.flights.details.duration') }}</span>
               </div>
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ flight.batteryUsed }}</span>
-                <span class="text-gray-400">baterías</span>
+                <span class="text-gray-400">{{ $t('message.flights.details.batteries') }}</span>
               </div>
             </div>
           </div>
@@ -428,14 +431,14 @@ const handleSubmit = async () => {
               variant="secondary"
               @click="editFlight(flight)"
             >
-              Editar
+              {{ $t('message.common.edit') }}
             </BaseButton>
             <BaseButton
               size="sm"
               variant="danger"
               @click="openDeleteModal(flight)"
             >
-              Eliminar
+              {{ $t('message.common.delete') }}
             </BaseButton>
           </div>
         </div>
@@ -444,12 +447,12 @@ const handleSubmit = async () => {
 
     <BaseModal
       :show="showDeleteModal"
-      title="Eliminar Vuelo"
+      :title="$t('message.flights.delete.title')"
       @close="showDeleteModal = false"
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        ¿Estás seguro de que quieres eliminar el vuelo "{{ flightToDelete?.title }}"? Esta acción no se puede deshacer.
+        {{ $t('message.flights.delete.confirmation', { title: flightToDelete?.title }) }}
       </p>
     </BaseModal>
   </div>
@@ -457,7 +460,7 @@ const handleSubmit = async () => {
   <!-- Modal para mostrar detalles del drone -->
   <BaseModal
     :show="showDroneModal"
-    title="Detalles del Drone"
+    :title="$t('message.drones.title')"
     @close="showDroneModal = false"
     :showAcceptButton="false"
     :showCancelButton="true"
@@ -473,25 +476,25 @@ const handleSubmit = async () => {
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">Nombre</p>
+          <p class="text-sm font-medium text-gray-500">{{ $t('message.drones.form.name') }}</p>
           <p class="text-base">{{ selectedDroneInfo.name }}</p>
         </div>
         <div>
-          <p class="text-sm font-medium text-gray-500">Modelo</p>
+          <p class="text-sm font-medium text-gray-500">{{ $t('message.drones.form.model') }}</p>
           <p class="text-base">{{ selectedDroneInfo.model }}</p>
         </div>
         <div>
-          <p class="text-sm font-medium text-gray-500">Peso</p>
+          <p class="text-sm font-medium text-gray-500">{{ $t('message.drones.form.weight') }}</p>
           <p class="text-base">{{ selectedDroneInfo.weight }}g</p>
         </div>
         <div>
-          <p class="text-sm font-medium text-gray-500">Tamaño del Frame</p>
+          <p class="text-sm font-medium text-gray-500">{{ $t('message.drones.form.frameSize') }}</p>
           <p class="text-base">{{ selectedDroneInfo.frameSize }}mm</p>
         </div>
       </div>
 
       <div v-if="selectedDroneInfo.description" class="mt-4">
-        <p class="text-sm font-medium text-gray-500">Descripción</p>
+        <p class="text-sm font-medium text-gray-500">{{ $t('message.drones.form.description') }}</p>
         <p class="text-base">{{ selectedDroneInfo.description }}</p>
       </div>
 

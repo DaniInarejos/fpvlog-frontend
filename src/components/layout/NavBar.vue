@@ -20,7 +20,9 @@ const handleLogout = async () => {
 const handleAboutOf = async () => {
   router.push('/about')
 }
-
+const handleFollowers = async () => {
+  router.push('/followers')
+}
 const toggleUserMenu = () => {
   isRotating.value = true
   showUserMenu.value = !showUserMenu.value
@@ -54,6 +56,8 @@ const handleDroneOptions = (item) => {
     }, 2000)
   } else if (item === 'Acerca de') {
     handleAboutOf()
+  } else if (item === 'Seguidores') {
+    handleFollowers()
   } else {
     handleLogout()
   }
@@ -159,8 +163,9 @@ onMounted(() => {
             </router-link>
             <button
               v-for="(item, index) in [
-                { name: $t('message.nav.droneBrands'), action: 'Marcas Drones' },
-                { name: $t('message.nav.droneTypes'), action: 'Tipos de Drones' },
+             //   { name: $t('message.nav.droneBrands'), action: 'Marcas Drones' },
+             //   { name: $t('message.nav.droneTypes'), action: 'Tipos de Drones' },
+                { name: $t('message.nav.followers'), action: 'Seguidores' },
                 { name: $t('message.nav.about'), action: 'Acerca de' },
                 { name: $t('message.nav.logout'), action: 'Cerrar Sesión' }
               ]"

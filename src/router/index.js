@@ -12,6 +12,7 @@ import Followers from '../views/FollowersView.vue'
 import Following from '../views/FollowingView.vue'
 import Dashboard from '../views/DashboardView.vue'
 import About from '../views/About.vue'
+import Feed from '../views/FeedView.vue'
 
 const routes = [
   {
@@ -94,7 +95,14 @@ const routes = [
       title: 'Dashboard'
     }
   },
-  {
+   {
+    path: '/feed',
+    name: 'feed',
+    component: Feed,
+    meta: {
+      title: 'Feed'
+    }
+  },{
     path: '/about',
     name: 'about',
     component: About,

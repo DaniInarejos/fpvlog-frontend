@@ -1,36 +1,33 @@
 <script setup>
-import {  computed } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import UserAvatar from '../base/UserAvatar.vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
+
 const menuItems = computed(() => [
   {
-    name: 'Home',
+    name: t('message.nav.home'),
     path: '/',
     icon: 'home',
     exact: true
   },
   {
-    name: 'Feed',
+    name: t('message.nav.feed'),
     path: '/feed',
     icon: 'feed',
     exact: true
   },
   {
-    name: 'Seguidores',
-    path: '/followers',
-    icon: 'users',
-    count: userStore.followerCount
-  },
-  {
-    name: 'Siguiendo',
+    name: t('message.nav.following'),
     path: '/following',
-    icon: 'users-plus',
+    icon: 'following',
     count: userStore.followingCount
   }
 ])
@@ -42,8 +39,7 @@ const getIcon = (icon) => {
     feed: '🌐',
     flight: '✈️',
     drone: '🚁',
-    users: '👥',
-    'users-plus': '👥+'
+    'following': '👥'
   }
   return icons[icon] || ''
 }
@@ -68,7 +64,7 @@ const navigateToProfile = () => {
       >
         <UserAvatar 
           :src="userStore.user?.profilePicture"
-          :alt="userStore.user?.name || 'Usuario'" 
+          :alt="userStore.user?.name || t('message.common.user')" 
           size="md" 
           status="online"
           class="ring-2 ring-sky-500/30 transition-transform duration-300"

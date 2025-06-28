@@ -16,7 +16,7 @@ const loadFeed = async (page = 1) => {
 
   try {
     loading.value = true
-    const response = await feedService.getFollowingFeed(page)
+    const response = await feedService.getGlobalFeed(page)
     
     if (page === 1) {
       items.value = response.items

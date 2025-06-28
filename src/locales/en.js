@@ -12,7 +12,10 @@ export default {
       about: 'About',
       myData: 'My Data',
       droneBrands: 'Drone Brands',
-      droneTypes: 'Drone Types'
+      droneTypes: 'Drone Types',
+      followers: 'Followers',
+      following: 'Following',
+      feed: 'Feed'
     },
     common: {
       loading: 'Loading...',
@@ -172,7 +175,8 @@ export default {
         drones: 'Drones',
         flights: 'Flights',
         followers: 'Followers',
-        following: 'Following'
+        following: 'Following',
+        feed: 'Feed'
       },
       recentFlights: {
         title: 'Recent Flights',
@@ -196,7 +200,8 @@ export default {
       profile: {
         bio: 'FPV pilot passionate about drones',
         followers: 'Followers',
-        following: 'Following'
+        following: 'Following',
+        feed: 'Feed'
       },
       stats: {
         totalTime: 'Total Time',
@@ -211,6 +216,28 @@ export default {
       time: {
         hours: 'h',
         minutes: 'm'
+      }
+    },
+    feed: {
+      drone:{title:'Drone'},
+      description: 'Description',
+      title: 'Global Feed',
+      subtitle: 'Discover the latest drones, flights and users from the community',
+      error: {
+        loading: 'Error loading feed'
+      },
+      noMoreContent: 'No more content to show',
+      itemInfo: {
+        location: 'Location',
+        duration: 'Duration',
+        weather: 'Weather',
+        weight: 'Weight',
+        type: 'Type',
+        model:"Model",
+        frameSize:"Frame size",
+        brand: 'Brand',
+        newUser: 'New user',
+        joinedAt: 'Joined on'
       }
     }
   }

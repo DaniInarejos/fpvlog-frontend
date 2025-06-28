@@ -12,7 +12,10 @@ export default {
       about: 'Acerca de',
       myData: 'Mis Datos',
       droneBrands: 'Marcas de Drones',
-      droneTypes: 'Tipos de Drones'
+      droneTypes: 'Tipos de Drones',
+      followers: 'Seguidores',
+      following: 'Seguidos',
+      feed: 'Novedades'
     },
     common: {
       loading: 'Cargando...',
@@ -196,7 +199,8 @@ export default {
       profile: {
         bio: 'Piloto FPV apasionado por los drones',
         followers: 'Seguidores',
-        following: 'Siguiendo'
+        following: 'Siguiendo',
+        feed: 'Feed'
       },
       stats: {
         totalTime: 'Tiempo Total',
@@ -211,6 +215,28 @@ export default {
       time: {
         hours: 'h',
         minutes: 'm'
+      }
+    },
+    feed: {
+      drone:{title:'Drone'},
+      description: 'Descripción',
+      title: 'Novedades  Global',
+      subtitle: 'Descubre los últimos drones, vuelos y usuarios de la comunidad',
+      error: {
+        loading: 'Error al cargar el novedades'
+      },
+      noMoreContent: 'No hay más contenido para mostrar',
+      itemInfo: {
+        location: 'Ubicación',
+        duration: 'Duración',
+        weather: 'Clima',
+        weight: 'Peso',
+        type: 'Tipo',
+        brand: 'Marca',
+        model:"Modelo",
+        frameSize:"Tamaño de marco",
+        newUser: 'Nuevo usuario',
+        joinedAt: 'Se unió el'
       }
     }
   }

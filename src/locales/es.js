@@ -236,7 +236,9 @@ export default {
         model:"Modelo",
         frameSize:"Tamaño de marco",
         newUser: 'Nuevo usuario',
-        joinedAt: 'Se unió el'
+        joinedAt: 'Se unió el',
+        likes: 'Me gusta',
+        noLikes: 'Sin me gusta'
       }
     },
     profile: {

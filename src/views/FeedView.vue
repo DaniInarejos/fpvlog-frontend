@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '../stores/user' // Importar el store de usuario
 import feedService from '../services/feedService'
 import FeedItem from '../components/feed/FeedItem.vue'
 
 const { t } = useI18n()
+const userStore = useUserStore() // Inicializar el store
 const items = ref([])
 const loading = ref(false)
 const error = ref(null)
@@ -66,6 +68,7 @@ onUnmounted(() => {
         v-for="item in items"
         :key="item.data._id"
         :item="item"
+        :current-user-id="userStore.user?._id"
       />
     </div>
 

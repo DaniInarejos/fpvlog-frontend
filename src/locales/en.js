@@ -237,7 +237,9 @@ export default {
         frameSize:"Frame size",
         brand: 'Brand',
         newUser: 'New user',
-        joinedAt: 'Joined on'
+        joinedAt: 'Joined on',
+        likes: 'Likes',
+        noLikes: 'Without likes'
       }
     },
     profile: {

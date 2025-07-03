@@ -4,25 +4,31 @@ import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 import './assets/styles/main.css'
-
-// Importar archivos de idiomas
 import es from './locales/es.js'
 import en from './locales/en.js'
 
-// Crear instancia de i18n
+
 const i18n = createI18n({
-  legacy: false, // Usar la API de Composition
-  locale: 'es', // Idioma por defecto
-  fallbackLocale: 'en', // Idioma de respaldo
+  legacy: false, 
+  locale: 'es',
+  fallbackLocale: 'en', 
   messages: {
     es,
     en
   }
 })
+function loadGoogleMaps(callbackName = 'initMap') {
+  const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
+  const script = document.createElement('script');
+  console.log(apiKey)
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,marker&callback=${callbackName}&loading=async`;
+  script.async = true;
+  script.defer = true;
 
-// Add this before app creation
+  document.head.appendChild(script);
+} 
+
 window.initMap = function() {
-  // Empty function to satisfy the callback requirement
   console.log('Google Maps API loaded')
 }
 
@@ -32,6 +38,7 @@ const pinia = createPinia()
 // Configuración global
 app.config.globalProperties.$api = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
+loadGoogleMaps();
 app.use(pinia)
 app.use(router)
 app.use(i18n)

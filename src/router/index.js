@@ -13,6 +13,7 @@ import Following from '../views/FollowingView.vue'
 import Dashboard from '../views/DashboardView.vue'
 import About from '../views/About.vue'
 import Feed from '../views/FeedView.vue'
+import Components from '../views/ComponentsView.vue'
 
 const routes = [
   {
@@ -111,6 +112,33 @@ const routes = [
     }
   },
   {
+    path: '/components',
+    name: 'components',
+    component: Components,
+    meta: {
+      requiresAuth: true,
+      title: 'Componentes'
+    }
+  },
+  {
+    path: '/spots',
+    name: 'spots',
+    component: () => import('../views/SpotView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Spots'
+    }
+  },
+  {
+    path: '/feedSpots',
+    name: 'spotsMap',
+    component: () => import('../views/SpotsMapView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Mapa de Spots'
+    }
+  },
+  {
   path: '/:pathMatch(.*)*',
   redirect: '/'
 }
@@ -131,7 +159,13 @@ router.beforeEach(async (to, from, next) => {
   // Esperar a que se inicialice la autenticación
   await userStore.initAuth()
 
-  if (requiresAuth && !userStore.isAuthenticated && !isDashboard) {
+  if (to.path === '/') {
+    if (!userStore.isAuthenticated) {
+      next('/login')
+    } else {
+      next(`/dashboard/${userStore.user.username}`)
+    }
+  } else if (requiresAuth && !userStore.isAuthenticated && !isDashboard) {
     next('/login')
   } else {
     next()

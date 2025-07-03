@@ -38,6 +38,11 @@ defineProps({
   showWarningIcon: {
     type: Boolean,
     default: false
+  },
+  size: {
+    type: String,
+    default: 'default',
+    validator: (value) => ['default', 'full'].includes(value)
   }
 })
 
@@ -66,7 +71,13 @@ const emit = defineEmits(['close', 'confirm', 'accept'])
   >
     <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+        <div
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full"
+          :class="{
+            'sm:max-w-lg sm:p-6 px-4 pb-4 pt-5': size === 'default',
+            'sm:max-w-[95%] sm:p-8 px-6 pb-6 pt-6': size === 'full'
+          }"
+        >
           <div class="sm:flex sm:items-start">
             <div v-if="showWarningIcon" class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
               <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

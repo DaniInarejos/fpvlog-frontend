@@ -12,16 +12,17 @@ const userStore = useUserStore()
 const { t } = useI18n()
 
 const menuItems = computed(() => [
-  {
-    name: t('message.nav.home'),
-    path: '/',
-    icon: 'home',
-    exact: true
-  },
+
   {
     name: t('message.nav.feed'),
     path: '/feed',
     icon: 'feed',
+    exact: true
+  },
+  {
+    name: t('message.nav.spots'),
+    path: '/feedSpots',
+    icon: 'feedSpots',
     exact: true
   },
   {
@@ -33,13 +34,14 @@ const menuItems = computed(() => [
 ])
 
 const getIcon = (icon) => {
-  // Mapa de iconos a caracteres o componentes
   const icons = {
     home: '🏠',
     feed: '🌐',
     flight: '✈️',
     drone: '🚁',
-    'following': '👥'
+    feedSpots: '📍',
+    following: '👥',
+    components: '🔧',
   }
   return icons[icon] || ''
 }

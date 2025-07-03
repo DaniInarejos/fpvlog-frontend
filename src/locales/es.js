@@ -15,7 +15,9 @@ export default {
       droneTypes: 'Tipos de Drones',
       followers: 'Seguidores',
       following: 'Seguidos',
-      feed: 'Novedades'
+      feed: 'Novedades',
+      components: 'Componentes',
+      spots: 'Spots'
     },
     common: {
       loading: 'Cargando...',
@@ -24,7 +26,8 @@ export default {
       save: 'Guardar',
       cancel: 'Cancelar',
       delete: 'Eliminar',
-      edit: 'Editar'
+      edit: 'Editar',
+      select: 'Seleccionar'
     },
     about: {
       title: 'Acerca de SkySphere',
@@ -64,7 +67,7 @@ export default {
       noDrones: 'Aún no tienes ningún drone registrado',
       form: {
         name: 'Nombre',
-        type: 'Selecciona un tipo',
+        type: 'Selecciona un estilo',
         brand: 'Selecciona una marca',
         model: 'Modelo',
         serialNumber: 'Número de Serie',
@@ -76,7 +79,10 @@ export default {
         visibility: {
           followers: 'Visible para seguidores',
           public: 'Público'
-        }
+        },
+        components:'Componentes',
+        originType: 'Tipo de Origen'
+
       },
       validation: {
         name: 'El nombre es requerido',
@@ -261,10 +267,26 @@ export default {
         allowFlights: 'Permitir que seguidores vean mis vuelos',
         allowDrones: 'Permitir que seguidores vean mis drones',
         profileVisibility: 'Visibilidad del perfil',
-        options: {
-          public: 'Público',
-          followers: 'Solo seguidores',
-          private: 'Privado'
+        types: {
+          frame: 'Frame',
+          motor: 'Motor',
+          flightController: 'Controladora de Vuelo',
+          esc: 'ESC',
+          vtx: 'VTX',
+          camera: 'Cámara',
+          antenna: 'Antena',
+          receiver: 'Receptor',
+          battery: 'Batería',
+          props: 'Hélices',
+          mount: 'Soporte',
+          other: 'Otro'
+        },
+        validation: {
+          required: 'Este componente es requerido',
+          invalid: 'Componente inválido'
+        },
+        select: {
+          placeholder: 'Seleccionar componente'
         }
       },
       messages: {
@@ -273,6 +295,64 @@ export default {
         loadError: 'Error cargando perfil',
         photoError: 'Error subiendo la foto de perfil'
       }
-    }
+    },
+    components: {
+      title: 'Componentes',
+      addComponent: 'Añadir Componente',
+      noComponentsOfType: 'No hay componentes de este tipo',
+      selectType: 'Seleccionar Tipo de Componente',
+      types: {
+        frame: 'Marco',
+        motor: 'Motor',
+        flightController: 'Controlador de Vuelo',
+        esc: 'ESC',
+        vtx: 'VTX',
+        camera: 'Cámara',
+        antenna: 'Antena',
+        receiver: 'Receptor',
+        battery: 'Batería',
+        props: 'Hélices',
+        mount: 'Montaje',
+        other: 'Otros'
+      },
+      form: {
+        name: 'Nombre',
+        brand: 'Marca',
+        weight: 'Peso (g)',
+        sourceUrl: 'URL de compra',
+        description: 'Descripción'
+      },
+      validation: {
+        name: 'El nombre es requerido'
+      }
+    },
+    spots: {
+    title: 'Mis Spots',
+    addSpot: 'Añadir Spot',
+    editSpot: 'Editar Spot',
+    createSpot: 'Crear Spot',
+    deleteSpot: 'Eliminar Spot',
+    noSpots: 'Aún no tienes ningún spot registrado',
+    deleteConfirmation: '¿Estás seguro de que quieres eliminar el spot "{name}"? Esta acción no se puede deshacer.',
+    public: 'Público',
+    followersOnly: 'Solo seguidores',
+    private: 'Privado',
+    form: {
+      name: 'Nombre',
+      description: 'Descripción',
+      location: 'Ubicación',
+      searchLocation: 'Buscar ubicación...',
+      visibility: 'Visibilidad',
+      public: 'Público',
+      visibleToFollowersOnly: 'Visible solo para seguidores',
+      create: 'Crear Spot'
+    },
+    delete: {
+      title: 'Eliminar Spot',
+      confirmation: '¿Estás seguro de que quieres eliminar el spot "{name}"? Esta acción no se puede deshacer.',
+      success: 'Spot eliminado correctamente',
+      error: 'Error eliminando spot'
+    
+    }}
   }
 }

@@ -2,107 +2,104 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
-
+import spotService from '../services/spotService'
+import SpotList from '../components/spot/SpotList.vue'
+import SpotForm from '../components/spot/SpotForm.vue'
 import BaseModal from '../components/base/BaseModal.vue'
-import droneService from '../services/droneService'
-import DroneList from '../components/drone/DroneList.vue'
-import DroneForm from '../components/drone/DroneForm.vue'
 
 const userStore = useUserStore()
 const { t } = useI18n()
-const drones = ref([])
+const spots = ref([])
 const isLoading = ref(false)
 const showForm = ref(false)
-const selectedDrone = ref(null)
+const selectedSpot = ref(null)
 const showDeleteModal = ref(false)
-const droneToDelete = ref(null)
+const spotToDelete = ref(null)
 const errors = ref({})
 
-const fetchDrones = async () => {
+const fetchSpots = async () => {
   isLoading.value = true
   try {
-    drones.value = await droneService.getUserDrones(userStore.user._id)
+    spots.value = await spotService.getUserSpots(userStore.user._id)
   } catch (error) {
-    errors.value.fetch = error.message
+    errors.value.fetch = error.response?.data?.message || error.message
   } finally {
     isLoading.value = false
   }
 }
 
-const openDeleteModal = (drone) => {
-  droneToDelete.value = drone
+const handleCreate = () => {
+  selectedSpot.value = null
+  showForm.value = true
+}
+
+const handleEdit = (spot) => {
+  selectedSpot.value = spot
+  showForm.value = true
+}
+
+const handleDelete = (spot) => {
+  spotToDelete.value = spot
   showDeleteModal.value = true
 }
 
 const confirmDelete = async () => {
-  if (!droneToDelete.value) return
-  
-  isLoading.value = true
   try {
-    await droneService.deleteDrone(droneToDelete.value._id)
-    await fetchDrones()
+    await spotService.deleteSpot(spotToDelete.value._id)
+    await fetchSpots()
     showDeleteModal.value = false
-    droneToDelete.value = null
+    spotToDelete.value = null
   } catch (error) {
-    errors.value.delete = error.message
-  } finally {
-    isLoading.value = false
+    errors.value.delete = error.response?.data?.message || error.message
   }
-}
-
-const handleEdit = (drone) => {
-  selectedDrone.value = drone
-  showForm.value = true
-}
-
-const handleClose = () => {
-  showForm.value = false
-  selectedDrone.value = null
 }
 
 const handleSaved = async () => {
   showForm.value = false
-  selectedDrone.value = null
-  await fetchDrones()
+  await fetchSpots()
+}
+
+const handleClose = () => {
+  showForm.value = false
+  selectedSpot.value = null
 }
 
 onMounted(() => {
-  fetchDrones()
+  fetchSpots()
 })
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <div v-if="!showForm">
-      <DroneList
-        :drones="drones"
+      <SpotList
+        :spots="spots"
         :is-loading="isLoading"
         :errors="errors"
         @edit="handleEdit"
         @create="showForm = true"
-        @delete="openDeleteModal"
+        @delete="handleDelete"
       />
     </div>
 
     <div v-else>
-      <DroneForm
-        :drone="selectedDrone"
+      <SpotForm
+        :spot="selectedSpot"
         @close="handleClose"
         @saved="handleSaved"
       />
     </div>
 
-    <!-- Modal para confirmar eliminación -->
     <BaseModal
       :show="showDeleteModal"
-      :title="t('message.drones.delete.title')"
+      :title="t('message.spots.delete.title')"
       :show-warning-icon="true"
       :show-delete-button="true"
       @close="showDeleteModal = false"
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('message.drones.delete.confirmation', { name: droneToDelete?.name }) }}
+        {{ t('message.spots.delete.confirmation', { name: spotToDelete?.name }) }}
       </p>
     </BaseModal>
   </div>

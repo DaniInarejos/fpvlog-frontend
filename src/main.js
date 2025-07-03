@@ -20,6 +20,12 @@ const i18n = createI18n({
   }
 })
 
+// Add this before app creation
+window.initMap = function() {
+  // Empty function to satisfy the callback requirement
+  console.log('Google Maps API loaded')
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 

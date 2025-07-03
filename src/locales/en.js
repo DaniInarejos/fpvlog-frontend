@@ -15,7 +15,9 @@ export default {
       droneTypes: 'Drone Types',
       followers: 'Followers',
       following: 'Following',
-      feed: 'Feed'
+      feed: 'Feed',
+      components: 'Components',
+      spots: 'Spots'
     },
     common: {
       loading: 'Loading...',
@@ -24,7 +26,8 @@ export default {
       save: 'Save',
       cancel: 'Cancel',
       delete: 'Delete',
-      edit: 'Edit'
+      edit: 'Edit',
+      select: 'Select'
     },
     about: {
       title: 'About SkySphere',
@@ -64,7 +67,7 @@ export default {
       noDrones: 'You don\'t have any registered drones yet',
       form: {
         name: 'Name',
-        type: 'Select a type',
+        type: 'Select a style',
         brand: 'Select a brand',
         model: 'Model',
         serialNumber: 'Serial Number',
@@ -76,7 +79,9 @@ export default {
         visibility: {
           followers: 'Visible to followers',
           public: 'Public'
-        }
+        },
+        components:'Components',
+        originType: 'Origin Type'
       },
       validation: {
         name: 'Name is required',
@@ -262,6 +267,9 @@ export default {
         allowFlights: 'Allow followers to see my flights',
         allowDrones: 'Allow followers to see my drones',
         profileVisibility: 'Profile visibility',
+        
+        allowDrones: 'Allow followers to see my drones',
+        profileVisibility: 'Profile visibility',
         options: {
           public: 'Public',
           followers: 'Followers only',
@@ -274,6 +282,68 @@ export default {
         loadError: 'Error loading profile',
         photoError: 'Error uploading profile picture'
       }
+    },
+    components: {
+         title: 'Components for drones',
+      addComponent: 'add Component',
+      noComponents: 'Dont have component type',
+      addFirst: 'Añadir {type}',
+      form: {
+        name: 'Nombre',
+        brand: 'Brand',
+        weight: 'Weight (g)',
+        sourceUrl: 'Buy URL',
+        description: 'Descripción'
+      },
+          types: {
+            frame: 'Frame',
+            motor: 'Motor',
+            flightController: 'Flight Controller',
+            esc: 'ESC',
+            vtx: 'VTX',
+            camera: 'Camera',
+            antenna: 'Antenna',
+            receiver: 'Receiver',
+            battery: 'Battery',
+            props: 'Props',
+            mount: 'Mount',
+            other: 'Other'
+          },
+          validation: {
+            required: 'This component is required',
+            invalid: 'Invalid component'
+          },
+          select: {
+            placeholder: 'Select component'
+          }
+        },
+    spots: {
+          title: 'My Spots',
+          addSpot: 'Add Spot',
+          editSpot: 'Edit Spot',
+          createSpot: 'Create Spot',
+          deleteSpot: 'Delete Spot',
+          noSpots: 'You don\'t have any spots registered yet',
+          deleteConfirmation: 'Are you sure you want to delete the spot "{name}"? This action cannot be undone.',
+          public: 'Public',
+          followersOnly: 'Followers only',
+          private: 'Private',
+          form: {
+            name: 'Name',
+            description: 'Description',
+            location: 'Location',
+            searchLocation: 'Search location...',
+            visibility: 'Visibility',
+            public: 'Public',
+            visibleToFollowersOnly: 'Visible to followers only',
+            create: 'Create Spot'
+          },
+          delete: {
+            title: 'Delete Spot',
+            confirmation: 'Are you sure you want to delete the spot "{name}"? This action cannot be undone.',
+            success: 'Spot deleted successfully',
+            error: 'Error deleting spot'
+          }
+        }
+      }
     }
-  }
-}

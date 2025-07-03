@@ -98,9 +98,10 @@ onMounted(() => {
           <div class="flex space-x-6">
             <router-link
               v-for="item in [
-                { name: $t('message.nav.profile'), path: '/' },
+                { name: $t('message.nav.spots'), path: '/spots' },
                 { name: $t('message.nav.flights'), path: '/flights' },
                 { name: $t('message.nav.drones'), path: '/drones' },
+                { name: $t('message.nav.components'), path: '/components' },
               ]"
               :key="item.path"
               :to="item.path"
@@ -167,7 +168,7 @@ onMounted(() => {
              //   { name: $t('message.nav.droneTypes'), action: 'Tipos de Drones' },
                 { name: $t('message.nav.followers'), action: 'Seguidores' },
                 { name: $t('message.nav.about'), action: 'Acerca de' },
-                { name: $t('message.nav.logout'), action: 'Cerrar Sesión' }
+                { name: $t('message.nav.logout'), action: 'Cerrar Sesión' },
               ]"
               :key="index"
               @click="handleDroneOptions(item.action)"

@@ -27,7 +27,8 @@ export default {
       cancel: 'Cancel',
       delete: 'Delete',
       edit: 'Edit',
-      select: 'Select'
+      select: 'Select',
+      likes:"Likes"
     },
     about: {
       title: 'About SkySphere',
@@ -65,6 +66,11 @@ export default {
       editDrone: 'Edit Drone',
       newDrone: 'New Drone',
       noDrones: 'You don\'t have any registered drones yet',
+      details: 'Details',
+      location: 'Location',
+      description: 'Description',
+      visibility: 'Visibility',
+
       form: {
         name: 'Name',
         type: 'Select a style',
@@ -73,9 +79,11 @@ export default {
         serialNumber: 'Serial Number',
         weight: 'Weight (g)',
         frameSize: 'Frame Size (mm)',
+        frame: 'Frame',
         description: 'Description',
         notes: 'Notes',
         image: 'Drone Image',
+        droneImage: 'Drone Image',
         visibility: {
           followers: 'Visible to followers',
           public: 'Public'
@@ -99,7 +107,8 @@ export default {
       specs: {
         weight: 'weight',
         frame: 'frame'
-      }
+      },
+
     },
     flights: {
       title: 'My Flights',
@@ -133,6 +142,12 @@ export default {
       },
       details: {
         drone: 'Drone',
+        date: 'Date',
+        batteryUsed: 'Baterry used',
+        likes: "Likes",
+        weather: "Weather",
+        notes: 'Notes',
+        visibility: 'Visibility',
         location: 'Location',
         duration: 'duration',
         batteries: 'batteries',
@@ -184,7 +199,7 @@ export default {
         feed: 'Feed'
       },
       recentFlights: {
-        title: 'Recent Flights',
+        title: 'Flights',
         noFlights: 'No recent flights',
         duration: 'min',
         location: 'Location'
@@ -216,7 +231,7 @@ export default {
       },
       sections: {
         myDrones: 'My Drones',
-        recentFlights: 'Recent Flights'
+        recentFlights: 'My Flights'
       },
       time: {
         hours: 'h',
@@ -328,6 +343,10 @@ export default {
           public: 'Public',
           followersOnly: 'Followers only',
           private: 'Private',
+          details: 'Details',
+          location: 'Location',
+          description: 'Description',
+          visibility: 'Visibility',
           form: {
             name: 'Name',
             description: 'Description',

@@ -95,6 +95,7 @@ onMounted(() => {
       :title="t('message.spots.delete.title')"
       :show-warning-icon="true"
       :show-delete-button="true"
+      :show-accept-button="false"
       @close="showDeleteModal = false"
       @confirm="confirmDelete"
     >

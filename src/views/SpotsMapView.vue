@@ -89,8 +89,7 @@ onMounted(() => {
       loadSpots()
     }, 1000)
   }
-})
-</script>
+})</script>
 
 <template>
   <div class="min-h-screen py-4 px-4 sm:px-6 lg:px-8">

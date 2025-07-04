@@ -1,18 +1,17 @@
 <script setup>
-  import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'  // Añadir useRouter
+  import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
 import userService from '../services/userService'
 import followerService from '../services/followerService'
 import likeService from '../services/likeService'
-import BaseCard from '../components/base/BaseCard.vue'
-import UserAvatar from '../components/base/UserAvatar.vue'
-import BaseButton from '../components/base/BaseButton.vue'
+import DashboardHeader from '../components/dashboard/DashboardHeader.vue'
+import DashboardContent from '../components/dashboard/DashboardContent.vue'
+import DroneInfo from '../components/drone/DroneInfo.vue'
 
-const DEFAULT_IMAGE = '/images/placeholder.png'
 const route = useRoute()
-const router = useRouter()  // Añadir esta línea
+const router = useRouter()
 const userStore = useUserStore()
 const { t } = useI18n()
 
@@ -21,17 +20,8 @@ const loading = ref(true)
 const error = ref('')
 const isFollowing = ref(false)
 const followLoading = ref(false)
-
-// Computed properties para manejar valores por defecto
-const stats = computed(() => ({
-  dronesCount: dashboard.value?.stats?.dronesCount || 0,
-  flightsCount: dashboard.value?.stats?.flightsCount || 0,
-  followersCount: dashboard.value?.stats?.followersCount || 0,
-  followingCount: dashboard.value?.stats?.followingCount || 0
-}))
-
-const recentFlights = computed(() => dashboard.value?.recentFlights || [])
-const drones = computed(() => dashboard.value?.drones || [])
+const showDroneInfo = ref(false)
+const selectedDroneInfo = ref(null)
 
 const loadDashboard = async () => {
   try {
@@ -46,7 +36,6 @@ const loadDashboard = async () => {
     const response = await userService.getDashboard(username)
     dashboard.value = response
 
-    // Verificar si seguimos a este usuario
     if (userStore.user && userStore.user?._id !== dashboard.value.user._id) {
       const followStatus = await followerService.checkIfFollowing(dashboard.value.user._id)
       isFollowing.value = followStatus.isFollowing
@@ -59,7 +48,6 @@ const loadDashboard = async () => {
 }
 
 const toggleFollow = async () => {
-  // Verificar si el usuario está autenticado
   if (!userStore.isAuthenticated) {
     router.push('/login')
     return
@@ -81,7 +69,8 @@ const toggleFollow = async () => {
     followLoading.value = false
   }
 }
-const handleLike = async (type, item) => {
+
+const handleLike = async ({ type, item }) => {
   try {
     const response = await likeService.toggleLike(type, item._id)
     if (response.liked) {
@@ -92,6 +81,16 @@ const handleLike = async (type, item) => {
   } catch (error) {
     console.error('Error al dar like:', error)
   }
+}
+
+const handleShowDroneInfo = (drone) => {
+  selectedDroneInfo.value = drone
+  showDroneInfo.value = true
+}
+
+const handleCloseDroneInfo = () => {
+  showDroneInfo.value = false
+  selectedDroneInfo.value = null
 }
 
 onMounted(() => {
@@ -110,132 +109,24 @@ onMounted(() => {
     </div>
 
     <div v-else-if="dashboard" class="space-y-4">
-      <!-- Perfil Header -->
-      <BaseCard class="p-4">
-        <div class="flex items-center gap-4">
-          <UserAvatar
-            :src="dashboard.user.profilePicture || DEFAULT_IMAGE"
-            :alt="dashboard.user.name + ' ' + dashboard.user.lastName"
-            :size="'lg'"
-            class="w-20 h-20"
-          />
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <div>
-                <h1 class="text-xl font-bold text-gray-900">{{ dashboard.user.name }} {{ dashboard.user.lastName }}</h1>
-                <p class="text-sm text-gray-600">@{{ dashboard.user.username }}</p>
-              </div>
-              <div v-if="userStore.user?._id !== dashboard.user._id">
-                <BaseButton
-                  :variant="isFollowing ? 'danger' : 'primary'"
-                  :disabled="followLoading"
-                  @click="toggleFollow"
-                  size="sm"
-                >
-                  {{ isFollowing ? t('message.dashboard.follow.unfollow') : t('message.dashboard.follow.follow') }}
-                </BaseButton>
-              </div>
-            </div>
+      <DashboardHeader
+        :dashboard="dashboard"
+        :is-following="isFollowing"
+        :follow-loading="followLoading"
+        @toggle-follow="toggleFollow"
+      />
 
-            <!-- Estadísticas -->
-            <div class="grid grid-cols-4 gap-2 mt-3">
-              <div class="text-center p-2 bg-gray-50 rounded">
-                <div class="text-lg font-bold text-primary-600">{{ stats.dronesCount }}</div>
-                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.drones') }}</div>
-              </div>
-              <div class="text-center p-2 bg-gray-50 rounded">
-                <div class="text-lg font-bold text-primary-600">{{ stats.flightsCount }}</div>
-                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.flights') }}</div>
-              </div>
-              <div class="text-center p-2 bg-gray-50 rounded">
-                <div class="text-lg font-bold text-primary-600">{{ stats.followersCount }}</div>
-                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.followers') }}</div>
-              </div>
-              <div class="text-center p-2 bg-gray-50 rounded">
-                <div class="text-lg font-bold text-primary-600">{{ stats.followingCount }}</div>
-                <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.following') }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </BaseCard>
+      <DashboardContent
+        :dashboard="dashboard"
+        @like="handleLike"
+        @show-drone-info="handleShowDroneInfo"
+      />
 
-      <!-- Vuelos Recientes -->
-      <BaseCard v-if="recentFlights.length > 0" class="p-4">
-        <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.recentFlights.title') }}</h2>
-        <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          <!-- En la sección de vuelos recientes, actualizar el div del vuelo -->
-          <div v-for="flight in dashboard.recentFlights" :key="flight._id" class="bg-gray-50 p-3 rounded">
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="font-medium">{{ flight.title }}</h3>
-              <span class="text-xs text-gray-500">{{ new Date(flight.date).toLocaleDateString() }}</span>
-            </div>
-            <p class="text-gray-600 text-xs mb-2">{{ flight.description }}</p>
-            <div class="flex justify-between text-xs text-gray-500">
-              <div class="flex items-center gap-2">
-                <span>🕒 {{ flight.duration }}{{ t('message.dashboard.recentFlights.duration') }}</span>
-                <span>📍 {{ flight.location }}</span>
-              </div>
-              <div class="flex items-center gap-1">
-                 <button 
-                  @click="handleLike('flight',flight)"
-                  :class="{ 'text-red-500': flight.likes?.some(like => like.userId == userStore.user?._id) }"
-                > 
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                         :class="[`h-4 w-4`, flight.likes?.some(like => like.userId === userStore.user?._id) ? 'text-red-500' : 'text-gray-400']" 
-                         viewBox="0 0 20 20" 
-                         fill="currentColor">
-                      <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                    </svg>
-                </button>
-                <span>{{ flight.likes?.length || 0 }}</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </BaseCard>
-      <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-        <p>{{ t('message.dashboard.recentFlights.noFlights') }}</p>
-      </BaseCard>
-
-      <!-- Drones -->
-      <BaseCard v-if="drones.length > 0" class="p-4">
-        <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.drones.title') }}</h2>
-        <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">  
-          <div v-for="drone in drones" :key="drone._id" class="bg-gray-50 p-3 rounded">
-            <div class="flex items-center space-x-3">
-              <img 
-                :src="drone.image || DEFAULT_IMAGE" 
-                :alt="drone.name" 
-                class="w-12 h-12 object-cover rounded" 
-              />
-              <div class="flex-1">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="font-medium">{{ drone.name }}</h3>
-                    <p class="text-xs text-gray-500">{{ drone.model }}</p>
-                  </div>
-                  <div class="flex items-center gap-1">
-                     <button @click="handleLike('drone',drone)"> 
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                         :class="[`h-4 w-4`, drone.likes?.some(like => like.userId === userStore.user?._id) ? 'text-red-500' : 'text-gray-400']" 
-                         viewBox="0 0 20 20" 
-                         fill="currentColor">
-                      <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                    </svg>
-                    </button>
-                    <span class="text-xs text-gray-500">{{ drone.likes?.length || 0 }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </BaseCard>
-      <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-        <p>{{ t('message.dashboard.drones.noDrones') }}</p>
-      </BaseCard>
+      <DroneInfo
+        :drone="selectedDroneInfo"
+        :show="showDroneInfo"
+        @close="handleCloseDroneInfo"
+      />
     </div>
   </div>
 </template>

@@ -20,7 +20,6 @@ const i18n = createI18n({
 function loadGoogleMaps(callbackName = 'initMap') {
   const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
   const script = document.createElement('script');
-  console.log(apiKey)
   script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,marker&callback=${callbackName}&loading=async`;
   script.async = true;
   script.defer = true;

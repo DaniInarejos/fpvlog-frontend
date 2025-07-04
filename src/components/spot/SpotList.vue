@@ -5,6 +5,7 @@ import BaseCard from '../base/BaseCard.vue'
 import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import StaticMap from '../base/StaticMap.vue'
+import SpotInfo from './SpotInfo.vue'
 
 const props = defineProps({
   spots: {
@@ -23,6 +24,19 @@ const props = defineProps({
 
 const emit = defineEmits(['create', 'edit', 'delete'])
 const { t } = useI18n()
+
+const showSpotInfo = ref(false)
+const selectedSpot = ref(null)
+
+const handleShowSpotInfo = (spot) => {
+  selectedSpot.value = spot
+  showSpotInfo.value = true
+}
+
+const handleCloseSpotInfo = () => {
+  showSpotInfo.value = false
+  selectedSpot.value = null
+}
 </script>
 
 <template>
@@ -80,14 +94,35 @@ const { t } = useI18n()
         <div class="p-4">
           <div class="flex justify-between items-start mb-4">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 
+                class="text-lg font-semibold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
+                @click="handleShowSpotInfo(spot)"
+              >
                 {{ spot.name }}
               </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ spot.location.city }}, {{ spot.location.country }}
               </p>
             </div>
-            <div class="flex gap-2">
+           
+          </div>
+
+          <p v-if="spot.description" class="text-gray-600 dark:text-gray-400 mb-4">
+            {{ spot.description }}
+          </p>
+
+          <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <span v-if="spot.visibility.public">
+              {{ t('message.spots.public') }}
+            </span>
+            <span v-else-if="spot.visibility.visibleToFollowersOnly">
+              {{ t('message.spots.followersOnly') }}
+            </span>
+            <span v-else>
+              {{ t('message.spots.private') }}
+            </span>
+          </div>
+           <div class="flex gap-2">
               <BaseButton
                 size="sm"
                 variant="secondary"
@@ -108,25 +143,14 @@ const { t } = useI18n()
                 {{ t('message.common.delete') }}
               </BaseButton>
             </div>
-          </div>
-
-          <p v-if="spot.description" class="text-gray-600 dark:text-gray-400 mb-4">
-            {{ spot.description }}
-          </p>
-
-          <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <span v-if="spot.visibility.public">
-              {{ t('message.spots.public') }}
-            </span>
-            <span v-else-if="spot.visibility.visibleToFollowersOnly">
-              {{ t('message.spots.followersOnly') }}
-            </span>
-            <span v-else>
-              {{ t('message.spots.private') }}
-            </span>
-          </div>
         </div>
       </BaseCard>
     </div>
+
+    <SpotInfo
+      :spot="selectedSpot"
+      :show="showSpotInfo"
+      @close="handleCloseSpotInfo"
+    />
   </div>
 </template>

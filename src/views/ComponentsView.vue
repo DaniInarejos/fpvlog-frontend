@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import componentService from '../services/componentService'
 import ComponentList from '../components/component/ComponentList.vue'
 import ComponentForm from '../components/component/ComponentForm.vue'
+import ComponentInfo from '../components/component/ComponentInfo.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 
 const userStore = useUserStore()
@@ -19,6 +20,10 @@ const selectedType = ref(null)
 const showDeleteModal = ref(false)
 const componentToDelete = ref(null)
 const errors = ref({})
+
+// Variables para el modal de información
+const showComponentInfo = ref(false)
+const selectedComponent = ref(null)
 
 const fetchComponents = async () => {
   isLoading.value = true
@@ -71,15 +76,34 @@ const handleCreate = (type) => {
   showForm.value = true
 }
 
+const handleEdit = (component) => {
+  selectedComponent.value = component
+  selectedType.value = component.type
+  showForm.value = true
+}
+
 const handleClose = () => {
   showForm.value = false
   selectedType.value = null
+  selectedComponent.value = null
 }
 
 const handleSaved = async () => {
   showForm.value = false
   selectedType.value = null
+  selectedComponent.value = null
   await fetchComponents()
+}
+
+// Funciones para el modal de información
+const handleShowComponentInfo = (component) => {
+  selectedComponent.value = component
+  showComponentInfo.value = true
+}
+
+const handleCloseComponentInfo = () => {
+  showComponentInfo.value = false
+  selectedComponent.value = null
 }
 
 onMounted(() => {
@@ -95,13 +119,16 @@ onMounted(() => {
         :is-loading="isLoading"
         :errors="errors"
         @create="handleCreate"
+        @edit="handleEdit"
         @delete="openDeleteModal"
+        @showInfo="handleShowComponentInfo"
       />
     </div>
 
     <div v-else>
       <ComponentForm
         :selected-type="selectedType"
+        :component="selectedComponent"
         @close="handleClose"
         @saved="handleSaved"
       />
@@ -112,6 +139,7 @@ onMounted(() => {
       :title="t('message.common.delete')"
       :show-warning-icon="true"
       :show-delete-button="true"
+      :show-accept-button="false"
       @close="showDeleteModal = false"
       @confirm="confirmDelete"
     >
@@ -119,5 +147,11 @@ onMounted(() => {
         {{ t('message.components.delete.confirmation', { name: componentToDelete?.name }) }}
       </p>
     </BaseModal>
+
+    <ComponentInfo
+      :component="selectedComponent"
+      :show="showComponentInfo"
+      @close="handleCloseComponentInfo"
+    />
   </div>
 </template>

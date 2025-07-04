@@ -44,17 +44,17 @@ const formData = ref({
     isPublic: false
   },
   components: {
-    frameId: '',
+    frameId: null,
     motors: [],
-    flightControllerId: '',
-    escId: '',
-    vtxId: '',
-    cameraId: '',
-    antennaId: '',
-    receiverId: '',
-    batteryId: '',
-    propsId: '',
-    mountId: '',
+    flightControllerId: null,
+    escId: null,
+    vtxId: null,
+    cameraId: null,
+    antennaId: null,
+    receiverId: null,
+    batteryId: null,
+    propsId: null,
+    mountId: null,
     others: []
   },
   betaflightId: ''
@@ -157,7 +157,21 @@ onMounted(() => {
   if (props.drone) {
     formData.value = { 
       ...props.drone,
-      originType: props.drone.originType || 'BRANDED'
+      originType: props.drone.originType || 'BRANDED',
+      components: {
+        frameId: props.drone.components?.frameId || null,
+        motors: props.drone.components?.motors || [],
+        flightControllerId: props.drone.components?.flightControllerId || null,
+        escId: props.drone.components?.escId || null,
+        vtxId: props.drone.components?.vtxId || null,
+        cameraId: props.drone.components?.cameraId || null,
+        antennaId: props.drone.components?.antennaId || null,
+        receiverId: props.drone.components?.receiverId || null,
+        batteryId: props.drone.components?.batteryId || null,
+        propsId: props.drone.components?.propsId || null,
+        mountId: props.drone.components?.mountId || null,
+        others: props.drone.components?.others || []
+      }
     }
   }
   fetchDroneTypes()
@@ -172,18 +186,21 @@ watch(() => formData.value.originType, (newValue) => {
     formData.value.model = ''
   }
   if(newValue !== 'CUSTOM') {
-    formData.value.components.antennaId = null
-    formData.value.components.batteryId = null
-    formData.value.components.cameraId = null
-    formData.value.components.escId = null
-    formData.value.components.fcId = null
-    formData.value.components.motorId = null
-    formData.value.components.mountId = null
-    formData.value.components.propsId = null
-    formData.value.components.receiverId = null
-    formData.value.components.vtxId = null
-    formData.value.components.frameId = null
-    formData.value.components.others = []
+    // Asegurarse de que todos los componentes se reseteen a null o array vacío según corresponda
+    formData.value.components = {
+      frameId: null,
+      motors: [],
+      flightControllerId: null,
+      escId: null,
+      vtxId: null,
+      cameraId: null,
+      antennaId: null,
+      receiverId: null,
+      batteryId: null,
+      propsId: null,
+      mountId: null,
+      others: []
+    }
   }
 })
 

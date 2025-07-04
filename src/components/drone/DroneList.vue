@@ -6,6 +6,7 @@ import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import BaseCard from '../base/BaseCard.vue'
 import droneService from '../../services/droneService'
+import DroneInfo from './DroneInfo.vue'
 
 const props = defineProps({
   showCreateButton: {
@@ -48,6 +49,19 @@ const handleDelete = (drone) => {
 onMounted(() => {
   fetchDrones()
 })
+
+const showInfo = ref(false)
+const selectedDroneInfo = ref(null)
+
+const handleShowInfo = (drone) => {
+  selectedDroneInfo.value = drone
+  showInfo.value = true
+}
+
+const handleCloseInfo = () => {
+  showInfo.value = false
+  selectedDroneInfo.value = null
+}
 </script>
 
 <template>
@@ -90,7 +104,12 @@ onMounted(() => {
         <div class="p-4">
           <div class="flex justify-between items-start mb-2">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">{{ drone.name }}</h3>
+              <h3 
+                class="text-lg font-semibold text-gray-900 hover:text-primary-600 cursor-pointer"
+                @click="handleShowInfo(drone)"
+              >
+                {{ drone.name }}
+              </h3>
               <p class="text-sm text-gray-600">{{ drone.brand?.name }} {{ drone.model }}</p>
             </div>
           </div>
@@ -132,5 +151,12 @@ onMounted(() => {
         </div>
       </BaseCard>
     </div>
+
+    <!-- Add the DroneInfo component -->
+    <DroneInfo
+      :drone="selectedDroneInfo"
+      :show="showInfo"
+      @close="handleCloseInfo"
+    />
   </div>
 </template>

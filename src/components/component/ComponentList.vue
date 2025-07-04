@@ -22,7 +22,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['create', 'delete', 'edit'])
+const emit = defineEmits(['create', 'delete', 'edit', 'showInfo'])
 const { t } = useI18n()
 const showTypeSelector = ref(false)
 
@@ -117,14 +117,11 @@ const componentIcons = {
                 <div>
                   <h4 class="font-medium text-gray-900 dark:text-gray-100">
                     <a 
-                      v-if="component.sourceUrl" 
-                      :href="component.sourceUrl" 
-                      target="_blank"
-                      class="hover:text-primary-600 transition-colors"
+                      class="hover:text-primary-600 transition-colors cursor-pointer"
+                      @click="emit('showInfo', component)"
                     >
                       {{ component.name }}
                     </a>
-                    <span v-else>{{ component.name }}</span>
                   </h4>
                   <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <span v-if="component.brand">{{ component.brand }}</span>

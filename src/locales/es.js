@@ -27,7 +27,8 @@ export default {
       cancel: 'Cancelar',
       delete: 'Eliminar',
       edit: 'Editar',
-      select: 'Seleccionar'
+      select: 'Seleccionar',
+      likes:"Me gustas"
     },
     about: {
       title: 'Acerca de SkySphere',
@@ -65,6 +66,10 @@ export default {
       editDrone: 'Editar Drone',
       newDrone: 'Nuevo Drone',
       noDrones: 'Aún no tienes ningún drone registrado',
+      details: 'Detalles',
+      location: 'Ubicación',
+      description: 'Descripción',
+      visibility: 'Visibilidad',
       form: {
         name: 'Nombre',
         type: 'Selecciona un estilo',
@@ -72,10 +77,12 @@ export default {
         model: 'Modelo',
         serialNumber: 'Número de Serie',
         weight: 'Peso (g)',
-        frameSize: 'Tamaño del Frame (mm)',
+        frameSize: 'Tamaño del marco (mm)',
+        frame: 'Marco',
         description: 'Descripción',
         notes: 'Notas',
         image: 'Imagen del Drone',
+        droneImage: 'Drone Image',
         visibility: {
           followers: 'Visible para seguidores',
           public: 'Público'
@@ -134,6 +141,12 @@ export default {
       },
       details: {
         drone: 'Drone',
+        date: 'Fecha',
+        batteryUsed: 'Baterias usadas',
+        likes: "Me gustas",
+        weather: "Clima",
+        notes: 'Notas',
+        visibility: 'Visibilidad',
         location: 'Ubicación',
         duration: 'duración',
         batteries: 'baterías',
@@ -184,8 +197,8 @@ export default {
         following: 'Siguiendo'
       },
       recentFlights: {
-        title: 'Vuelos Recientes',
-        noFlights: 'No hay vuelos recientes',
+        title: 'Vuelos',
+        noFlights: 'No hay vuelos ',
         duration: 'min',
         location: 'Ubicación'
       },
@@ -337,6 +350,10 @@ export default {
     public: 'Público',
     followersOnly: 'Solo seguidores',
     private: 'Privado',
+    details: 'Detalles',
+    location: 'Ubicación',
+    description: 'Descripción',
+    visibility: 'Visibilidad',
     form: {
       name: 'Nombre',
       description: 'Descripción',
@@ -353,6 +370,8 @@ export default {
       success: 'Spot eliminado correctamente',
       error: 'Error eliminando spot'
     
-    }}
+    }
+
+  }
   }
 }

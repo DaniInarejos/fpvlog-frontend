@@ -36,19 +36,8 @@ const initMap = () => {
   const mapElement = document.getElementById('map')
   map.value = new google.maps.Map(mapElement, {
     center: { lat: 40.416775, lng: -3.703790 },
-    zoom: 13,
-    styles: [
-      {
-        featureType: 'all',
-        elementType: 'geometry',
-        stylers: [{ color: '#242f3e' }]
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [{ color: '#17263c' }]
-      }
-    ]
+    zoom: 10,
+   
   })
 
   // Configurar el marcador si hay una ubicación existente

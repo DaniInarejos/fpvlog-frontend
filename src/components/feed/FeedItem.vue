@@ -59,6 +59,35 @@ const handleLike = async () => {
     console.error('Error al dar like:', error)
   }
 }
+
+const initSpotMap = (spotId, coordinates) => {
+  if (!window.google || !coordinates?.length === 2) return
+
+  const mapId = `spot-map-${spotId}`
+  setTimeout(() => {
+    const map = new google.maps.Map(document.getElementById(mapId), {
+      mapId: mapId,
+      center: { 
+        lat: coordinates[1], 
+        lng: coordinates[0] 
+      },
+      zoom: 15,
+      disableDefaultUI: true,
+      draggable: false,
+      zoomControl: false,
+      scrollwheel: false,
+      disableDoubleClickZoom: true
+    })
+
+    new google.maps.marker.AdvancedMarkerElement({
+      map,
+      position: { 
+        lat: coordinates[1], 
+        lng: coordinates[0] 
+      }
+    })
+  }, 100)
+}
 </script>
 
 <template>
@@ -179,6 +208,44 @@ const handleLike = async () => {
         />
            
       </div>
+           <div v-else-if="itemType === 'spot'" class="space-y-4">
+        <div class="flex items-center mb-4">
+          <UserAvatar
+            :src="itemData.user.profilePicture"
+            :alt="itemData.user.username"
+            size="sm"
+            class="mr-3"
+            @click="navigateToProfile(itemData.user.username)"
+            style="cursor: pointer"
+          />
+          <div>
+            <h3 class="font-medium text-gray-900 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer"
+                @click="navigateToProfile(itemData.user.username)">
+              {{ itemData.user.username }}
+            </h3>
+          </div>
+        </div>
+
+        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          Spot: {{ itemData.name }}
+        </h4>
+        
+        <!-- Map -->
+        <div v-if="itemData.location?.coordinates?.length === 2" 
+             :id="`spot-map-${item._id}`" 
+             class="w-full h-48 rounded-lg overflow-hidden"
+             @vue:mounted="initSpotMap(item._id, itemData.location.coordinates)">
+        </div>
+
+        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          <span>📍 {{ itemData.location?.city }}, {{ itemData.location?.country }}</span>
+        </div>
+
+        <p v-if="itemData.description" class="text-gray-600 dark:text-gray-300">
+          {{ itemData.description }}
+        </p>
+
+      </div>
        <!-- Botón de like común para todos los tipos -->
        <button 
          @click="handleLike"
@@ -189,6 +256,7 @@ const handleLike = async () => {
          </svg>
          {{ likesCount }}
        </button>
+ 
     </div>
   </BaseCard>
 </template>

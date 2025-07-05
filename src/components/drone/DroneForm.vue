@@ -57,11 +57,25 @@ const formData = ref({
     mountId: null,
     others: []
   },
-  betaflightId: ''
+  betaflightId: null
 })
-const handleCreateComponent  = () => {
-
-  console.log("VAYA TELA")
+const handleCreateComponent = async (typeComponent, inputValue) => {
+  try {
+    const newComponent = {
+      name: inputValue, 
+      type: typeComponent,
+      createdBy: userStore.user._id
+    }
+    
+    const createdComponent = await componentService.createComponent(newComponent)
+    
+    if (createdComponent) {
+      components.value[typeComponent] = [...components.value[typeComponent], createdComponent]
+      formData.value.components[typeComponent.toLowerCase() + 'Id'] = createdComponent._id
+    }
+  } catch (error) {
+    errors.value.components = t('message.components.error.create')
+  }
 }
 const fetchDroneTypes = async () => {
   try {
@@ -285,15 +299,7 @@ const handleImageUpload = async (file) => {
         </div>
 
         <BaseDivider title="Informacion Avanzada" />    
-        <BaseSelect
-          v-model="formData.originType"
-          label="TEST"
-          :options="droneBrands"
-          placeholder="Buscar componente..."
-          filterable
-          canCreate
-          @create="handleCreateComponent"
-        />
+
         <BaseSelect
           v-model="formData.originType"
           :label="t('message.drones.form.originType')"
@@ -338,6 +344,9 @@ const handleImageUpload = async (file) => {
             :options="components.FRAME"
             :error="errors.frameId"
             placeholder="Seleccionar Frame"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('FRAME', value)"
           />
 
           <!-- Motors -->
@@ -347,6 +356,9 @@ const handleImageUpload = async (file) => {
             :options="components.MOTOR"
             :error="errors.motors"
             placeholder="Seleccionar Motors"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('MOTOR', value)"
           />
           <BaseSelect
             v-model="formData.components.esc"
@@ -354,6 +366,9 @@ const handleImageUpload = async (file) => {
             :options="components.ESC"
             :error="errors.esc"
             placeholder="Seleccionar ESC"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('ESC', value)"
           />
           <!-- FC -->
           <BaseSelect
@@ -362,6 +377,9 @@ const handleImageUpload = async (file) => {
             :options="components.FC"
             :error="errors.fc"
             placeholder="Seleccionar FC"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('FC', value)"
           />
           <!-- VTX -->
           <BaseSelect
@@ -370,6 +388,9 @@ const handleImageUpload = async (file) => {
             :options="components.VTX"
             :error="errors.vtx"
             placeholder="Seleccionar VTX"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('VTX', value)"
           />
           <!-- ANTENNA -->
           <BaseSelect
@@ -378,6 +399,9 @@ const handleImageUpload = async (file) => {
             :options="components.ANTENNA"
             :error="errors.antenna"
             placeholder="Seleccionar ANTENNA"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('ANTENNA', value)"
           />
           <!-- RECEIVER -->
           <BaseSelect
@@ -386,6 +410,9 @@ const handleImageUpload = async (file) => {
             :options="components.RECEIVER"
             :error="errors.receiver"
             placeholder="Seleccionar RECEIVER"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('RECEIVER', value)"
           />
           <!-- BATTERY -->
           <BaseSelect
@@ -394,6 +421,9 @@ const handleImageUpload = async (file) => {
             :options="components.BATTERY"
             :error="errors.battery"
             placeholder="Seleccionar BATTERY"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('BATTERY', value)"
           />
           <!-- PROPS -->
           <BaseSelect
@@ -402,6 +432,9 @@ const handleImageUpload = async (file) => {
             :options="components.PROPS"
             :error="errors.props"
             placeholder="Seleccionar PROPS"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('PROPS', value)"
           />
           <!-- MOUNT -->
           <BaseSelect
@@ -410,6 +443,9 @@ const handleImageUpload = async (file) => {
             :options="components.MOUNT"
             :error="errors.mount"
             placeholder="Seleccionar MOUNT"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('MOUNT', value)"
           />    
           <!-- OTHER -->
           <BaseSelect
@@ -418,6 +454,9 @@ const handleImageUpload = async (file) => {
             :options="components.OTHER"
             :error="errors.other"
             placeholder="Seleccionar OTHERS"
+            filterable
+            canCreate
+            @create="(value) => handleCreateComponent('OTHER', value)"
           />    
          
         </div>

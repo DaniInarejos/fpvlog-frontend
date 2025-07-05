@@ -4,7 +4,11 @@ import { useI18n } from 'vue-i18n'
 import BaseCard from '../base/BaseCard.vue'
 import BaseInput from '../base/BaseInput.vue'
 import BaseButton from '../base/BaseButton.vue'
+import BaseImageUpload from '../base/BaseImageUpload.vue'
 import BaseAlert from '../base/BaseAlert.vue'
+import BaseDivider from '../base/BaseDivider.vue'
+import BaseCheckbox from '../base/BaseCheckbox.vue'
+import flightService from '../../services/flightService'
 
 const { t } = useI18n()
 
@@ -17,56 +21,81 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  spots: {
+    type: Array,
+    required: true
+  },
   isLoading: {
     type: Boolean,
     default: false
   }
 })
 
-const emit = defineEmits(['submit', 'close', 'imageUpload'])
+const emit = defineEmits(['submit', 'close', 'saved'])
+
+const errors = ref({})
+const isSubmitting = ref(false)
 
 const formData = ref({
   title: '',
   date: '',
-  location: '',
+  droneId: null,
+  spotId: null,
   duration: '',
   batteryUsed: '',
   weather: '',
   notes: '',
-  droneId: '',
+  urlVideo: '',
+  image: null,
   visibility: {
     isVisibleToFollowers: true,
-    isPublic: false
+    isPublic: true
   }
 })
-
-const errors = ref({})
 
 if (props.flight) {
   formData.value = {
     ...props.flight,
-    date: props.flight.date.split('T')[0]
+    date: props.flight.date ? props.flight.date.split('T')[0] : ''
   }
 }
 
 const validateForm = () => {
   errors.value = {}
   if (!formData.value.title) errors.value.title = t('message.flights.validation.title')
-  if (!formData.value.date) errors.value.date = t('message.flights.validation.date')
-  if (!formData.value.location) errors.value.location = t('message.flights.validation.location')
-  if (!formData.value.duration) errors.value.duration = t('message.flights.validation.duration')
-  if (!formData.value.batteryUsed) errors.value.batteryUsed = t('message.flights.validation.batteryUsed')
-  if (!formData.value.droneId) errors.value.droneId = t('message.flights.validation.droneId')
   return Object.keys(errors.value).length === 0
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!validateForm()) return
-  emit('submit', formData.value)
+  
+  isSubmitting.value = true
+  try {
+    let flightId
+    if (props.flight) {
+      await flightService.updateFlight(props.flight._id, formData.value)
+      flightId = props.flight._id
+    } else {
+      const newFlight = await flightService.createFlight(formData.value)
+      flightId = newFlight._id
+    }
+    
+    if (formData.value.image instanceof File) {
+      const imageFormData = new FormData()
+      imageFormData.append('image', formData.value.image)
+      await flightService.uploadFlightImage(flightId, imageFormData)
+    }
+    
+    emit('saved')
+  } catch (error) {
+    errors.value.submit = error.message
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
-const handleImageUpload = (event) => {
-  emit('imageUpload', event)
+const handleImageChange = (image) => {
+  formData.value.image = image
 }
 </script>
 
@@ -77,6 +106,20 @@ const handleImageUpload = (event) => {
     </h2>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
+      <BaseAlert
+        v-if="errors.submit"
+        type="error"
+        :message="errors.submit"
+      />
+
+      <BaseDivider :title="t('message.flights.form.sections.media')" />
+      <BaseImageUpload
+        :label="t('message.flights.form.image')"
+        :current-image="formData.image"
+        @change="handleImageChange"
+      />
+
+      <BaseDivider :title="t('message.flights.form.sections.basic')" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BaseInput
           v-model="formData.title"
@@ -89,15 +132,11 @@ const handleImageUpload = (event) => {
           v-model="formData.date"
           :label="t('message.flights.form.date')"
           type="date"
-          :error="errors.date"
-          required
         />
 
         <select
           v-model="formData.droneId"
           class="input"
-          :class="{ 'border-red-500': errors.droneId }"
-          required
         >
           <option value="">{{ t('message.flights.form.drone') }}</option>
           <option v-for="drone in drones" :key="drone._id" :value="drone._id">
@@ -105,27 +144,26 @@ const handleImageUpload = (event) => {
           </option>
         </select>
 
-        <BaseInput
-          v-model="formData.location"
-          :label="t('message.flights.form.location')"
-          :error="errors.location"
-          required
-        />
+        <select
+          v-model="formData.spotId"
+          class="input"
+        >
+          <option value="">{{ t('message.flights.form.spot') }}</option>
+          <option v-for="spot in spots" :key="spot._id" :value="spot._id">
+            {{ spot.name }}
+          </option>
+        </select>
 
         <BaseInput
           v-model="formData.duration"
           :label="t('message.flights.form.duration')"
           type="number"
-          :error="errors.duration"
-          required
         />
 
         <BaseInput
           v-model="formData.batteryUsed"
           :label="t('message.flights.form.batteryUsed')"
           type="number"
-          :error="errors.batteryUsed"
-          required
         />
 
         <BaseInput
@@ -133,57 +171,38 @@ const handleImageUpload = (event) => {
           :label="t('message.flights.form.weather')"
         />
 
-        <div class="md:col-span-2">
-          <BaseInput
-            v-model="formData.notes"
-            :label="t('message.flights.form.notes')"
-            type="textarea"
-          />
-        </div>
+        <BaseInput
+          v-model="formData.urlVideo"
+          :label="t('message.flights.form.urlVideo')"
+          type="url"
+        />
+      </div>
 
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            {{ t('message.flights.form.image') }}
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            @change="handleImageUpload"
-            class="block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
+      <div class="md:col-span-2">
+        <BaseInput
+          v-model="formData.notes"
+          :label="t('message.flights.form.notes')"
+          type="textarea"
+        />
+      </div>
 
-        <div class="md:col-span-2 space-y-2">
-          <label class="flex items-center">
-            <input
-              type="checkbox"
-              v-model="formData.visibility.isVisibleToFollowers"
-              class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-            />
-            <span class="ml-2">{{ t('message.flights.form.visibility.followers') }}</span>
-          </label>
-
-          <label class="flex items-center">
-            <input
-              type="checkbox"
-              v-model="formData.visibility.isPublic"
-              class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-            />
-            <span class="ml-2">{{ t('message.flights.form.visibility.public') }}</span>
-          </label>
-        </div>
+      <BaseDivider :title="t('message.flights.form.sections.privacy')" />
+      <div class="md:col-span-2 space-y-2">
+        <BaseCheckbox
+          v-model="formData.visibility.isVisibleToFollowers"
+          :label="t('message.flights.form.visibility.followers')"
+        />
+        <BaseCheckbox
+          v-model="formData.visibility.isPublic"
+          :label="t('message.flights.form.visibility.public')"
+        />
       </div>
 
       <div class="flex justify-end space-x-4">
         <BaseButton
           type="button"
           variant="secondary"
-         @click="emit('close')"
+          @click="emit('close')"
         >
           {{ t('message.common.cancel') }}
         </BaseButton>

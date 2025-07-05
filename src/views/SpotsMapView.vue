@@ -14,22 +14,9 @@ const initMap = () => {
     return
   }
 
-  // Centrar el mapa en España
   map.value = new google.maps.Map(document.getElementById('spots-map'), {
-    center: { lat: 40.416775, lng: -3.703790 }, // Centro de España
-    zoom: 6, // Zoom para ver España completa
-    styles: [
-      {
-        featureType: 'all',
-        elementType: 'geometry',
-        stylers: [{ color: '#242f3e' }]
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [{ color: '#17263c' }]
-      }
-    ]
+    center: { lat: 40.416775, lng: -3.703790 }, 
+    zoom: 6
   })
 }
 

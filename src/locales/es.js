@@ -128,6 +128,13 @@ export default {
         visibility: {
           followers: 'Visible para seguidores',
           public: 'Público'
+        },
+        spot:'Spot',
+        urlVideo: 'Link a youtube',
+        sections: {
+          media: 'Imagen',
+          basic: 'Informacion Basica', 
+          privacy: 'Privacidad'
         }
       },
       validation: {

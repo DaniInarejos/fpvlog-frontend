@@ -77,6 +77,12 @@ const handleCreateNew = () => {
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
 }
+
+const selectedOptionName = computed(() => {
+  if (!props.modelValue) return ''
+  const selectedOption = props.options.find(option => option._id === props.modelValue)
+  return selectedOption ? selectedOption.name : ''
+})
 </script>
 
 <template>
@@ -89,7 +95,7 @@ const toggleDropdown = () => {
       <template v-if="filterable">
         <input
           type="text"
-          :value="searchQuery"
+          :value="showDropdown ? searchQuery : selectedOptionName"
           @input="handleInput"
           @focus="showDropdown = true"
           class="input w-full pr-8"

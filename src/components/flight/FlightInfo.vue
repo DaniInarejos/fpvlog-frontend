@@ -38,6 +38,13 @@ const formatDuration = (duration) => {
   const seconds = duration % 60
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
+
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null
+  // Soporte para videos normales y shorts
+  const videoId = url.match(/(?:youtube\.com\/(?:shorts\/|(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))|youtu\.be\/)([^"&?\/ ]{11})/)?.[1]
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+}
 </script>
 
 <template>
@@ -48,10 +55,20 @@ const formatDuration = (duration) => {
     @close="handleClose"
   >
     <div class="space-y-6">
-      <!-- Imagen del vuelo -->
-      <div v-if="flight.image" class="relative aspect-[4/3] overflow-hidden rounded-lg">
+      <!-- Video o Imagen del vuelo -->
+      <div v-if="flight.urlVideo || flight.image" class="relative aspect-[4/3] overflow-hidden rounded-lg">
+        <template v-if="flight.urlVideo && getYouTubeEmbedUrl(flight.urlVideo)">
+          <iframe
+            :src="getYouTubeEmbedUrl(flight.urlVideo)"
+            class="w-full h-full"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </template>
         <img
-          :src="flight.image"
+          v-else
+          :src="flight.image || '/images/placeholder.png'"
           :alt="flight.title"
           class="w-full h-full object-cover"
         />
@@ -94,8 +111,6 @@ const formatDuration = (duration) => {
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('message.flights.details.notes') }}</h3>
           <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ flight.notes }}</p>
         </div>
-
-
       </div>
     </div>
   </BaseModal>

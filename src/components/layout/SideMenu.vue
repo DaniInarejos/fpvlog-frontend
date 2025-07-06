@@ -24,12 +24,6 @@ const menuItems = computed(() => [
     path: '/feedSpots',
     icon: 'feedSpots',
     exact: true
-  },
-  {
-    name: t('message.nav.following'),
-    path: '/following',
-    icon: 'following',
-    count: userStore.followingCount
   }
 ])
 
@@ -40,7 +34,6 @@ const getIcon = (icon) => {
     flight: '✈️',
     drone: '🚁',
     feedSpots: '📍',
-    following: '👥',
     components: '🔧',
   }
   return icons[icon] || ''

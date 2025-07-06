@@ -7,6 +7,7 @@ const { t } = useI18n()
 const spots = ref([])
 const map = ref(null)
 const markers = ref([])
+const uasLayers = ref([])
 
 const initMap = () => {
   if (!window.google) {
@@ -18,6 +19,46 @@ const initMap = () => {
     center: { lat: 40.416775, lng: -3.703790 }, 
     zoom: 6
   })
+
+  // Añadir capa de zonas geográficas de UAS
+  loadUASZones()
+}
+
+const loadUASZones = async () => {
+  try {
+    // Limpiar capas existentes
+    uasLayers.value.forEach(layer => layer.setMap(null))
+    uasLayers.value = []
+
+    // Cargar zonas aeronáuticas
+    const aeroLayer = new google.maps.KmlLayer({
+      url: 'https://servais.enaire.es/einsignia/rest/services/Drones/ZGUAS_Aero.kmz',
+      map: map.value,
+      preserveViewport: true,
+      suppressInfoWindows: false
+    })
+    uasLayers.value.push(aeroLayer)
+
+    // Cargar zonas urbanas
+    const urbanLayer = new google.maps.KmlLayer({
+      url: 'https://servais.enaire.es/einsignia/rest/services/Drones/ZGUAS_Urbano.kmz',
+      map: map.value,
+      preserveViewport: true,
+      suppressInfoWindows: false
+    })
+    uasLayers.value.push(urbanLayer)
+
+    // Cargar zonas de infraestructuras
+    const infraLayer = new google.maps.KmlLayer({
+      url: 'https://servais.enaire.es/einsignia/rest/services/Drones/ZGUAS_Infraestructuras.kmz',
+      map: map.value,
+      preserveViewport: true,
+      suppressInfoWindows: false
+    })
+    uasLayers.value.push(infraLayer)
+  } catch (error) {
+    console.error('Error al cargar las zonas UAS:', error)
+  }
 }
 
 const loadSpots = async () => {
@@ -80,6 +121,22 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen py-4 px-4 sm:px-6 lg:px-8">
+    <div class="mb-4 flex justify-end space-x-2">
+      <div class="flex items-center space-x-2 text-sm">
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-red-500 opacity-50 mr-1"></div>
+          <span>{{ t('message.spots.map.restrictedZone') }}</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-yellow-500 opacity-50 mr-1"></div>
+          <span>{{ t('message.spots.map.limitedZone') }}</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-green-500 opacity-50 mr-1"></div>
+          <span>{{ t('message.spots.map.allowedZone') }}</span>
+        </div>
+      </div>
+    </div>
     <div
       id="spots-map"
       class="w-full h-[calc(100vh-6rem)] rounded-lg overflow-hidden ring-1 ring-gray-200/20 dark:ring-gray-700/20 shadow-lg"

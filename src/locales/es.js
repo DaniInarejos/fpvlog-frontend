@@ -181,6 +181,7 @@ export default {
     followers: {
       title: 'Seguidores',
       total: 'Total',
+      subtitle: "Revisa todos los follows",
       searchPlaceholder: 'Buscar por username...',
       noUsersFound: 'No se encontraron usuarios',
       noFollowers: 'No tienes seguidores aún',
@@ -246,8 +247,10 @@ export default {
     feed: {
       drone:{title:'Drone'},
       description: 'Descripción',
-      title: 'Novedades  Global',
-      subtitle: 'Descubre los últimos drones, vuelos y usuarios de la comunidad',
+      title: 'Novedades',
+      globalFeed:'Global',
+      followingFeed:'Seguidos',
+      subtitle: 'Descubre las ultimas novedades de la comunidad',
       error: {
         loading: 'Error al cargar el novedades'
       },
@@ -377,7 +380,12 @@ export default {
       success: 'Spot eliminado correctamente',
       error: 'Error eliminando spot'
     
-    }
+    },
+          map:{
+            restrictedZone: "Restricted Zone",
+            limitedZone: 'Limited Zone',
+            allowedZone: 'Allowed Zone'
+          }
 
   }
   }

@@ -6,17 +6,27 @@ import { useI18n } from 'vue-i18n'
 import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 import followerService from '../services/followerService'
+import TabSelector from '../components/base/TabSelector.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
 const { t } = useI18n()
 const followers = ref([])
+const following = ref([])
 const loading = ref(true)
 const error = ref('')
 const searchQuery = ref('')
-const filteredFollowers = computed(() => {
-  if (!searchQuery.value) return followers.value
-  return followers.value.filter(user => 
+const activeTab = ref('followers')
+
+const tabs = [
+  { id: 'followers', label: t('message.followers.title') },
+  { id: 'following', label: t('message.following.title') }
+]
+
+const filteredUsers = computed(() => {
+  const users = activeTab.value === 'followers' ? followers.value : following.value
+  if (!searchQuery.value) return users
+  return users.filter(user => 
     user.username.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
@@ -28,7 +38,7 @@ const pagination = ref({
   pages: 0
 })
 
-const loadFollowers = async () => {
+const loadUsers = async () => {
   try {
     loading.value = true
     await userStore.initAuth()
@@ -38,8 +48,16 @@ const loadFollowers = async () => {
       return
     }
     
-    const response = await followerService.getUserFollowers(userStore.user._id)
-    followers.value = response.followers || []
+    const response = activeTab.value === 'followers'
+      ? await followerService.getUserFollowers(userStore.user._id)
+      : await followerService.getUserFollowing(userStore.user._id)
+
+    if (activeTab.value === 'followers') {
+      followers.value = response.followers || []
+    } else {
+      following.value = response.following || []
+    }
+
     pagination.value = response.pagination || {
       page: 1,
       limit: 20,
@@ -53,8 +71,13 @@ const loadFollowers = async () => {
   }
 }
 
+const handleTabChange = (tabId) => {
+  activeTab.value = tabId
+  loadUsers()
+}
+
 onMounted(() => {
-  loadFollowers()
+  loadUsers()
 })
 
 const navigateToDashboard = (username) => {
@@ -64,11 +87,23 @@ const navigateToDashboard = (username) => {
 
 <template>
   <div class="container mx-auto px-4 py-4">
+    <!-- Encabezado -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t('message.followers.title') }}</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-2">{{ t('message.followers.subtitle') }}</p>
+    </div>
+
+    <!-- Selector de pestañas -->
+    <TabSelector
+      :tabs="tabs"
+      :active-tab="activeTab"
+      @tab-change="handleTabChange"
+    />
+
     <BaseCard class="p-3">
       <template #header>
         <div class="flex justify-between items-center mb-2">
           <div>
-            <h1 class="text-lg font-bold">{{ t('message.followers.title') }}</h1>
             <p class="text-xs text-gray-500" v-if="pagination.total > 0">
               {{ t('message.followers.total') }}: {{ pagination.total }}
             </p>
@@ -92,25 +127,26 @@ const navigateToDashboard = (username) => {
         {{ error }}
       </div>
 
-      <div v-else-if="filteredFollowers.length === 0" class="text-center py-3 text-sm text-gray-500">
-        {{ searchQuery ? t('message.followers.noUsersFound') : t('message.followers.noFollowers') }}
+      <div v-else-if="filteredUsers.length === 0" class="text-center py-3 text-sm text-gray-500">
+        {{ searchQuery ? t('message.followers.noUsersFound') : 
+          activeTab === 'followers' ? t('message.followers.noFollowers') : t('message.followers.noFollowing') }}
       </div>
 
       <div v-else class="space-y-2">
-        <div v-for="follower in filteredFollowers" 
-             :key="follower._id" 
+        <div v-for="user in filteredUsers" 
+             :key="user._id" 
              class="flex items-center justify-between p-2 hover:bg-gray-50 rounded transition-colors cursor-pointer border border-gray-100 hover:border-primary"
-             @click="navigateToDashboard(follower.username)">
+             @click="navigateToDashboard(user.username)">
           <div class="flex items-center space-x-3">
             <UserAvatar 
-              :src="follower.profilePicture" 
-              :alt="follower.username" 
+              :src="user.profilePicture" 
+              :alt="user.username" 
               size="sm"
               class="w-8 h-8"
             />
             <div>
-              <h3 class="font-medium text-sm">@{{ follower.username }}</h3>
-              <p class="text-xs text-gray-500">{{ t('message.followers.followsSince') }} {{ new Date(follower.createdAt).toLocaleDateString() }}</p>
+              <h3 class="font-medium text-sm">@{{ user.username }}</h3>
+              <p class="text-xs text-gray-500">{{ t('message.followers.followsSince') }} {{ new Date(user.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>
         </div>

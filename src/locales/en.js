@@ -169,6 +169,7 @@ export default {
     followers: {
       title: 'Followers',
       total: 'Total',
+      subtitle: "See all followers",
       searchPlaceholder: 'Search by username...',
       noUsersFound: 'No users found',
       noFollowers: 'You don\'t have any followers yet',
@@ -248,8 +249,10 @@ export default {
     feed: {
       drone:{title:'Drone'},
       description: 'Description',
-      title: 'Global Feed',
-      subtitle: 'Discover the latest drones, flights and users from the community',
+      title: 'Feeds',
+      globalFeed:'Global',
+      followingFeed:'Following',
+      subtitle: 'Discover the latest feeds from the community',
       error: {
         loading: 'Error loading feed'
       },
@@ -369,6 +372,11 @@ export default {
             confirmation: 'Are you sure you want to delete the spot "{name}"? This action cannot be undone.',
             success: 'Spot deleted successfully',
             error: 'Error deleting spot'
+          },
+          map:{
+            restrictedZone: "Restricted Zone",
+            limitedZone: 'Limited Zone',
+            allowedZone: 'Allowed Zone'
           }
         }
       }

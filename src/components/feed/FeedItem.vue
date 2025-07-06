@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import likeService from '../../services/likeService'
@@ -19,6 +19,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['show-drone-info', 'show-spot-info', 'show-flight-info'])
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString()
@@ -88,6 +90,29 @@ const initSpotMap = (spotId, coordinates) => {
     })
   }, 100)
 }
+
+const handleDroneClick = () => {
+  emit('show-drone-info', itemData.value)
+}
+
+const handleSpotClick = () => {
+  emit('show-spot-info', itemData.value)
+}
+
+const handleFlightClick = () => {
+  emit('show-flight-info', itemData.value)
+}
+
+const handleImageError = (event) => {
+  event.target.src = '/images/placeholder.png'
+}
+
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null
+  const videoIdMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/ ]{11})/)
+  const videoId = videoIdMatch ? videoIdMatch[1] : null
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+}
 </script>
 
 <template>
@@ -139,13 +164,10 @@ const initSpotMap = (spotId, coordinates) => {
           </div>
         </div>
 
-        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
+            @click="handleDroneClick">
          {{ t('message.feed.drone.title') }}: {{ itemData.name }}
         </h4>
-        <p class="text-gray-600 dark:text-gray-300">
-          {{ t('message.feed.description') }}: {{ itemData.description }}
-
-        </p>
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
           <span v-if="itemData.droneBrand">{{ t('message.feed.itemInfo.brand') }}: {{ itemData.droneBrand.name }}</span>
           <span v-if="itemData.droneType">{{ t('message.feed.itemInfo.type') }}: {{ itemData.droneType.name }}</span>
@@ -185,7 +207,8 @@ const initSpotMap = (spotId, coordinates) => {
           </div>
         </div>
 
-        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
+            @click="handleFlightClick">
           {{ itemData.title }}
         </h4>
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
@@ -196,7 +219,8 @@ const initSpotMap = (spotId, coordinates) => {
         <p class="text-gray-600 dark:text-gray-300">
           {{ itemData.notes }}
         </p>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
+           @click="handleDroneClick">
           {{ t('message.feed.drone.title') }}: {{ itemData.drone.name }}
         </p>
 
@@ -205,6 +229,7 @@ const initSpotMap = (spotId, coordinates) => {
           :src="itemData.image"
           :alt="itemData.title"
           class="w-full h-auto rounded-lg mt-4 object-cover max-h-96"
+          @error="handleImageError"
         />
            
       </div>
@@ -224,9 +249,11 @@ const initSpotMap = (spotId, coordinates) => {
               {{ itemData.user.username }}
             </h3>
           </div>
+        
         </div>
 
-        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
+            @click="handleSpotClick">
           Spot: {{ itemData.name }}
         </h4>
         

@@ -157,7 +157,7 @@ onMounted(() => {
       </BaseCard>
 
       <BaseCard class="p-6">
-        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.recentFlights') }}</h2>
+        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.flights') }}</h2>
         <div class="space-y-4">
           <div v-for="flight in flights.slice(0, 3)" :key="flight._id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>

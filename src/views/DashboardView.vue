@@ -9,6 +9,8 @@ import likeService from '../services/likeService'
 import DashboardHeader from '../components/dashboard/DashboardHeader.vue'
 import DashboardContent from '../components/dashboard/DashboardContent.vue'
 import DroneInfo from '../components/drone/DroneInfo.vue'
+import SpotInfo from '../components/spot/SpotInfo.vue'
+import FlightInfo from '../components/flight/FlightInfo.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -22,6 +24,10 @@ const isFollowing = ref(false)
 const followLoading = ref(false)
 const showDroneInfo = ref(false)
 const selectedDroneInfo = ref(null)
+const showSpotInfo = ref(false)
+const selectedSpotInfo = ref(null)
+const showFlightInfo = ref(false)
+const selectedFlightInfo = ref(null)
 
 const loadDashboard = async () => {
   try {
@@ -93,6 +99,26 @@ const handleCloseDroneInfo = () => {
   selectedDroneInfo.value = null
 }
 
+const handleShowSpotInfo = (spot) => {
+  selectedSpotInfo.value = spot
+  showSpotInfo.value = true
+}
+
+const handleCloseSpotInfo = () => {
+  showSpotInfo.value = false
+  selectedSpotInfo.value = null
+}
+
+const handleShowFlightInfo = (flight) => {
+  selectedFlightInfo.value = flight
+  showFlightInfo.value = true
+}
+
+const handleCloseFlightInfo = () => {
+  showFlightInfo.value = false
+  selectedFlightInfo.value = null
+}
+
 onMounted(() => {
   loadDashboard()
 })
@@ -120,12 +146,26 @@ onMounted(() => {
         :dashboard="dashboard"
         @like="handleLike"
         @show-drone-info="handleShowDroneInfo"
+        @show-spot-info="handleShowSpotInfo"
+        @show-flight-info="handleShowFlightInfo"
       />
 
       <DroneInfo
         :drone="selectedDroneInfo"
         :show="showDroneInfo"
         @close="handleCloseDroneInfo"
+      />
+
+      <SpotInfo
+        :spot="selectedSpotInfo"
+        :show="showSpotInfo"
+        @close="handleCloseSpotInfo"
+      />
+
+      <FlightInfo
+        :flight="selectedFlightInfo"
+        :show="showFlightInfo"
+        @close="handleCloseFlightInfo"
       />
     </div>
   </div>

@@ -95,7 +95,7 @@ onMounted(() => {
           </div>
           
           <!-- Enlaces de navegación -->
-          <div class="flex space-x-6">
+          <div class="hidden sm:flex space-x-6">
             <router-link
               v-for="item in [
                 { name: $t('nav.spots'), path: '/spots' },
@@ -110,6 +110,34 @@ onMounted(() => {
               {{ item.name }}
             </router-link>
           </div>
+          
+          <!-- Botón de menú móvil -->
+          <button
+            @click="showMobileMenu = !showMobileMenu"
+            class="sm:hidden p-2 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+          >
+            <svg
+              class="w-6 h-6 text-gray-600 dark:text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                v-if="!showMobileMenu"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+              <path
+                v-else
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         <!-- Menú de usuario -->

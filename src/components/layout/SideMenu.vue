@@ -50,9 +50,9 @@ const navigateToProfile = () => {
 </script>
 
 <template>
-  <aside class="bg-white/30 dark:bg-gray-800/30 backdrop-blur-md shadow-xl border-r border-gray-200/20 dark:border-gray-700/20 overflow-y-auto transition-all duration-300">
-    <!-- Perfil del usuario -->
-    <div class="p-4 border-b border-gray-200/20 dark:border-gray-700/20">
+  <aside class="bg-white/30 dark:bg-gray-800/30 backdrop-blur-md shadow-xl overflow-y-auto transition-all duration-300">
+    <!-- Perfil del usuario (visible solo en desktop) -->
+    <div class="hidden sm:block p-4 border-b border-gray-200/20 dark:border-gray-700/20">
       <div 
         class="flex items-center space-x-4 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 p-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
         @click="navigateToProfile"
@@ -72,23 +72,23 @@ const navigateToProfile = () => {
     </div>
     
     <!-- Navegación -->
-    <nav class="mt-6 px-3">
+    <nav class="sm:mt-6 px-3 flex sm:flex-col justify-around sm:justify-start">
       <router-link 
         v-for="item in menuItems" 
         :key="item.path" 
         :to="item.path"
         :class="[
-          'flex items-center px-4 py-3 rounded-xl mb-2 transition-all duration-300 text-base',
+          'flex items-center sm:px-4 py-3 rounded-xl sm:mb-2 transition-all duration-300 text-base flex-col sm:flex-row',
           isActive(item.path) 
             ? 'bg-gradient-to-r from-sky-500/10 to-indigo-500/10 text-sky-600 dark:text-sky-400 transform scale-[1.02]' 
             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50 hover:scale-[1.02]'
         ]"
       >
-        <span class="mr-4 text-lg">{{ getIcon(item.icon) }}</span>
-        <span>{{ item.name }}</span>
+        <span class="text-lg sm:mr-4">{{ getIcon(item.icon) }}</span>
+        <span class="text-xs sm:text-base">{{ item.name }}</span>
         <span 
           v-if="item.count" 
-          class="ml-auto px-2 py-1 text-xs rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400"
+          class="ml-auto hidden sm:block px-2 py-1 text-xs rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400"
         >
           {{ item.count }}
         </span>

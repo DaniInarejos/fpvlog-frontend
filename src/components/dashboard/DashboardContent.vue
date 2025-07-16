@@ -42,7 +42,7 @@ const handleShowFlightInfo = (flight) => {
 <template>
   <!-- Vuelos Recientes -->
   <BaseCard v-if="flights.length > 0" class="p-4">
-    <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.flights.title') }}</h2>
+    <h2 class="text-lg font-bold mb-3">{{ t('dashboard.flights.title') }}</h2>
     <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="flight in flights" :key="flight._id" class="bg-gray-50 p-3 rounded">
         <div class="flex items-center justify-between mb-1">
@@ -68,7 +68,7 @@ const handleShowFlightInfo = (flight) => {
         <p class="text-gray-600 text-xs mb-2">{{ flight.description }}</p>
         <div class="flex justify-between text-xs text-gray-500">
           <div class="flex items-center gap-2">
-            <span>🕒 {{ flight.duration }}{{ t('message.dashboard.flights.duration') }}</span>
+            <span>🕒 {{ flight.duration }}{{ t('dashboard.flights.duration') }}</span>
             <span>📍 {{ flight.location }}</span>
           </div>
           <div class="flex items-center gap-1">
@@ -90,12 +90,12 @@ const handleShowFlightInfo = (flight) => {
     </div>
   </BaseCard>
   <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-    <p>{{ t('message.dashboard.flights.noFlights') }}</p>
+    <p>{{ t('dashboard.flights.noFlights') }}</p>
   </BaseCard>
 
   <!-- Drones -->
   <BaseCard v-if="drones.length > 0" class="p-4">
-    <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.drones.title') }}</h2>
+    <h2 class="text-lg font-bold mb-3">{{ t('dashboard.drones.title') }}</h2>
     <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">  
       <div v-for="drone in drones" :key="drone._id" class="bg-gray-50 p-3 rounded">
         <div class="flex items-center space-x-3">
@@ -135,7 +135,7 @@ const handleShowFlightInfo = (flight) => {
 
   <!-- Spots -->
   <BaseCard v-if="spots.length > 0" class="p-4">
-    <h2 class="text-lg font-bold mb-3">{{ t('message.dashboard.spots.title') }}</h2>
+    <h2 class="text-lg font-bold mb-3">{{ t('dashboard.spots.title') }}</h2>
     <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="spot in spots" :key="spot._id" class="bg-gray-50 p-3 rounded">
         <div class="flex items-center space-x-3">
@@ -168,6 +168,6 @@ const handleShowFlightInfo = (flight) => {
     </div>
   </BaseCard>
   <BaseCard v-else class="p-4 text-center text-gray-500 text-sm">
-    <p>{{ t('message.dashboard.spots.noSpots') }}</p>
+    <p>{{ t('dashboard.spots.noSpots') }}</p>
   </BaseCard>
 </template>

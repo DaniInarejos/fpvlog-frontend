@@ -43,7 +43,7 @@ const handleCloseSpotInfo = () => {
   <div>
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-        {{ t('message.spots.title') }}
+        {{ t('spots.title') }}
       </h1>
       <BaseButton
         variant="primary"
@@ -54,7 +54,7 @@ const handleCloseSpotInfo = () => {
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
           </svg>
         </template>
-        {{ t('message.spots.addSpot') }}
+        {{ t('spots.addSpot') }}
       </BaseButton>
     </div>
 
@@ -70,7 +70,7 @@ const handleCloseSpotInfo = () => {
 
     <div v-else-if="spots.length === 0" class="text-center py-12">
       <p class="text-gray-500 dark:text-gray-400">
-        {{ t('message.spots.noSpots') }}
+        {{ t('spots.noSpots') }}
       </p>
     </div>
 
@@ -87,7 +87,7 @@ const handleCloseSpotInfo = () => {
         />
         <div v-else class="w-full h-48 bg-gray-100 dark:bg-gray-800 rounded-t-lg flex items-center justify-center">
           <p class="text-gray-500 dark:text-gray-400 text-sm">
-            {{ t('message.spots.noLocation') }}
+            {{ t('spots.noLocation') }}
           </p>
         </div>
 
@@ -113,13 +113,13 @@ const handleCloseSpotInfo = () => {
 
           <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
             <span v-if="spot.visibility.public">
-              {{ t('message.spots.public') }}
+              {{ t('spots.public') }}
             </span>
             <span v-else-if="spot.visibility.visibleToFollowersOnly">
-              {{ t('message.spots.followersOnly') }}
+              {{ t('spots.followersOnly') }}
             </span>
             <span v-else>
-              {{ t('message.spots.private') }}
+              {{ t('spots.private') }}
             </span>
           </div>
            <div class="flex gap-2">
@@ -133,14 +133,14 @@ const handleCloseSpotInfo = () => {
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                 </template>
-                {{ t('message.common.edit') }}
+                {{ t('common.edit') }}
               </BaseButton>
               <BaseButton
                 size="sm"
                 variant="danger"
                 @click="emit('delete', spot)"
               >
-                {{ t('message.common.delete') }}
+                {{ t('common.delete') }}
               </BaseButton>
             </div>
         </div>

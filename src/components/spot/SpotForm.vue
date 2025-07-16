@@ -68,7 +68,7 @@ const handleSubmit = async () => {
 <template>
   <BaseCard class="p-6">
     <h2 class="text-xl font-semibold mb-4">
-      {{ props.spot ? t('message.spots.editSpot') : t('message.spots.addSpot') }}
+      {{ props.spot ? t('spots.editSpot') : t('spots.addSpot') }}
     </h2>
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <BaseAlert
@@ -82,14 +82,14 @@ const handleSubmit = async () => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BaseInput
           v-model="form.name"
-          :label="t('message.spots.form.name')"
+          :label="t('spots.form.name')"
           :error="errors.name"
           required
         />
 
         <BaseInput
           v-model="form.description"
-          :label="t('message.spots.form.description')"
+          :label="t('spots.form.description')"
           :error="errors.description"
           type="textarea"
         />
@@ -109,11 +109,11 @@ const handleSubmit = async () => {
       <div class="space-y-3">
         <BaseCheckbox
           v-model="form.visibility.public"
-          :label="t('message.spots.form.public')"
+          :label="t('spots.form.public')"
         />
         <BaseCheckbox
           v-model="form.visibility.visibleToFollowersOnly"
-          :label="t('message.spots.form.visibleToFollowersOnly')"
+          :label="t('spots.form.visibleToFollowersOnly')"
         />
       </div>
 
@@ -123,13 +123,13 @@ const handleSubmit = async () => {
           variant="secondary"
           @click="emit('close')"
         >
-          {{ t('message.common.cancel') }}
+          {{ t('common.cancel') }}
         </BaseButton>
         <BaseButton
           type="submit"
           :loading="isLoading"
         >
-          {{ props.spot ? t('message.common.save') : t('message.spots.form.create') }}
+          {{ props.spot ? t('common.save') : t('spots.form.create') }}
         </BaseButton>
       </div>
     </form>

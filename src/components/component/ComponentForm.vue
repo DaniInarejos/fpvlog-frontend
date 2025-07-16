@@ -32,7 +32,7 @@ const formData = ref({
 
 const validateForm = () => {
   errors.value = {}
-  if (!formData.value.name) errors.value.name = t('message.components.validation.name')
+  if (!formData.value.name) errors.value.name = t('components.validation.name')
   return Object.keys(errors.value).length === 0
 }
 
@@ -55,7 +55,7 @@ const handleSubmit = async () => {
   <BaseCard class="p-6">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-semibold">
-        {{ t('message.components.addComponent') }} - {{ t(`message.components.types.${selectedType.toLowerCase()}`) }}
+        {{ t('components.addComponent') }} - {{ t(`message.components.types.${selectedType.toLowerCase()}`) }}
       </h2>
     </div>
 
@@ -69,32 +69,32 @@ const handleSubmit = async () => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BaseInput
           v-model="formData.name"
-          :label="t('message.components.form.name')"
+          :label="t('components.form.name')"
           :error="errors.name"
           required
         />
 
         <BaseInput
           v-model="formData.brand"
-          :label="t('message.components.form.brand')"
+          :label="t('components.form.brand')"
         />
 
         <BaseInput
           v-model="formData.weightGrams"
-          :label="t('message.components.form.weight')"
+          :label="t('components.form.weight')"
           type="number"
         />
 
         <BaseInput
           v-model="formData.sourceUrl"
-          :label="t('message.components.form.sourceUrl')"
+          :label="t('components.form.sourceUrl')"
           type="url"
         />
       </div>
 
       <BaseInput
         v-model="formData.description"
-        :label="t('message.components.form.description')"
+        :label="t('components.form.description')"
         type="textarea"
       />
 
@@ -104,14 +104,14 @@ const handleSubmit = async () => {
           variant="secondary"
           @click="emit('close')"
         >
-          {{ t('message.common.cancel') }}
+          {{ t('common.cancel') }}
         </BaseButton>
 
         <BaseButton
           type="submit"
           :loading="isLoading"
         >
-          {{ t('message.common.save') }}
+          {{ t('common.save') }}
         </BaseButton>
       </div>
     </form>

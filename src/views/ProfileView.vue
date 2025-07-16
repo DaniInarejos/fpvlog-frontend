@@ -60,7 +60,7 @@ const loadProfile = async () => {
       }
     }
   } catch (err) {
-    error.value = t('message.profile.messages.loadError')
+    error.value = t('profile.messages.loadError')
   } finally {
     loading.value = false
   }
@@ -77,7 +77,7 @@ const handleSubmit = async () => {
     success.value = true
     setTimeout(() => success.value = false, 3000)
   } catch (err) {
-    error.value = t('message.profile.messages.updateError')
+    error.value = t('profile.messages.updateError')
   } finally {
     loading.value = false
   }
@@ -99,7 +99,7 @@ const handleProfilePictureUpload = async (event) => {
     success.value = true
     setTimeout(() => success.value = false, 3000)
   } catch (err) {
-    error.value = t('message.profile.messages.photoError')
+    error.value = t('profile.messages.photoError')
   } finally {
     loading.value = false
   }
@@ -113,7 +113,7 @@ onMounted(() => {
 <template>
   <div class="min-h-[85vh] max-w-4xl mx-auto py-8 px-4">
     <h1 class="text-3xl font-bold mb-8 bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent animate-fade-in">
-      {{ t('message.profile.title') }}
+      {{ t('profile.title') }}
     </h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -134,22 +134,22 @@ onMounted(() => {
                 class="hidden"
                 @change="handleProfilePictureUpload"
               >
-              {{ t('message.profile.uploadPhoto') }}
+              {{ t('profile.uploadPhoto') }}
             </label>
           </div>
 
           <div class="grid grid-cols-3 gap-6">
             <div class="transform hover:scale-105 transition-transform duration-300">
               <div class="text-2xl font-bold text-sky-500">{{ user?.flightCount || 0 }}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('message.profile.stats.flights') }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('profile.stats.flights') }}</div>
             </div>
             <div class="transform hover:scale-105 transition-transform duration-300">
               <div class="text-2xl font-bold text-indigo-500">{{ user?.followers?.length || 0 }}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('message.profile.stats.followers') }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('profile.stats.followers') }}</div>
             </div>
             <div class="transform hover:scale-105 transition-transform duration-300">
               <div class="text-2xl font-bold text-purple-500">{{ user?.following?.length || 0 }}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('message.profile.stats.following') }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">{{ t('profile.stats.following') }}</div>
             </div>
           </div>
         </BaseCard>
@@ -175,14 +175,14 @@ onMounted(() => {
             dismissible
             @close="success = false"
           >
-            {{ t('message.profile.messages.updateSuccess') }}
+            {{ t('profile.messages.updateSuccess') }}
           </BaseAlert>
 
           <form @submit.prevent="handleSubmit" class="space-y-8">
             <div class="space-y-6">
               <BaseInput
                 v-model="form.username"
-                :label="t('message.profile.form.username')"
+                :label="t('profile.form.username')"
                 required
                 class="transition-all duration-300 focus-within:scale-[1.02]"
               />
@@ -190,13 +190,13 @@ onMounted(() => {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <BaseInput
                   v-model="form.name"
-                  :label="t('message.profile.form.name')"
+                  :label="t('profile.form.name')"
                   required
                   class="transition-all duration-300 focus-within:scale-[1.02]"
                 />
                 <BaseInput
                   v-model="form.lastName"
-                  :label="t('message.profile.form.lastName')"
+                  :label="t('profile.form.lastName')"
                   required
                   class="transition-all duration-300 focus-within:scale-[1.02]"
                 />
@@ -205,7 +205,7 @@ onMounted(() => {
               <BaseInput
                 v-model="form.email"
                 type="email"
-                :label="t('message.profile.form.email')"
+                :label="t('profile.form.email')"
                 required
                 disabled
                 class="opacity-70"
@@ -214,7 +214,7 @@ onMounted(() => {
 
             <!-- Configuración de privacidad -->
             <div class="space-y-6">
-              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('message.profile.privacy.title') }}</h3>
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('profile.privacy.title') }}</h3>
               
               <div class="space-y-4">
                 <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-300">
@@ -223,7 +223,7 @@ onMounted(() => {
                     v-model="form.privacySettings.allowFollowersToSeeFlights"
                     class="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500 transition-colors duration-300"
                   />
-                  <span class="text-gray-700 dark:text-gray-300">{{ t('message.profile.privacy.allowFlights') }}</span>
+                  <span class="text-gray-700 dark:text-gray-300">{{ t('profile.privacy.allowFlights') }}</span>
                 </label>
 
                 <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-300">
@@ -232,19 +232,19 @@ onMounted(() => {
                     v-model="form.privacySettings.allowFollowersToSeeDrones"
                     class="w-5 h-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500 transition-colors duration-300"
                   />
-                  <span class="text-gray-700 dark:text-gray-300">{{ t('message.profile.privacy.allowDrones') }}</span>
+                  <span class="text-gray-700 dark:text-gray-300">{{ t('profile.privacy.allowDrones') }}</span>
                 </label>
               </div>
 
               <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('message.profile.privacy.profileVisibility') }}</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('profile.privacy.profileVisibility') }}</label>
                 <select
                   v-model="form.privacySettings.profileVisibility"
                   class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-300"
                 >
-                  <option value="public">{{ t('message.profile.privacy.options.public') }}</option>
-                  <option value="followers">{{ t('message.profile.privacy.options.followers') }}</option>
-                  <option value="private">{{ t('message.profile.privacy.options.private') }}</option>
+                  <option value="public">{{ t('profile.privacy.options.public') }}</option>
+                  <option value="followers">{{ t('profile.privacy.options.followers') }}</option>
+                  <option value="private">{{ t('profile.privacy.options.private') }}</option>
                 </select>
               </div>
             </div>
@@ -256,7 +256,7 @@ onMounted(() => {
                 :loading="loading"
                 class="min-w-[150px]"
               >
-                {{ t('message.profile.form.saveChanges') }}
+                {{ t('profile.form.saveChanges') }}
               </BaseButton>
             </div>
           </form>

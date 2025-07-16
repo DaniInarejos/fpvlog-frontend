@@ -141,8 +141,12 @@ const routes = [
   {
   path: '/:pathMatch(.*)*',
   redirect: '/'
+},
+{
+  path: '/terms',
+  name: 'terms',
+  component: () => import('../views/TermsView.vue')
 }
-
 ]
 
 const router = createRouter({

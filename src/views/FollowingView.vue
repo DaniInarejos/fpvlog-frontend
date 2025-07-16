@@ -27,7 +27,7 @@ const loadFeed = async (page = 1) => {
     hasNextPage.value = response.pagination.hasNextPage
     currentPage.value = response.pagination.currentPage
   } catch (err) {
-    error.value = t('message.feed.error.loading')
+    error.value = t('feed.error.loading')
   } finally {
     loading.value = false
   }
@@ -56,8 +56,8 @@ onUnmounted(() => {
   <div class="container mx-auto px-4 py-8 max-w-3xl">
     <!-- Encabezado -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t('message.feed.title') }}</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-2">{{ t('message.feed.subtitle') }}</p>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t('feed.title') }}</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-2">{{ t('feed.subtitle') }}</p>
     </div>
 
     <!-- Lista de items -->
@@ -81,7 +81,7 @@ onUnmounted(() => {
 
     <!-- Fin del feed -->
     <div v-if="!hasNextPage && !loading" class="text-center py-8 text-gray-600 dark:text-gray-400">
-      {{ t('message.feed.noMoreContent') }}
+      {{ t('feed.noMoreContent') }}
     </div>
   </div>
 </template>

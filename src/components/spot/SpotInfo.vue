@@ -89,18 +89,18 @@ onMounted(() => {
       <!-- Información básica -->
       <div class="space-y-4">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('message.spots.details') }}</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('spots.details') }}</h3>
           <dl class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.spots.location') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('spots.location') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ spot.location?.city }}, {{ spot.location?.country }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.spots.visibility') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('spots.visibility') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">
-                <span v-if="spot.visibility?.public">{{ t('message.spots.public') }}</span>
-                <span v-else-if="spot.visibility?.visibleToFollowersOnly">{{ t('message.spots.followersOnly') }}</span>
-                <span v-else>{{ t('message.spots.private') }}</span>
+                <span v-if="spot.visibility?.public">{{ t('spots.public') }}</span>
+                <span v-else-if="spot.visibility?.visibleToFollowersOnly">{{ t('spots.followersOnly') }}</span>
+                <span v-else>{{ t('spots.private') }}</span>
               </dd>
             </div>
           </dl>
@@ -108,7 +108,7 @@ onMounted(() => {
 
         <!-- Descripción -->
         <div v-if="spot.description">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('message.spots.description') }}</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('spots.description') }}</h3>
           <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ spot.description }}</p>
         </div>
       </div>

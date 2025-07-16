@@ -41,7 +41,7 @@ const droneService = {
     return api.get('/drone-brands')
   },
 
-  // Subir imagen de drone
+  // Subir imagen de drone - CORREGIDO
   uploadDroneImage(droneId, formData) {
     return api.post(`/drones/${droneId}/image`, formData, {
       headers: {

@@ -95,14 +95,14 @@ onMounted(() => {
     <!-- Modal para confirmar eliminación -->
     <BaseModal
       :show="showDeleteModal"
-      :title="t('message.drones.delete.title')"
+      :title="t('drones.delete.title')"
       :show-warning-icon="true"
       :show-delete-button="true"
       @close="showDeleteModal = false"
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('message.drones.delete.confirmation', { name: droneToDelete?.name }) }}
+        {{ t('drones.delete.confirmation', { name: droneToDelete?.name }) }}
       </p>
     </BaseModal>
   </div>

@@ -50,7 +50,7 @@ const handleFileUpload = (event) => {
         class="hidden"
         @change="handleFileUpload"
       >
-      {{ t('message.profile.uploadPhoto') }}
+      {{ t('profile.uploadPhoto') }}
     </label>
   </div>
 </template>

@@ -41,21 +41,21 @@ watch(filters, (newFilters) => {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <BaseInput
           v-model="filters.search"
-          :label="t('message.components.filter.search')"
-          :placeholder="t('message.components.filter.searchPlaceholder')"
+          :label="t('components.filter.search')"
+          :placeholder="t('components.filter.searchPlaceholder')"
           class="w-full"
         />
         <BaseSelect
           v-model="filters.type"
           :options="componentTypes"
-          :label="t('message.components.filter.type')"
-          :placeholder="t('message.components.filter.typePlaceholder')"
+          :label="t('components.filter.type')"
+          :placeholder="t('components.filter.typePlaceholder')"
           class="w-full"
         />
         <BaseInput
           v-model="filters.brand"
-          :label="t('message.components.filter.brand')"
-          :placeholder="t('message.components.filter.brandPlaceholder')"
+          :label="t('components.filter.brand')"
+          :placeholder="t('components.filter.brandPlaceholder')"
           class="w-full"
         />
       </div>
@@ -66,7 +66,7 @@ watch(filters, (newFilters) => {
           @click="clearFilters"
           class="w-auto"
         >
-          {{ t('message.components.filter.clear') }}
+          {{ t('components.filter.clear') }}
         </BaseButton>
       </div>
     </div>

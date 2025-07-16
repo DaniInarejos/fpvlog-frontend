@@ -14,13 +14,13 @@ const { t } = useI18n()
 const menuItems = computed(() => [
 
   {
-    name: t('message.nav.feed'),
+    name: t('nav.feed'),
     path: '/feed',
     icon: 'feed',
     exact: true
   },
   {
-    name: t('message.nav.spots'),
+    name: t('nav.spots'),
     path: '/feedSpots',
     icon: 'feedSpots',
     exact: true
@@ -59,7 +59,7 @@ const navigateToProfile = () => {
       >
         <UserAvatar 
           :src="userStore.user?.profilePicture"
-          :alt="userStore.user?.name || t('message.common.user')" 
+          :alt="userStore.user?.name || t('common.user')" 
           size="md" 
           status="online"
           class="ring-2 ring-sky-500/30 transition-transform duration-300"

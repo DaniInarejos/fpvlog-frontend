@@ -84,7 +84,7 @@ onMounted(() => {
     </label>
     
     <div v-if="isLoading" class="text-sm text-gray-500">
-      {{ t('message.common.loading') }}
+      {{ t('common.loading') }}
     </div>
     
     <div v-else-if="loadError" class="text-sm text-red-500">
@@ -114,7 +114,7 @@ onMounted(() => {
           @change="$emit('update:modelValue', $event.target.value)"
           class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
         >
-          <option value="">{{ t('message.common.select') }}</option>
+          <option value="">{{ t('common.select') }}</option>
           <option
             v-for="component in components"
             :key="component._id"

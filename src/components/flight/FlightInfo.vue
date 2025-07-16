@@ -77,30 +77,30 @@ const getYouTubeEmbedUrl = (url) => {
       <!-- Información básica -->
       <div class="space-y-4">
         <div>
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('message.flights.details.drone') }}</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('flights.details.drone') }}</h3>
           <dl class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.date') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.date') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(flight.date) }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.location') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.location') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ flight.location }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.duration') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.duration') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ formatDuration(flight.duration) }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.batteryUsed') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.batteryUsed') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ flight.batteryUsed }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.weather') }}</dt>
-              <dd class="text-sm text-gray-900 dark:text-gray-100">{{ flight.weather || t('message.flights.details.notSpecified') }}</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.weather') }}</dt>
+              <dd class="text-sm text-gray-900 dark:text-gray-100">{{ flight.weather || t('flights.details.notSpecified') }}</dd>
             </div>
             <div class="flex justify-between sm:block">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('message.flights.details.likes') }}</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('flights.details.likes') }}</dt>
               <dd class="text-sm text-gray-900 dark:text-gray-100">{{ flight.likesCount || 0 }}</dd>
             </div>
           </dl>
@@ -108,7 +108,7 @@ const getYouTubeEmbedUrl = (url) => {
 
         <!-- Notas -->
         <div v-if="flight.notes">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('message.flights.details.notes') }}</h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t('flights.details.notes') }}</h3>
           <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ flight.notes }}</p>
         </div>
       </div>

@@ -51,9 +51,9 @@ const getYouTubeThumbnail = (url) => {
 }
 
 const getSpotName = (spotId) => {
-  if (!spotId) return t('message.flights.details.notSpecified')
+  if (!spotId) return t('flights.details.notSpecified')
   const spot = props.spots.find(s => s._id === spotId)
-  return spot ? spot.name : t('message.flights.details.notSpecified')
+  return spot ? spot.name : t('flights.details.notSpecified')
 }
 
 const handleCreate = () => {
@@ -64,13 +64,13 @@ const handleCreate = () => {
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ $t('message.flights.title') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('flights.title') }}</h1>
       
       <BaseButton
         v-if="showCreateButton"
         @click="handleCreate"
       >
-        {{ $t('message.flights.addFlight') }}
+        {{ $t('flights.addFlight') }}
       </BaseButton>
     </div>
 
@@ -113,7 +113,7 @@ const handleCreate = () => {
           <div class="text-sm text-gray-600 mb-4">
             <p class="mb-1 flex items-center justify-between">
               <span>
-                <span class="font-medium">{{ t('message.flights.details.drone') }}:</span>
+                <span class="font-medium">{{ t('flights.details.drone') }}:</span>
                 <span 
                   v-if="flight.droneId"
                   class="hover:text-primary-600 cursor-pointer"
@@ -121,11 +121,11 @@ const handleCreate = () => {
                 >
                   {{ drones.find(d => d._id === flight.droneId)?.name }}
                 </span>
-                <span v-else>{{ t('message.flights.details.notSpecified') }}</span>
+                <span v-else>{{ t('flights.details.notSpecified') }}</span>
               </span>
             </p>
             <p class="mb-1">
-              <span class="font-medium">{{ t('message.flights.details.location') }}:</span>
+              <span class="font-medium">{{ t('flights.details.location') }}:</span>
               <span 
                 v-if="flight.spotId"
                 class="hover:text-primary-600 cursor-pointer"
@@ -133,16 +133,16 @@ const handleCreate = () => {
               >
                 {{ getSpotName(flight.spotId) }}
               </span>
-              <span v-else>{{ t('message.flights.details.notSpecified') }}</span>
+              <span v-else>{{ t('flights.details.notSpecified') }}</span>
             </p>
             <div class="flex items-center gap-4">
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ formatDuration(flight.duration) }}</span>
-                <span class="text-gray-400">{{ t('message.flights.details.duration') }}</span>
+                <span class="text-gray-400">{{ t('flights.details.duration') }}</span>
               </div>
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ flight.batteryUsed }}</span>
-                <span class="text-gray-400">{{ t('message.flights.details.batteries') }}</span>
+                <span class="text-gray-400">{{ t('flights.details.batteries') }}</span>
               </div>
             </div>
           </div>
@@ -158,14 +158,14 @@ const handleCreate = () => {
               variant="secondary"
               @click="emit('edit', flight)"
             >
-              {{ t('message.common.edit') }}
+              {{ t('common.edit') }}
             </BaseButton>
             <BaseButton
               size="sm"
               variant="danger"
               @click="emit('delete', flight)"
             >
-              {{ t('message.common.delete') }}
+              {{ t('common.delete') }}
             </BaseButton>
           </div>
         </div>

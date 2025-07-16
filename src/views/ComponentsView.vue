@@ -136,7 +136,7 @@ onMounted(() => {
 
     <BaseModal
       :show="showDeleteModal"
-      :title="t('message.common.delete')"
+      :title="t('common.delete')"
       :show-warning-icon="true"
       :show-delete-button="true"
       :show-accept-button="false"
@@ -144,7 +144,7 @@ onMounted(() => {
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('message.components.delete.confirmation', { name: componentToDelete?.name }) }}
+        {{ t('components.delete.confirmation', { name: componentToDelete?.name }) }}
       </p>
     </BaseModal>
 

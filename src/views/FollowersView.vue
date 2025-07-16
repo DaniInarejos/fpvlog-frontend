@@ -19,8 +19,8 @@ const searchQuery = ref('')
 const activeTab = ref('followers')
 
 const tabs = [
-  { id: 'followers', label: t('message.followers.title') },
-  { id: 'following', label: t('message.following.title') }
+  { id: 'followers', label: t('followers.title') },
+  { id: 'following', label: t('following.title') }
 ]
 
 const filteredUsers = computed(() => {
@@ -44,7 +44,7 @@ const loadUsers = async () => {
     await userStore.initAuth()
     
     if (!userStore.user?._id) {
-      error.value = t('message.followers.error.userNotFound')
+      error.value = t('followers.error.userNotFound')
       return
     }
     
@@ -65,7 +65,7 @@ const loadUsers = async () => {
       pages: 0
     }
   } catch (err) {
-    error.value = t('message.followers.error.loading')
+    error.value = t('followers.error.loading')
   } finally {
     loading.value = false
   }
@@ -89,8 +89,8 @@ const navigateToDashboard = (username) => {
   <div class="container mx-auto px-4 py-4">
     <!-- Encabezado -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t('message.followers.title') }}</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-2">{{ t('message.followers.subtitle') }}</p>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t('followers.title') }}</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-2">{{ t('followers.subtitle') }}</p>
     </div>
 
     <!-- Selector de pestañas -->
@@ -105,14 +105,14 @@ const navigateToDashboard = (username) => {
         <div class="flex justify-between items-center mb-2">
           <div>
             <p class="text-xs text-gray-500" v-if="pagination.total > 0">
-              {{ t('message.followers.total') }}: {{ pagination.total }}
+              {{ t('followers.total') }}: {{ pagination.total }}
             </p>
           </div>
           <div class="relative w-48">
             <input
               v-model="searchQuery"
               type="text"
-              :placeholder="t('message.followers.searchPlaceholder')"
+              :placeholder="t('followers.searchPlaceholder')"
               class="w-full px-3 py-1.5 text-sm border rounded focus:ring-1 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -128,8 +128,8 @@ const navigateToDashboard = (username) => {
       </div>
 
       <div v-else-if="filteredUsers.length === 0" class="text-center py-3 text-sm text-gray-500">
-        {{ searchQuery ? t('message.followers.noUsersFound') : 
-          activeTab === 'followers' ? t('message.followers.noFollowers') : t('message.followers.noFollowing') }}
+        {{ searchQuery ? t('followers.noUsersFound') : 
+          activeTab === 'followers' ? t('followers.noFollowers') : t('followers.noFollowing') }}
       </div>
 
       <div v-else class="space-y-2">
@@ -146,7 +146,7 @@ const navigateToDashboard = (username) => {
             />
             <div>
               <h3 class="font-medium text-sm">@{{ user.username }}</h3>
-              <p class="text-xs text-gray-500">{{ t('message.followers.followsSince') }} {{ new Date(user.createdAt).toLocaleDateString() }}</p>
+              <p class="text-xs text-gray-500">{{ t('followers.followsSince') }} {{ new Date(user.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>
         </div>

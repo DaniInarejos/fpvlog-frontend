@@ -27,18 +27,18 @@ const { t } = useI18n()
 const showTypeSelector = ref(false)
 
 const componentTypes = [
-  { _id: 'FRAME', name: t('message.components.types.frame') },
-  { _id: 'MOTOR', name: t('message.components.types.motor') },
-  { _id: 'FC', name: t('message.components.types.flightController') },
-  { _id: 'ESC', name: t('message.components.types.esc') },
-  { _id: 'VTX', name: t('message.components.types.vtx') },
-  { _id: 'CAMERA', name: t('message.components.types.camera') },
-  { _id: 'ANTENNA', name: t('message.components.types.antenna') },
-  { _id: 'RECEIVER', name: t('message.components.types.receiver') },
-  { _id: 'BATTERY', name: t('message.components.types.battery') },
-  { _id: 'PROPS', name: t('message.components.types.props') },
-  { _id: 'MOUNT', name: t('message.components.types.mount') },
-  { _id: 'OTHER', name: t('message.components.types.other') }
+  { _id: 'FRAME', name: t('components.types.frame') },
+  { _id: 'MOTOR', name: t('components.types.motor') },
+  { _id: 'FC', name: t('components.types.flightController') },
+  { _id: 'ESC', name: t('components.types.esc') },
+  { _id: 'VTX', name: t('components.types.vtx') },
+  { _id: 'CAMERA', name: t('components.types.camera') },
+  { _id: 'ANTENNA', name: t('components.types.antenna') },
+  { _id: 'RECEIVER', name: t('components.types.receiver') },
+  { _id: 'BATTERY', name: t('components.types.battery') },
+  { _id: 'PROPS', name: t('components.types.props') },
+  { _id: 'MOUNT', name: t('components.types.mount') },
+  { _id: 'OTHER', name: t('components.types.other') }
 ]
 
 const handleTypeSelect = (typeId) => {
@@ -65,7 +65,7 @@ const componentIcons = {
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ t('message.components.title') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{{ t('components.title') }}</h1>
       <BaseButton
         variant="primary"
         @click="showTypeSelector = true"
@@ -75,7 +75,7 @@ const componentIcons = {
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
           </svg>
         </template>
-        {{ t('message.components.addComponent') }}
+        {{ t('components.addComponent') }}
       </BaseButton>
     </div>
 
@@ -104,7 +104,7 @@ const componentIcons = {
           </div>
 
           <div v-if="components[type._id].length === 0" class="text-center py-6">
-            <p class="text-sm text-gray-500">{{ t('message.components.noComponentsOfType') }}</p>
+            <p class="text-sm text-gray-500">{{ t('components.noComponentsOfType') }}</p>
           </div>
 
           <BaseScrollbar v-else>
@@ -140,14 +140,14 @@ const componentIcons = {
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                       </svg>
                     </template>
-                    {{ t('message.common.edit') }}
+                    {{ t('common.edit') }}
                   </BaseButton>
                   <BaseButton
                     size="sm"
                     variant="danger"
                     @click="emit('delete', component)"
                   >
-                    {{ t('message.common.delete') }}
+                    {{ t('common.delete') }}
                   </BaseButton>
                 </div>
               </div>
@@ -159,7 +159,7 @@ const componentIcons = {
 
     <BaseModal
       :show="showTypeSelector"
-      :title="t('message.components.selectType')"
+      :title="t('components.selectType')"
       @close="showTypeSelector = false"
     >
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

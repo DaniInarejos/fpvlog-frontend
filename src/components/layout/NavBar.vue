@@ -98,10 +98,10 @@ onMounted(() => {
           <div class="flex space-x-6">
             <router-link
               v-for="item in [
-                { name: $t('message.nav.spots'), path: '/spots' },
-                { name: $t('message.nav.flights'), path: '/flights' },
-                { name: $t('message.nav.drones'), path: '/drones' },
-                { name: $t('message.nav.components'), path: '/components' },
+                { name: $t('nav.spots'), path: '/spots' },
+                { name: $t('nav.flights'), path: '/flights' },
+                { name: $t('nav.drones'), path: '/drones' },
+                { name: $t('nav.components'), path: '/components' },
               ]"
               :key="item.path"
               :to="item.path"
@@ -160,15 +160,15 @@ onMounted(() => {
               to="/profile"
               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
             >
-              {{ $t('message.nav.profile') }}
+              {{ $t('nav.profile') }}
             </router-link>
             <button
               v-for="(item, index) in [
-             //   { name: $t('message.nav.droneBrands'), action: 'Marcas Drones' },
-             //   { name: $t('message.nav.droneTypes'), action: 'Tipos de Drones' },
-                { name: $t('message.nav.followers'), action: 'Seguidores' },
-                { name: $t('message.nav.about'), action: 'Acerca de' },
-                { name: $t('message.nav.logout'), action: 'Cerrar Sesión' },
+             //   { name: $t('nav.droneBrands'), action: 'Marcas Drones' },
+             //   { name: $t('nav.droneTypes'), action: 'Tipos de Drones' },
+                { name: $t('nav.followers'), action: 'Seguidores' },
+                { name: $t('nav.about'), action: 'Acerca de' },
+                { name: $t('nav.logout'), action: 'Cerrar Sesión' },
               ]"
               :key="index"
               @click="handleDroneOptions(item.action)"

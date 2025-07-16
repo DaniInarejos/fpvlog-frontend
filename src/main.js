@@ -4,19 +4,14 @@ import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 import './assets/styles/main.css'
-import es from './locales/es.js'
-import en from './locales/en.js'
-
+import i18nConfig from './locales/index.js'
 
 const i18n = createI18n({
-  legacy: false, 
-  locale: 'es',
-  fallbackLocale: 'en', 
-  messages: {
-    es,
-    en
-  }
+  ...i18nConfig,
+  legacy: false, // Deshabilitar modo legacy para Composition API
+  globalInjection: true // Habilitar inyección global para Options API
 })
+
 function loadGoogleMaps(callbackName = 'initMap') {
   const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
   const script = document.createElement('script');

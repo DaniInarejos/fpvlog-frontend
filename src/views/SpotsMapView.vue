@@ -125,15 +125,15 @@ onMounted(() => {
       <div class="flex items-center space-x-2 text-sm">
         <div class="flex items-center">
           <div class="w-4 h-4 bg-red-500 opacity-50 mr-1"></div>
-          <span>{{ t('message.spots.map.restrictedZone') }}</span>
+          <span>{{ t('spots.map.restrictedZone') }}</span>
         </div>
         <div class="flex items-center">
           <div class="w-4 h-4 bg-yellow-500 opacity-50 mr-1"></div>
-          <span>{{ t('message.spots.map.limitedZone') }}</span>
+          <span>{{ t('spots.map.limitedZone') }}</span>
         </div>
         <div class="flex items-center">
           <div class="w-4 h-4 bg-green-500 opacity-50 mr-1"></div>
-          <span>{{ t('message.spots.map.allowedZone') }}</span>
+          <span>{{ t('spots.map.allowedZone') }}</span>
         </div>
       </div>
     </div>

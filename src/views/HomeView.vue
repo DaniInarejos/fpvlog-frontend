@@ -25,10 +25,10 @@ const loading = ref(true)
 const error = ref(null)
 
 const formatDuration = (minutes) => {
-  if (!minutes) return `0${t('message.home.time.hours')} 0${t('message.home.time.minutes')}`
+  if (!minutes) return `0${t('home.time.hours')} 0${t('home.time.minutes')}`
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
-  return `${hours}${t('message.home.time.hours')} ${mins}${t('message.home.time.minutes')}`
+  return `${hours}${t('home.time.hours')} ${mins}${t('home.time.minutes')}`
 }
 
 
@@ -55,7 +55,7 @@ const loadDashboardData = async () => {
     following.value = userStore.user.following || []
     followers.value = []
   } catch (err) {
-    error.value = t('message.home.error.loading')
+    error.value = t('home.error.loading')
   } finally {
     loading.value = false
   }
@@ -94,16 +94,16 @@ onMounted(() => {
             <div class="flex flex-wrap gap-6 justify-center md:justify-start mb-4">
               <div class="text-center">
                 <span class="block text-2xl font-bold">{{ followers.length }}</span>
-                <span class="text-gray-600">{{ t('message.home.profile.followers') }}</span>
+                <span class="text-gray-600">{{ t('home.profile.followers') }}</span>
               </div>
               <div class="text-center">
                 <span class="block text-2xl font-bold">{{ following.length }}</span>
-                <span class="text-gray-600">{{ t('message.home.profile.following') }}</span>
+                <span class="text-gray-600">{{ t('home.profile.following') }}</span>
               </div>
             </div>
 
             <p class="text-gray-700">
-              {{ userStore.user?.bio || t('message.home.profile.bio') }}
+              {{ userStore.user?.bio || t('home.profile.bio') }}
             </p>
           </div>
         </div>
@@ -112,35 +112,35 @@ onMounted(() => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.totalTime') }}</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('home.stats.totalTime') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ formatDuration(stats.totalFlightTime) }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.flights') }}</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('home.stats.flights') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ stats.totalFlights }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.drones') }}</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('home.stats.drones') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ stats.totalDrones }}</p>
           </div>
         </BaseCard>
 
         <BaseCard class="p-6">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-600">{{ t('message.home.stats.averageTime') }}</h3>
+            <h3 class="text-lg font-semibold text-gray-600">{{ t('home.stats.averageTime') }}</h3>
             <p class="text-3xl font-bold text-primary-600">{{ formatDuration(stats.averageFlightTime) }}</p>
           </div>
         </BaseCard>
       </div>
 
       <BaseCard class="p-6">
-        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.myDrones') }}</h2>
+        <h2 class="text-2xl font-bold mb-6">{{ t('home.sections.myDrones') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="drone in drones.slice(0, 3)" :key="drone._id" class="relative group">
             <img 
@@ -157,7 +157,7 @@ onMounted(() => {
       </BaseCard>
 
       <BaseCard class="p-6">
-        <h2 class="text-2xl font-bold mb-6">{{ t('message.home.sections.flights') }}</h2>
+        <h2 class="text-2xl font-bold mb-6">{{ t('home.sections.flights') }}</h2>
         <div class="space-y-4">
           <div v-for="flight in flights.slice(0, 3)" :key="flight._id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>

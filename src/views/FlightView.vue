@@ -167,7 +167,7 @@ onMounted(() => {
 
     <BaseModal
       :show="showDeleteModal"
-      :title="t('message.flights.delete.title')"
+      :title="t('flights.delete.title')"
       :show-warning-icon="true"
       :show-delete-button="true"
       :show-accept-button="false"
@@ -175,7 +175,7 @@ onMounted(() => {
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('message.flights.delete.confirmation', { title: flightToDelete?.title }) }}
+        {{ t('flights.delete.confirmation', { title: flightToDelete?.title }) }}
       </p>
     </BaseModal>
     <FlightInfo

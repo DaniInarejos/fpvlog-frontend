@@ -2,12 +2,15 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import BaseInput from '../components/base/BaseInput.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import BaseAlert from '../components/base/BaseAlert.vue'
+import BaseCard from '../components/base/BaseCard.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 
 const formData = ref({
   username: '',
@@ -26,6 +29,7 @@ const formData = ref({
 const errors = ref({})
 const isLoading = ref(false)
 const showSuccessAlert = ref(false)
+const showTermsModal = ref(false)
 
 const validateForm = () => {
   errors.value = {}
@@ -150,9 +154,13 @@ const handleSubmit = async () => {
               />
               <label for="terms" class="ml-2 block text-sm text-gray-900">
                 Acepto los
-                <a href="#" class="font-medium text-primary-600 hover:text-primary-500">
+                <button
+                  type="button"
+                  @click="showTermsModal = true"
+                  class="font-medium text-primary-600 hover:text-primary-500"
+                >
                   términos y condiciones
-                </a>
+                </button>
               </label>
             </div>
           </div>
@@ -167,6 +175,97 @@ const handleSubmit = async () => {
             </BaseButton>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones -->
+    <div v-if="showTermsModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Fondo oscuro del modal -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="showTermsModal = false"></div>
+
+        <!-- Contenedor del modal -->
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 max-h-[80vh] overflow-y-auto">
+            <!-- Contenido de los términos -->
+            <div class="space-y-8">
+              <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900">{{ t('terms.title') }}</h2>
+                <p class="mt-4 text-gray-500">{{ t('terms.lastUpdated') }}: {{ t('terms.updateDate') }}</p>
+              </div>
+
+              <!-- Secciones de términos -->
+              <BaseCard v-for="section in ['definitions', 'registration', 'content', 'affiliates', 'privacy', 'liability', 'offers', 'modifications']" :key="section">
+                <h3 class="text-2xl font-semibold mb-4">{{ t(`terms.${section}.title`) }}</h3>
+                <div class="prose max-w-none">
+                  <template v-if="section === 'definitions'">
+                    <h4>{{ t('terms.definitions.user') }}</h4>
+                    <p>{{ t('terms.definitions.userDesc') }}</p>
+                    <h4>{{ t('terms.definitions.fpvPilot') }}</h4>
+                    <p>{{ t('terms.definitions.fpvPilotDesc') }}</p>
+                    <h4>{{ t('terms.definitions.content') }}</h4>
+                    <p>{{ t('terms.definitions.contentDesc') }}</p>
+                    <h4>{{ t('terms.definitions.services') }}</h4>
+                    <p>{{ t('terms.definitions.servicesDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'registration'">
+                    <h4>{{ t('terms.registration.requirements') }}</h4>
+                    <p>{{ t('terms.registration.requirementsDesc') }}</p>
+                    <h4>{{ t('terms.registration.verification') }}</h4>
+                    <p>{{ t('terms.registration.verificationDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'content'">
+                    <h4>{{ t('terms.content.rules') }}</h4>
+                    <p>{{ t('terms.content.rulesDesc') }}</p>
+                    <h4>{{ t('terms.content.safety') }}</h4>
+                    <p>{{ t('terms.content.safetyDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'affiliates'">
+                    <h4>{{ t('terms.affiliates.disclosure') }}</h4>
+                    <p>{{ t('terms.affiliates.disclosureDesc') }}</p>
+                    <h4>{{ t('terms.affiliates.commission') }}</h4>
+                    <p>{{ t('terms.affiliates.commissionDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'privacy'">
+                    <h4>{{ t('terms.privacy.data') }}</h4>
+                    <p>{{ t('terms.privacy.dataDesc') }}</p>
+                    <h4>{{ t('terms.privacy.location') }}</h4>
+                    <p>{{ t('terms.privacy.locationDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'liability'">
+                    <h4>{{ t('terms.liability.disclaimer') }}</h4>
+                    <p>{{ t('terms.liability.disclaimerDesc') }}</p>
+                    <h4>{{ t('terms.liability.compliance') }}</h4>
+                    <p>{{ t('terms.liability.complianceDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'offers'">
+                    <h4>{{ t('terms.offers.conditions') }}</h4>
+                    <p>{{ t('terms.offers.conditionsDesc') }}</p>
+                    <h4>{{ t('terms.offers.validity') }}</h4>
+                    <p>{{ t('terms.offers.validityDesc') }}</p>
+                  </template>
+                  <template v-else-if="section === 'modifications'">
+                    <h4>{{ t('terms.modifications.changes') }}</h4>
+                    <p>{{ t('terms.modifications.changesDesc') }}</p>
+                    <h4>{{ t('terms.modifications.termination') }}</h4>
+                    <p>{{ t('terms.modifications.terminationDesc') }}</p>
+                  </template>
+                </div>
+              </BaseCard>
+            </div>
+          </div>
+
+          <!-- Botones del modal -->
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
+              @click="showTermsModal = false"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

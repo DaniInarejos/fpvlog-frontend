@@ -61,7 +61,7 @@ const handleToggleFollow = () => {
               @click="handleToggleFollow"
               size="sm"
             >
-              {{ isFollowing ? t('message.dashboard.follow.unfollow') : t('message.dashboard.follow.follow') }}
+              {{ isFollowing ? t('dashboard.follow.unfollow') : t('dashboard.follow.follow') }}
             </BaseButton>
           </div>
         </div>
@@ -70,19 +70,19 @@ const handleToggleFollow = () => {
         <div class="grid grid-cols-4 gap-2 mt-3">
           <div class="text-center p-2 bg-gray-50 rounded">
             <div class="text-lg font-bold text-primary-600">{{ stats.dronesCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.drones') }}</div>
+            <div class="text-xs text-gray-500">{{ t('dashboard.stats.drones') }}</div>
           </div>
           <div class="text-center p-2 bg-gray-50 rounded">
             <div class="text-lg font-bold text-primary-600">{{ stats.flightsCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.flights') }}</div>
+            <div class="text-xs text-gray-500">{{ t('dashboard.stats.flights') }}</div>
           </div>
           <div class="text-center p-2 bg-gray-50 rounded">
             <div class="text-lg font-bold text-primary-600">{{ stats.followersCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.followers') }}</div>
+            <div class="text-xs text-gray-500">{{ t('dashboard.stats.followers') }}</div>
           </div>
           <div class="text-center p-2 bg-gray-50 rounded">
             <div class="text-lg font-bold text-primary-600">{{ stats.followingCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('message.dashboard.stats.following') }}</div>
+            <div class="text-xs text-gray-500">{{ t('dashboard.stats.following') }}</div>
           </div>
         </div>
       </div>

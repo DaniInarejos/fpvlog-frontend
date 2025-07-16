@@ -62,7 +62,7 @@ if (props.flight) {
 
 const validateForm = () => {
   errors.value = {}
-  if (!formData.value.title) errors.value.title = t('message.flights.validation.title')
+  if (!formData.value.title) errors.value.title = t('flights.validation.title')
   return Object.keys(errors.value).length === 0
 }
 
@@ -102,7 +102,7 @@ const handleImageChange = (image) => {
 <template>
   <BaseCard class="p-6">
     <h2 class="text-xl font-semibold mb-4">
-      {{ flight ? t('message.flights.editFlight') : t('message.flights.newFlight') }}
+      {{ flight ? t('flights.editFlight') : t('flights.newFlight') }}
     </h2>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -112,25 +112,25 @@ const handleImageChange = (image) => {
         :message="errors.submit"
       />
 
-      <BaseDivider :title="t('message.flights.form.sections.media')" />
+      <BaseDivider :title="t('flights.form.sections.media')" />
       <BaseImageUpload
-        :label="t('message.flights.form.image')"
+        :label="t('flights.form.image')"
         :current-image="formData.image"
         @change="handleImageChange"
       />
 
-      <BaseDivider :title="t('message.flights.form.sections.basic')" />
+      <BaseDivider :title="t('flights.form.sections.basic')" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BaseInput
           v-model="formData.title"
-          :label="t('message.flights.form.title')"
+          :label="t('flights.form.title')"
           :error="errors.title"
           required
         />
 
         <BaseInput
           v-model="formData.date"
-          :label="t('message.flights.form.date')"
+          :label="t('flights.form.date')"
           type="date"
         />
 
@@ -138,7 +138,7 @@ const handleImageChange = (image) => {
           v-model="formData.droneId"
           class="input"
         >
-          <option value="">{{ t('message.flights.form.drone') }}</option>
+          <option value="">{{ t('flights.form.drone') }}</option>
           <option v-for="drone in drones" :key="drone._id" :value="drone._id">
             {{ drone.name }}
           </option>
@@ -148,7 +148,7 @@ const handleImageChange = (image) => {
           v-model="formData.spotId"
           class="input"
         >
-          <option value="">{{ t('message.flights.form.spot') }}</option>
+          <option value="">{{ t('flights.form.spot') }}</option>
           <option v-for="spot in spots" :key="spot._id" :value="spot._id">
             {{ spot.name }}
           </option>
@@ -156,24 +156,24 @@ const handleImageChange = (image) => {
 
         <BaseInput
           v-model="formData.duration"
-          :label="t('message.flights.form.duration')"
+          :label="t('flights.form.duration')"
           type="number"
         />
 
         <BaseInput
           v-model="formData.batteryUsed"
-          :label="t('message.flights.form.batteryUsed')"
+          :label="t('flights.form.batteryUsed')"
           type="number"
         />
 
         <BaseInput
           v-model="formData.weather"
-          :label="t('message.flights.form.weather')"
+          :label="t('flights.form.weather')"
         />
 
         <BaseInput
           v-model="formData.urlVideo"
-          :label="t('message.flights.form.urlVideo')"
+          :label="t('flights.form.urlVideo')"
           type="url"
         />
       </div>
@@ -181,20 +181,20 @@ const handleImageChange = (image) => {
       <div class="md:col-span-2">
         <BaseInput
           v-model="formData.notes"
-          :label="t('message.flights.form.notes')"
+          :label="t('flights.form.notes')"
           type="textarea"
         />
       </div>
 
-      <BaseDivider :title="t('message.flights.form.sections.privacy')" />
+      <BaseDivider :title="t('flights.form.sections.privacy')" />
       <div class="md:col-span-2 space-y-2">
         <BaseCheckbox
           v-model="formData.visibility.isVisibleToFollowers"
-          :label="t('message.flights.form.visibility.followers')"
+          :label="t('flights.form.visibility.followers')"
         />
         <BaseCheckbox
           v-model="formData.visibility.isPublic"
-          :label="t('message.flights.form.visibility.public')"
+          :label="t('flights.form.visibility.public')"
         />
       </div>
 
@@ -204,14 +204,14 @@ const handleImageChange = (image) => {
           variant="secondary"
           @click="emit('close')"
         >
-          {{ t('message.common.cancel') }}
+          {{ t('common.cancel') }}
         </BaseButton>
 
         <BaseButton
           type="submit"
           :loading="isLoading"
         >
-          {{ flight ? t('message.common.save') : t('message.flights.addFlight') }}
+          {{ flight ? t('common.save') : t('flights.addFlight') }}
         </BaseButton>
       </div>
     </form>

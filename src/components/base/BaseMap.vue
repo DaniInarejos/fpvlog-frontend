@@ -128,7 +128,7 @@ onMounted(() => {
       ref="searchInput"
       type="text"
       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-      :placeholder="t('message.spots.form.searchLocation')"
+      :placeholder="t('spots.form.searchLocation')"
       :class="{ 'border-red-500 focus:ring-red-500': error }"
     />
     <div 

@@ -130,14 +130,14 @@ const getYouTubeEmbedUrl = (url) => {
         />
         <div class="flex-1">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {{ t('message.feed.itemInfo.newUser') }}
+            {{ t('feed.itemInfo.newUser') }}
           </h3>
           <p class="text-lg text-gray-800 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer"
              @click="navigateToProfile(itemData.username)">
             @{{ itemData.username }}
           </p>
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ t('message.feed.itemInfo.joinedAt') }} {{ formatDate(itemData.createdAt) }}
+            {{ t('feed.itemInfo.joinedAt') }} {{ formatDate(itemData.createdAt) }}
           </p>
         </div>
       </div>
@@ -166,14 +166,14 @@ const getYouTubeEmbedUrl = (url) => {
 
         <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
             @click="handleDroneClick">
-         {{ t('message.feed.drone.title') }}: {{ itemData.name }}
+         {{ t('feed.drone.title') }}: {{ itemData.name }}
         </h4>
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-          <span v-if="itemData.droneBrand">{{ t('message.feed.itemInfo.brand') }}: {{ itemData.droneBrand.name }}</span>
-          <span v-if="itemData.droneType">{{ t('message.feed.itemInfo.type') }}: {{ itemData.droneType.name }}</span>
-          <span>{{ t('message.feed.itemInfo.model') }}: {{ itemData.model }}</span>
-          <span>{{ t('message.feed.itemInfo.weight') }}: {{ itemData.weight }}g</span>
-          <span>{{ t('message.feed.itemInfo.frameSize') }}: {{ itemData.frameSize }}mm</span>
+          <span v-if="itemData.droneBrand">{{ t('feed.itemInfo.brand') }}: {{ itemData.droneBrand.name }}</span>
+          <span v-if="itemData.droneType">{{ t('feed.itemInfo.type') }}: {{ itemData.droneType.name }}</span>
+          <span>{{ t('feed.itemInfo.model') }}: {{ itemData.model }}</span>
+          <span>{{ t('feed.itemInfo.weight') }}: {{ itemData.weight }}g</span>
+          <span>{{ t('feed.itemInfo.frameSize') }}: {{ itemData.frameSize }}mm</span>
         </div>
 
         <img
@@ -212,16 +212,16 @@ const getYouTubeEmbedUrl = (url) => {
           {{ itemData.title }}
         </h4>
         <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-          <span>📍 {{ t('message.feed.itemInfo.location') }}: {{ itemData.location }}</span>
-          <span>⏱️ {{ t('message.feed.itemInfo.duration') }}: {{ itemData.duration }}min</span>
-          <span>🌤️ {{ t('message.feed.itemInfo.weather') }}: {{ itemData.weather }}</span>
+          <span>📍 {{ t('feed.itemInfo.location') }}: {{ itemData.location }}</span>
+          <span>⏱️ {{ t('feed.itemInfo.duration') }}: {{ itemData.duration }}min</span>
+          <span>🌤️ {{ t('feed.itemInfo.weather') }}: {{ itemData.weather }}</span>
         </div>
         <p class="text-gray-600 dark:text-gray-300">
           {{ itemData.notes }}
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"
            @click="handleDroneClick">
-          {{ t('message.feed.drone.title') }}: {{ itemData.drone.name }}
+          {{ t('feed.drone.title') }}: {{ itemData.drone.name }}
         </p>
 
         <img

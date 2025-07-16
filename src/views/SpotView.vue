@@ -92,7 +92,7 @@ onMounted(() => {
 
     <BaseModal
       :show="showDeleteModal"
-      :title="t('message.spots.delete.title')"
+      :title="t('spots.delete.title')"
       :show-warning-icon="true"
       :show-delete-button="true"
       :show-accept-button="false"
@@ -100,7 +100,7 @@ onMounted(() => {
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('message.spots.delete.confirmation', { name: spotToDelete?.name }) }}
+        {{ t('spots.delete.confirmation', { name: spotToDelete?.name }) }}
       </p>
     </BaseModal>
   </div>

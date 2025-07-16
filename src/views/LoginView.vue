@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
-import BaseCard from '../components/base/BaseCard.vue'
+import { useI18n } from 'vue-i18n'
 import BaseInput from '../components/base/BaseInput.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import BaseAlert from '../components/base/BaseAlert.vue'
@@ -10,8 +10,9 @@ import BaseToast from '../components/base/BaseToast.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 
-onMounted(() => {
+onMounted(async () => {
   if (userStore.isAuthenticated) {
     router.push('/')
   }
@@ -80,7 +81,7 @@ const handleForgotPassword = () => {
               <BaseInput
                 v-model="form.email"
                 type="email"
-                placeholder="Correo electrónico"
+                :placeholder="t('login.form.email.placeholder')"
                 required
                 class="w-full pl-10 pr-4 py-3 border-0 bg-gray-50 dark:bg-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all duration-300"
               />

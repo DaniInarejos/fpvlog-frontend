@@ -28,6 +28,9 @@ const droneTypes = ref([])
 const droneBrands = ref([])
 const imageFile = ref(null)
 const errors = ref({})
+// Agregar variable para errores generales
+const errorMessage = ref('')
+const successMessage = ref('')
 
 const formData = ref({
   name: '',
@@ -59,6 +62,7 @@ const formData = ref({
   },
   betaflightId: null
 })
+
 const handleCreateComponent = async (typeComponent, inputValue) => {
   try {
     const newComponent = {
@@ -74,14 +78,17 @@ const handleCreateComponent = async (typeComponent, inputValue) => {
       formData.value.components[typeComponent.toLowerCase() + 'Id'] = createdComponent._id
     }
   } catch (error) {
-    errors.value.components = t('message.components.error.create')
+    console.error('Error creating component:', error)
+    errorMessage.value = error.response?.data?.message || t('components.error.create')
   }
 }
+
 const fetchDroneTypes = async () => {
   try {
     droneTypes.value = await droneService.getDroneTypes()
   } catch (error) {
-    errors.value.types = 'Error cargando tipos de drones'
+    console.error('Error fetching drone types:', error)
+    errorMessage.value = error.response?.data?.message || 'Error cargando tipos de drones'
   }
 }
 
@@ -89,39 +96,62 @@ const fetchDroneBrands = async () => {
   try {
     droneBrands.value = await droneService.getDroneBrands()
   } catch (error) {
-    errors.value.brands = 'Error cargando marcas de drones'
+    console.error('Error fetching drone brands:', error)
+    errorMessage.value = error.response?.data?.message || 'Error cargando marcas de drones'
   }
 }
 
 const validateForm = () => {
   errors.value = {}
-  if (!formData.value.name) errors.value.name = t('message.drones.validation.name')
+  if (!formData.value.name) errors.value.name = t('drones.validation.name')
   return Object.keys(errors.value).length === 0
 }
 
 const handleSubmit = async () => {
+  // Limpiar mensajes previos
+  errorMessage.value = ''
+  successMessage.value = ''
+  
   if (!validateForm()) return
   
   isLoading.value = true
   try {
     let droneId
+    
+    // Crear o actualizar el drone
     if (props.drone) {
       await droneService.updateDrone(props.drone._id, formData.value)
       droneId = props.drone._id
+      successMessage.value = 'Drone actualizado correctamente'
     } else {
       const newDrone = await droneService.createDrone(formData.value)
       droneId = newDrone._id
+      successMessage.value = 'Drone creado correctamente'
     }
     
+    // Subir imagen si existe
     if (imageFile.value) {
-      const imageFormData = new FormData()
-      imageFormData.append('image', imageFile.value)
-      await droneService.uploadDroneImage(droneId, imageFormData)
+      try {
+        const imageFormData = new FormData()
+        imageFormData.append('image', imageFile.value)
+        await droneService.uploadDroneImage(droneId, imageFormData)
+        successMessage.value += ' e imagen subida correctamente'
+      } catch (imageError) {
+        console.error('Error uploading image:', imageError)
+        // Mostrar error específico de la imagen pero no fallar todo el proceso
+        errorMessage.value = `Drone guardado pero error en imagen: ${imageError.response?.data?.message || 'Error subiendo imagen'}`
+      }
     }
     
-    emit('saved')
+    // Si todo salió bien, emitir evento de guardado
+    if (!errorMessage.value) {
+      emit('saved')
+    }
+    
   } catch (error) {
-    errors.value.submit = error.message
+    console.error('Error saving drone:', error)
+    // Mostrar el mensaje de error específico de la API
+    errorMessage.value = error.response?.data?.message || 'Error inesperado al guardar el drone'
   } finally {
     isLoading.value = false
   }
@@ -163,7 +193,8 @@ const fetchUserComponents = async () => {
       }
     }
   } catch (error) {
-    errors.value.components = 'Error cargando componentes'
+    console.error('Error fetching components:', error)
+    errorMessage.value = error.response?.data?.message || 'Error cargando componentes'
   }
 }
 
@@ -229,7 +260,7 @@ const handleImageUpload = async (file) => {
       formData.value.imageFile = file
     }
   } catch (err) {
-    error.value = t('message.drones.form.imageError')
+    err.value = "hola premo"
   }
 }
 </script>
@@ -237,32 +268,44 @@ const handleImageUpload = async (file) => {
 <template>
   <BaseCard class="p-6">
     <h2 class="text-xl font-semibold mb-4">
-      {{ props.drone ? t('message.drones.editDrone') : t('message.drones.newDrone') }}
+      {{ props.drone ? t('drones.editDrone') : t('drones.newDrone') }}
     </h2>
     <form @submit.prevent="handleSubmit" class="space-y-6">
+      <!-- Mostrar mensajes de error -->
       <BaseAlert
-        v-if="errors.submit"
+        v-if="errorMessage"
         type="error"
-        :message="errors.submit"
+        :message="errorMessage"
+        @close="errorMessage = ''"
       />
-    <BaseDivider title="Informacion Basica" />    
-     <BaseImageUpload
-          v-model="formData.image"
-          :alt="formData.name || t('message.drones.form.droneImage')"
-          @file-selected="handleImageUpload"
-        />
+      
+      <!-- Mostrar mensajes de éxito -->
+      <BaseAlert
+        v-if="successMessage"
+        type="success"
+        :message="successMessage"
+        @close="successMessage = ''"
+      />
+      
+      <!-- Resto del template permanece igual -->
+      <BaseDivider title="Informacion Basica" />    
+      <BaseImageUpload
+        v-model="formData.image"
+        :alt="formData.name || t('drones.form.droneImage')"
+        @file-selected="handleImageUpload"
+      />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Campos básicos -->
          
         <BaseInput
           v-model="formData.name"
-          :label="t('message.drones.form.name')"
+          :label="t('drones.form.name')"
           :error="errors.name"
           required
         />
         <BaseSelect
           v-model="formData.typeId"
-          :label="t('message.drones.form.type')"
+          :label="t('drones.form.type')"
           :options="droneTypes"
           :error="errors.typeId"
           required
@@ -270,18 +313,18 @@ const handleImageUpload = async (file) => {
         
          <BaseInput
           v-model="formData.weight"
-          :label="t('message.drones.form.weight')"
+          :label="t('drones.form.weight')"
           type="number"
         />
 
         <BaseInput
           v-model="formData.frameSize"
-          :label="t('message.drones.form.frameSize')"
+          :label="t('drones.form.frameSize')"
           type="number"
         />
       </div>
         <BaseInput
-          :label="t('message.drones.form.description')"
+          :label="t('drones.form.description')"
           v-model="formData.description"
           type="textarea"
         />
@@ -290,11 +333,11 @@ const handleImageUpload = async (file) => {
         <div class="md:col-span-2 space-y-2">
           <BaseCheckbox
             v-model="formData.visibility.isVisibleToFollowers"
-            :label="t('message.drones.form.visibility.followers')"
+            :label="t('drones.form.visibility.followers')"
           />
           <BaseCheckbox
             v-model="formData.visibility.isPublic"
-            :label="t('message.drones.form.visibility.public')"
+            :label="t('drones.form.visibility.public')"
           />
         </div>
 
@@ -302,7 +345,7 @@ const handleImageUpload = async (file) => {
 
         <BaseSelect
           v-model="formData.originType"
-          :label="t('message.drones.form.originType')"
+          :label="t('drones.form.originType')"
           :options="[
             { name: 'BRANDED', label: 'Marca Comercial' },
             { name: 'CUSTOM', label: 'Personalizado' }
@@ -315,7 +358,7 @@ const handleImageUpload = async (file) => {
         v-if="formData.originType === 'BRANDED'"
           v-model="formData.brandId"
           :class="{ 'border-red-500': errors.brandId }"
-          :label="t('message.drones.form.brand')"
+          :label="t('drones.form.brand')"
           :options="droneBrands"
           :error="errors.brandId"
           required
@@ -324,13 +367,13 @@ const handleImageUpload = async (file) => {
         <BaseInput
          v-if="formData.originType === 'BRANDED'"
           v-model="formData.model"
-          :label="t('message.drones.form.model')"
+          :label="t('drones.form.model')"
         />
        
 
       <!-- Sección de componentes (solo visible si es CUSTOM) -->
       <div v-if="formData.originType === 'CUSTOM'" class="space-y-4 mt-6">
-        <h3 class="text-lg font-medium">{{ t('message.drones.form.components') }}</h3>
+        <h3 class="text-lg font-medium">{{ t('drones.form.components') }}</h3>
         
         <div v-if="errors.components" class="text-red-600 text-sm mb-4">
           {{ errors.components }}
@@ -472,14 +515,15 @@ const handleImageUpload = async (file) => {
           variant="secondary"
           @click="emit('close')"
         >
-          {{ t('message.common.cancel') }}
+          {{ t('common.cancel') }}
         </BaseButton>
 
         <BaseButton
           type="submit"
           :loading="isLoading"
+          :disabled="isLoading"
         >
-          {{ props.drone ? t('message.common.save') : t('message.drones.addDrone') }}
+          {{ props.drone ? t('common.save') : t('drones.addDrone') }}
         </BaseButton>
       </div>
     </form>

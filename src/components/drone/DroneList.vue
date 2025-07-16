@@ -67,13 +67,13 @@ const handleCloseInfo = () => {
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ $t('message.drones.title') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('drones.title') }}</h1>
       
       <BaseButton
         v-if="showCreateButton"
         @click="handleCreate"
       >
-        {{ $t('message.drones.addDrone') }}
+        {{ $t('drones.addDrone') }}
       </BaseButton>
     </div>
 
@@ -88,7 +88,7 @@ const handleCloseInfo = () => {
     </div>
 
     <div v-else-if="drones.length === 0" class="text-center py-12">
-      <p class="text-gray-500 mb-4">{{ $t('message.drones.noDrones') }}</p>
+      <p class="text-gray-500 mb-4">{{ $t('drones.noDrones') }}</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -117,11 +117,11 @@ const handleCloseInfo = () => {
           <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.weight }}g</span>
-              <span class="text-gray-400">{{ $t('message.drones.specs.weight') }}</span>
+              <span class="text-gray-400">{{ $t('drones.specs.weight') }}</span>
             </div>
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.frameSize }}mm</span>
-              <span class="text-gray-400">{{ $t('message.drones.specs.frame') }}</span>
+              <span class="text-gray-400">{{ $t('drones.specs.frame') }}</span>
             </div>
           </div>
 
@@ -138,14 +138,14 @@ const handleCloseInfo = () => {
               variant="secondary"
               @click="handleEdit(drone)"
             >
-              {{ $t('message.common.edit') }}
+              {{ $t('common.edit') }}
             </BaseButton>
             <BaseButton
               size="sm"
               variant="danger"
               @click="handleDelete(drone)"
             >
-              {{ $t('message.common.delete') }}
+              {{ $t('common.delete') }}
             </BaseButton>
           </div>
         </div>

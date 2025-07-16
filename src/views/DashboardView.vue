@@ -70,7 +70,7 @@ const toggleFollow = async () => {
     }
     isFollowing.value = !isFollowing.value
   } catch (err) {
-    error.value = isFollowing.value ? t('message.dashboard.error.unfollowError') : t('message.dashboard.error.followError')
+    error.value = isFollowing.value ? t('dashboard.error.unfollowError') : t('dashboard.error.followError')
   } finally {
     followLoading.value = false
   }

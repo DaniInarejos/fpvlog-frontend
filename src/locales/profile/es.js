@@ -29,5 +29,14 @@ export default {
     updateError: 'Error actualizando perfil',
     loadError: 'Error cargando perfil',
     photoError: 'Error subiendo la foto de perfil'
+  },
+  socialMedia: {
+    title: 'Redes Sociales',
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    instagram: 'Instagram',
+    tiktok: 'TikTok',
+    linkedin: 'LinkedIn',
+    x: 'X (Twitter)'
   }
 }

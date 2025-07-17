@@ -19,7 +19,15 @@ const form = ref({
   name: '',
   lastName: '',
   email: '',
-  profilePicture:'',
+  profilePicture: '',
+  socialMedia: {
+    facebook: '',
+    youtube: '',
+    instagram: '',
+    tiktok: '',
+    linkedin: '',
+    x: ''
+  },
   privacySettings: {
     allowFollowersToSeeFlights: true,
     allowFollowersToSeeDrones: true,
@@ -43,6 +51,7 @@ const loadProfile = async () => {
         lastName: profile.lastName,
         email: profile.email,
         profilePicture: profile.profilePicture,
+        socialMedia: { ...profile.socialMedia },
         privacySettings: { ...profile.privacySettings }
       }
     } else {
@@ -56,6 +65,7 @@ const loadProfile = async () => {
         lastName: profile.lastName,
         email: profile.email,
         profilePicture: profile.profilePicture,
+        socialMedia: { ...profile.socialMedia },
         privacySettings: { ...profile.privacySettings }
       }
     }
@@ -246,6 +256,55 @@ onMounted(() => {
                   <option value="followers">{{ t('profile.privacy.options.followers') }}</option>
                   <option value="private">{{ t('profile.privacy.options.private') }}</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Añadir después de la sección de privacidad y antes del botón de guardar -->
+            <div class="space-y-6">
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('profile.socialMedia.title') }}</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <BaseInput
+                  v-model="form.socialMedia.facebook"
+                  :label="t('profile.socialMedia.facebook')"
+                  placeholder="https://facebook.com/username"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                
+                <BaseInput
+                  v-model="form.socialMedia.instagram"
+                  :label="t('profile.socialMedia.instagram')"
+                  placeholder="https://instagram.com/username"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                
+                <BaseInput
+                  v-model="form.socialMedia.youtube"
+                  :label="t('profile.socialMedia.youtube')"
+                  placeholder="https://youtube.com/@channel"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                
+                <BaseInput
+                  v-model="form.socialMedia.tiktok"
+                  :label="t('profile.socialMedia.tiktok')"
+                  placeholder="https://tiktok.com/@username"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                
+                <BaseInput
+                  v-model="form.socialMedia.linkedin"
+                  :label="t('profile.socialMedia.linkedin')"
+                  placeholder="https://linkedin.com/in/username"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
+                
+                <BaseInput
+                  v-model="form.socialMedia.x"
+                  :label="t('profile.socialMedia.x')"
+                  placeholder="https://x.com/username"
+                  class="transition-all duration-300 focus-within:scale-[1.02]"
+                />
               </div>
             </div>
 

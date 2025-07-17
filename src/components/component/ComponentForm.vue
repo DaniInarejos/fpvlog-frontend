@@ -55,7 +55,7 @@ const handleSubmit = async () => {
   <BaseCard class="p-6">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-semibold">
-        {{ t('components.addComponent') }} - {{ t(`message.components.types.${selectedType.toLowerCase()}`) }}
+        {{ t('components.addComponent') }} - {{ t(`components.types.${selectedType.toLowerCase()}`) }}
       </h2>
     </div>
 

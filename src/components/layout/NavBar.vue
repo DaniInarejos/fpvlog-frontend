@@ -56,8 +56,10 @@ const handleDroneOptions = (item) => {
     }, 2000)
   } else if (item === 'Acerca de') {
     handleAboutOf()
+    showUserMenu.value = false
   } else if (item === 'Seguidores') {
     handleFollowers()
+    showUserMenu.value = false
   } else {
     handleLogout()
   }
@@ -187,6 +189,7 @@ onMounted(() => {
             <router-link
               to="/profile"
               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-300"
+              @click="showUserMenu = false"
             >
               {{ $t('nav.profile') }}
             </router-link>
@@ -206,6 +209,27 @@ onMounted(() => {
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- Menú móvil desplegable -->
+      <div 
+        v-show="showMobileMenu" 
+        class="sm:hidden py-2 space-y-1 animate-fade-in"
+      >
+        <router-link
+          v-for="item in [
+            { name: $t('nav.spots'), path: '/spots' },
+            { name: $t('nav.flights'), path: '/flights' },
+            { name: $t('nav.drones'), path: '/drones' },
+            { name: $t('nav.components'), path: '/components' },
+          ]"
+          :key="item.path"
+          :to="item.path"
+          class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-300 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+          @click="showMobileMenu = false"
+        >
+          {{ item.name }}
+        </router-link>
       </div>
     </div>
   </nav>

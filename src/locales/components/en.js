@@ -2,6 +2,7 @@ export default {
   title: 'Components for drones',
   addComponent: 'Add Component',
   noComponents: 'Don\'t have component type',
+  noComponentsOfType: 'Don\'t havent component of this type.',
   addFirst: 'Add {type}',
   form: {
     name: 'Name',
@@ -30,5 +31,8 @@ export default {
   },
   select: {
     placeholder: 'Select component'
+  },
+  delete:{
+    confirmation: 'Are you sure you want to delete this component?'
   }
 }

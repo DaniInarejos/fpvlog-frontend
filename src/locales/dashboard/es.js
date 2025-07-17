@@ -24,5 +24,9 @@ export default {
       follow: {
         follow: 'Seguir',
         unfollow: 'Dejar de seguir'
+      },
+      spots: {
+        title: 'Spots',
+        noSpot: 'No hay spot registrados'
       }
     }

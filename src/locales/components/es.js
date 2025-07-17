@@ -2,6 +2,7 @@ export default {
   title: 'Componentes',
   addComponent: 'Añadir Componente',
   noComponents: 'No hay componentes de este tipo',
+  noComponentsOfType: 'No hay componentes de este tipo',
   addFirst: 'Añadir {type}',
   form: {
     name: 'Nombre',
@@ -30,5 +31,8 @@ export default {
   },
   select: {
     placeholder: 'Seleccionar componente'
+  },
+  delete:{
+    confirmation: 'Estas seguro que quieres eliminar el componente?'
   }
 }

@@ -14,6 +14,7 @@ import Dashboard from '../views/DashboardView.vue'
 import About from '../views/About.vue'
 import Feed from '../views/FeedView.vue'
 import Components from '../views/ComponentsView.vue'
+import Spots from '../views/SpotView.vue'
 
 const routes = [
   {
@@ -123,7 +124,7 @@ const routes = [
   {
     path: '/spots',
     name: 'spots',
-    component: () => import('../views/SpotView.vue'),
+    component: Spots, 
     meta: {
       requiresAuth: true,
       title: 'Spots'

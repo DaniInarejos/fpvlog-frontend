@@ -1,0 +1,51 @@
+src/locales/
+├── common/              # Traducciones comunes compartidas
+│   ├── en.js           # Inglés
+│   └── es.js           # Español
+├── views/              # Traducciones específicas por vista
+│   ├── about/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── components/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── dashboard/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── drone/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── feed/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── flight/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── followers/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── following/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── home/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── login/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── profile/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── register/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── spot/
+│   │   ├── en.js
+│   │   └── es.js
+│   ├── spots-map/
+│   │   ├── en.js
+│   │   └── es.js
+│   └── terms/
+       ├── en.js
+       └── es.js
+└── index.js           # Configuración i18n y carga de traducciones

@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref, onMounted } from 'vue'
+import { defineProps, defineEmits, watch, onMounted } from 'vue'
 import BaseModal from '../base/BaseModal.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -38,17 +38,7 @@ const initializeMap = () => {
     draggable: false,
     zoomControl: false,
     scrollwheel: false,
-    disableDoubleClickZoom: true,
-    styles: [{
-      featureType: 'all',
-      elementType: 'geometry',
-      stylers: [{ color: '#242f3e' }]
-    },
-    {
-      featureType: 'water',
-      elementType: 'geometry',
-      stylers: [{ color: '#17263c' }]
-    }]
+   disableDoubleClickZoom: true,
   })
 
   new google.maps.marker.AdvancedMarkerElement({
@@ -59,7 +49,11 @@ const initializeMap = () => {
     }
   })
 }
-
+watch(() => props.show, (newValue) => {
+  if (newValue) {
+    initMapWhenVisible()
+  }
+})
 // Observar cambios en la prop show para inicializar el mapa cuando se abre el modal
 const initMapWhenVisible = () => {
   if (props.show && props.spot) {

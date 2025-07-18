@@ -23,6 +23,10 @@ defineProps({
   required: {
     type: Boolean,
     default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -41,8 +45,12 @@ defineEmits(['update:modelValue'])
       @input="$emit('update:modelValue', $event.target.value)"
       :placeholder="placeholder"
       :required="required"
+      :disabled="disabled"
       class="input"
-      :class="{ 'border-red-500 focus:ring-red-500': error }"
+      :class="{ 
+        'border-red-500 focus:ring-red-500': error,
+        'opacity-70 cursor-not-allowed': disabled 
+      }"
     />
     <p v-if="error" class="mt-1 text-sm text-red-500">{{ error }}</p>
   </div>

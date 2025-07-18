@@ -2,7 +2,7 @@ export default {
   title: 'Seguidores',
   total: 'Total',
   subtitle: 'Revisa todos los follows',
-  searchPlaceholder: 'Buscar por username...',
+  searchPlaceholder: 'Buscar por ...',
   noUsersFound: 'No se encontraron usuarios',
   noFollowers: 'No tienes seguidores aún',
   followsSince: 'Te sigue desde',

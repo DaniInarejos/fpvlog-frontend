@@ -7,6 +7,8 @@ import BaseCard from '../components/base/BaseCard.vue'
 import UserAvatar from '../components/base/UserAvatar.vue'
 import followerService from '../services/followerService'
 import TabSelector from '../components/base/TabSelector.vue'
+import BaseFilter from '../components/base/BaseFilter.vue'
+import BaseDivider from '../components/base/BaseDivider.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -15,7 +17,6 @@ const followers = ref([])
 const following = ref([])
 const loading = ref(true)
 const error = ref('')
-const searchQuery = ref('')
 const activeTab = ref('followers')
 
 const tabs = [
@@ -23,13 +24,47 @@ const tabs = [
   { id: 'following', label: t('following.title') }
 ]
 
+const filterConfig = ref({
+  searchText: '',
+  selectedFields: []
+})
+
 const filteredUsers = computed(() => {
   const users = activeTab.value === 'followers' ? followers.value : following.value
-  if (!searchQuery.value) return users
-  return users.filter(user => 
-    user.username.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
+  if (!filterConfig.value.searchText && filterConfig.value.selectedFields.length === 0) return users
+
+  return users.filter(user => {
+    const searchText = filterConfig.value.searchText.toLowerCase()
+    
+    // Si no hay campos seleccionados, buscar en todos los campos
+    if (filterConfig.value.selectedFields.length === 0) {
+      return (
+        user.username.toLowerCase().includes(searchText) ||
+        `${user.name} ${user.lastName}`.toLowerCase().includes(searchText) ||
+        new Date(user.createdAt).toLocaleDateString().includes(searchText)
+      )
+    }
+
+    // Buscar solo en los campos seleccionados
+    return filterConfig.value.selectedFields.some(field => {
+      switch(field) {
+        case 'username':
+          return user.username.toLowerCase().includes(searchText)
+        case 'name':
+          return `${user.name} ${user.lastName}`.toLowerCase().includes(searchText)
+        case 'createdAt':
+          return new Date(user.createdAt).toLocaleDateString().includes(searchText)
+        default:
+          return false
+      }
+    })
+  })
 })
+
+const handleFilterChange = ({ searchText, selectedFields }) => {
+  filterConfig.value.searchText = searchText
+  filterConfig.value.selectedFields = selectedFields
+}
 
 const pagination = ref({
   page: 1,
@@ -37,6 +72,7 @@ const pagination = ref({
   total: 0,
   pages: 0
 })
+
 
 const loadUsers = async () => {
   try {
@@ -99,23 +135,27 @@ const navigateToDashboard = (username) => {
       :active-tab="activeTab"
       @tab-change="handleTabChange"
     />
+          <BaseDivider :title="t('common.filters')" />
+
+        <BaseFilter
+                :fields="['username', 'name', 'createdAt']"
+                :field-labels="{
+                  username: t('profile.form.username'),
+                  name: t('profile.form.name'),
+                  createdAt: t('flights.form.date')
+                }"
+                :placeholder="t('followers.searchPlaceholder')"
+                @filter-change="handleFilterChange"
+              />
+                    <BaseDivider :title="''"/>
 
     <BaseCard class="p-3">
       <template #header>
-        <div class="flex justify-between items-center mb-2">
-          <div>
-            <p class="text-xs text-gray-500" v-if="pagination.total > 0">
-              {{ t('followers.total') }}: {{ pagination.total }}
-            </p>
-          </div>
-          <div class="relative w-48">
-            <input
-              v-model="searchQuery"
-              type="text"
-              :placeholder="t('followers.searchPlaceholder')"
-              class="w-full px-3 py-1.5 text-sm border rounded focus:ring-1 focus:ring-primary focus:border-transparent"
-            />
-          </div>
+        <div class="mb-4">
+         
+          <p class="text-xs text-gray-500 mt-2" v-if="pagination.total > 0">
+            {{ t('followers.total') }}: {{ pagination.total }}
+          </p>
         </div>
       </template>
       
@@ -128,7 +168,7 @@ const navigateToDashboard = (username) => {
       </div>
 
       <div v-else-if="filteredUsers.length === 0" class="text-center py-3 text-sm text-gray-500">
-        {{ searchQuery ? t('followers.noUsersFound') : 
+        {{ filterConfig.searchText ? t('followers.noUsersFound') : 
           activeTab === 'followers' ? t('followers.noFollowers') : t('followers.noFollowing') }}
       </div>
 
@@ -146,6 +186,7 @@ const navigateToDashboard = (username) => {
             />
             <div>
               <h3 class="font-medium text-sm">@{{ user.username }}</h3>
+              <p class="text-sm text-gray-600">{{ user.name }} {{ user.lastName }}</p>
               <p class="text-xs text-gray-500">{{ t('followers.followsSince') }} {{ new Date(user.createdAt).toLocaleDateString() }}</p>
             </div>
           </div>

@@ -76,8 +76,60 @@ const loadProfile = async () => {
   }
 }
 
+const validateSocialMediaUrl = (url, platform) => {
+  if (!url) return true // Permitir campos vacíos
+  
+  try {
+    const urlObj = new URL(url)
+    
+    const platformPatterns = {
+      facebook: /^(?:https?:\/\/)?(?:www\.)?facebook\.com\/.+/i,
+      instagram: /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/.+/i,
+      youtube: /^(?:https?:\/\/)?(?:www\.)?youtube\.com\/.+/i,
+      tiktok: /^(?:https?:\/\/)?(?:www\.)?tiktok\.com\/.+/i,
+      linkedin: /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/.+/i,
+      x: /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/.+/i
+    }
+    
+    return platformPatterns[platform].test(url)
+  } catch {
+    return false
+  }
+}
+
+const socialMediaErrors = ref({
+  facebook: '',
+  instagram: '',
+  youtube: '',
+  tiktok: '',
+  linkedin: '',
+  x: ''
+})
+
+const validateSocialMedia = () => {
+  let isValid = true
+  const platforms = Object.keys(form.value.socialMedia)
+  
+  platforms.forEach(platform => {
+    const url = form.value.socialMedia[platform]
+    if (url && !validateSocialMediaUrl(url, platform)) {
+      socialMediaErrors.value[platform] = `URL de ${platform} inválida`
+      isValid = false
+    } else {
+      socialMediaErrors.value[platform] = ''
+    }
+  })
+  
+  return isValid
+}
+
 const handleSubmit = async () => {
   try {
+    if (!validateSocialMedia()) {
+      error.value = 'Por favor, corrige los errores en las URLs de redes sociales'
+      return
+    }
+    
     loading.value = true
     error.value = ''
     await userStore.updateProfile({
@@ -194,7 +246,8 @@ onMounted(() => {
                 v-model="form.username"
                 :label="t('profile.form.username')"
                 required
-                class="transition-all duration-300 focus-within:scale-[1.02]"
+                disabled
+                class="transition-all duration-300 focus-within:scale-[1.02] opacity-70"
               />
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -264,47 +317,65 @@ onMounted(() => {
               <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('profile.socialMedia.title') }}</h3>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <BaseInput
-                  v-model="form.socialMedia.facebook"
-                  :label="t('profile.socialMedia.facebook')"
-                  placeholder="https://facebook.com/username"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
-                
-                <BaseInput
-                  v-model="form.socialMedia.instagram"
-                  :label="t('profile.socialMedia.instagram')"
-                  placeholder="https://instagram.com/username"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
-                
-                <BaseInput
-                  v-model="form.socialMedia.youtube"
-                  :label="t('profile.socialMedia.youtube')"
-                  placeholder="https://youtube.com/@channel"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
-                
-                <BaseInput
-                  v-model="form.socialMedia.tiktok"
-                  :label="t('profile.socialMedia.tiktok')"
-                  placeholder="https://tiktok.com/@username"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
-                
-                <BaseInput
-                  v-model="form.socialMedia.linkedin"
-                  :label="t('profile.socialMedia.linkedin')"
-                  placeholder="https://linkedin.com/in/username"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
-                
-                <BaseInput
-                  v-model="form.socialMedia.x"
-                  :label="t('profile.socialMedia.x')"
-                  placeholder="https://x.com/username"
-                  class="transition-all duration-300 focus-within:scale-[1.02]"
-                />
+                <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.facebook"
+                      :label="t('profile.socialMedia.facebook')"
+                      placeholder="https://facebook.com/username"
+                      :error="socialMediaErrors.facebook"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.instagram"
+                      :label="t('profile.socialMedia.instagram')"
+                      placeholder="https://instagram.com/username"
+                      :error="socialMediaErrors.instagram"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.youtube"
+                      :label="t('profile.socialMedia.youtube')"
+                      placeholder="https://youtube.com/@channel"
+                      :error="socialMediaErrors.youtube"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.tiktok"
+                      :label="t('profile.socialMedia.tiktok')"
+                      placeholder="https://tiktok.com/@username"
+                      :error="socialMediaErrors.tiktok"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.linkedin"
+                      :label="t('profile.socialMedia.linkedin')"
+                      placeholder="https://linkedin.com/in/username"
+                      :error="socialMediaErrors.linkedin"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <BaseInput
+                      v-model="form.socialMedia.x"
+                      :label="t('profile.socialMedia.x')"
+                      placeholder="https://x.com/username"
+                      :error="socialMediaErrors.x"
+                      class="transition-all duration-300 focus-within:scale-[1.02]"
+                    />
+                  </div>
               </div>
             </div>
 

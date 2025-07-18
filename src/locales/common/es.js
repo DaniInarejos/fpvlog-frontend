@@ -7,5 +7,6 @@ export default {
   delete: 'Eliminar',
   edit: 'Editar',
   select: 'Seleccionar',
-  likes: 'Me gusta'
+  likes: 'Me gusta',
+  filters: 'Filtros',
 }

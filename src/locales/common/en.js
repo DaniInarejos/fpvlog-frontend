@@ -7,5 +7,6 @@ export default {
   delete: 'Delete',
   edit: 'Edit',
   select: 'Select',
-  likes: 'Likes'
+  likes: 'Likes',
+  filters: 'Filters',
 }

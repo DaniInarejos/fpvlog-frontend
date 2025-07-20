@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
@@ -122,6 +122,14 @@ const handleCloseFlightInfo = () => {
 onMounted(() => {
   loadDashboard()
 })
+
+// Observar cambios en el parámetro username de la ruta
+watch(
+  () => route.params.username,
+  (newUsername) => {
+    loadDashboard()
+  }
+)
 </script>
 
 <template>

@@ -25,14 +25,14 @@ const emit = defineEmits(['filter-change'])
 const searchText = ref('')
 const selectedFields = ref([])
 
-// Inicializar los campos seleccionados
-selectedFields.value = props.fields.map(() => true)
+// Inicializar los campos seleccionados solo para los campos con etiquetas
+selectedFields.value = props.fields.map(field => !!props.fieldLabels[field])
 
 // Observar cambios en el texto de búsqueda y campos seleccionados
 watch([searchText, selectedFields], ([newSearchText, newSelectedFields]) => {
   emit('filter-change', {
     searchText: newSearchText,
-    selectedFields: props.fields.filter((_, index) => newSelectedFields[index])
+    selectedFields: props.fields.filter((field, index) => newSelectedFields[index] && props.fieldLabels[field])
   })
 }, { deep: true })
 </script>
@@ -48,16 +48,17 @@ watch([searchText, selectedFields], ([newSearchText, newSelectedFields]) => {
 
     <!-- Lista de checkboxes -->
     <div class="flex flex-wrap gap-4">
-      <div
-        v-for="(field, index) in fields"
-        :key="field"
-        class="flex items-center"
-      >
-        <BaseCheckbox
-          v-model="selectedFields[index]"
-          :label="fieldLabels[field] || field"
-        />
-      </div>
+      <template v-for="(fieldName, index) in props.fields" :key="fieldName">
+        <div
+          v-if="props.fieldLabels[fieldName]"
+          class="flex items-center"
+        >
+          <BaseCheckbox
+            v-model="selectedFields[index]"
+            :label="props.fieldLabels[fieldName]"
+          />
+        </div>
+      </template>
     </div>
   </div>
 </template>

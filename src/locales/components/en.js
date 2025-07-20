@@ -11,10 +11,12 @@ export default {
     sourceUrl: 'Buy URL',
     description: 'Description'
   },
+  sourceLink: 'View product',
   types: {
     frame: 'Frame',
     motor: 'Motor',
     flightController: 'Flight Controller',
+    fc:  'Flight Controller',
     esc: 'ESC',
     vtx: 'VTX',
     camera: 'Camera',
@@ -23,7 +25,8 @@ export default {
     battery: 'Battery',
     props: 'Props',
     mount: 'Mount',
-    other: 'Other'
+    other: 'Other',
+    all: "All"
   },
   validation: {
     required: 'This component is required',

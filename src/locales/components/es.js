@@ -11,6 +11,7 @@ export default {
     sourceUrl: 'URL de compra',
     description: 'Descripción'
   },
+  sourceLink: 'Ver producto',
   types: {
     frame: 'Marco',
     motor: 'Motor',
@@ -23,7 +24,9 @@ export default {
     battery: 'Batería',
     props: 'Hélices',
     mount: 'Montaje',
-    other: 'Otros'
+    fc: 'Controlador de Vuelo',
+    other: 'Otros',
+    all: "Todos"
   },
   validation: {
     required: 'Este componente es requerido',

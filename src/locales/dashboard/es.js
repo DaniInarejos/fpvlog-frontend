@@ -27,6 +27,6 @@ export default {
       },
       spots: {
         title: 'Spots',
-        noSpot: 'No hay spot registrados'
+        noSpots: 'No hay spot registrados'
       }
     }

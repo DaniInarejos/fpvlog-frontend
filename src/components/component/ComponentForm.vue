@@ -41,7 +41,11 @@ const handleSubmit = async () => {
   
   isLoading.value = true
   try {
-    await componentService.createComponent(formData.value)
+    const formDataToSubmit = {
+      ...formData.value,
+      weightGrams: Number(formData.value.weightGrams)
+    }
+    await componentService.createComponent(formDataToSubmit)
     emit('saved')
   } catch (error) {
     errors.value.submit = error.message

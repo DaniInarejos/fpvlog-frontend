@@ -24,13 +24,13 @@ const isAuthenticated = computed(() => userStore.isAuthenticated)
 
     <!-- Layout principal con navegación -->
     <template v-else>
-      <NavBar />
+      <NavBar class="fixed top-0 left-0 right-0 z-50" />
       <div class="flex flex-col sm:flex-row min-h-screen">
         <SideMenu 
           v-if="isAuthenticated" 
-          class="w-full sm:w-64 fixed bottom-0 sm:static sm:h-screen z-40 border-t sm:border-t-0 sm:border-r border-gray-200/20 dark:border-gray-700/20" 
+          class="w-full sm:w-64 fixed bottom-0 sm:fixed sm:top-[3.5rem] sm:bottom-0 sm:left-0 h-16 sm:h-[calc(100vh-3.5rem)] z-40 border-t sm:border-t-0 sm:border-r border-gray-200/20 dark:border-gray-700/20" 
         />
-        <main class="flex-1 container mx-auto px-3 sm:px-4 py-4 pb-20 sm:pb-4 sm:py-8">
+        <main class="flex-1 sm:ml-64 px-3 sm:px-4 py-4 pb-20 sm:pb-4 sm:py-8 mt-16">
           <router-view />
         </main>
       </div>

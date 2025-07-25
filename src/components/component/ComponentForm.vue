@@ -12,6 +12,10 @@ const props = defineProps({
   selectedType: {
     type: String,
     required: true
+  },
+  component: {
+    type: Object,
+    default: null
   }
 })
 const userStore = useUserStore()
@@ -21,13 +25,13 @@ const isLoading = ref(false)
 const errors = ref({})
 
 const formData = ref({
-  name: '',
-  type: props.selectedType,
-  brand: '',
-  weightGrams: 0,
-  description: '',
-  sourceUrl: '',
-  createdBy:userStore.user._id
+  name: props.component?.name || '',
+  type: props.component?.type || props.selectedType,
+  brand: props.component?.brand || '',
+  weightGrams: props.component?.weightGrams || 0,
+  description: props.component?.description || '',
+  sourceUrl: props.component?.sourceUrl || '',
+  createdBy: userStore.user._id
 })
 
 const validateForm = () => {
@@ -45,7 +49,12 @@ const handleSubmit = async () => {
       ...formData.value,
       weightGrams: Number(formData.value.weightGrams)
     }
-    await componentService.createComponent(formDataToSubmit)
+
+    if (props.component) {
+      await componentService.updateComponent(props.component._id, formDataToSubmit)
+    } else {
+      await componentService.createComponent(formDataToSubmit)
+    }
     emit('saved')
   } catch (error) {
     errors.value.submit = error.message

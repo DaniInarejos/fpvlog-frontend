@@ -100,9 +100,46 @@ const confirmDelete = async () => {
   }
 }
 
+// Agregar variables para el selector de tipo
+const showTypeSelector = ref(false)
+
+// Definir tipos de componentes e iconos
+const componentTypes = [
+  { _id: 'FRAME', name: t('components.types.frame') },
+  { _id: 'MOTOR', name: t('components.types.motor') },
+  { _id: 'FC', name: t('components.types.fc') },
+  { _id: 'ESC', name: t('components.types.esc') },
+  { _id: 'VTX', name: t('components.types.vtx') },
+  { _id: 'CAMERA', name: t('components.types.camera') },
+  { _id: 'ANTENNA', name: t('components.types.antenna') },
+  { _id: 'RECEIVER', name: t('components.types.receiver') },
+  { _id: 'BATTERY', name: t('components.types.battery') },
+  { _id: 'PROPS', name: t('components.types.props') },
+  { _id: 'MOUNT', name: t('components.types.mount') },
+  { _id: 'OTHER', name: t('components.types.other') }
+]
+
+const componentIcons = {
+  FRAME: '🧩', MOTOR: '⚙️', FC: '🧠', ESC: '🔌',
+  VTX: '📡', CAMERA: '📷', ANTENNA: '📶', RECEIVER: '📥',
+  BATTERY: '🔋', PROPS: '🪶', MOUNT: '🗜️', OTHER: '🧰'
+}
+
+// Agregar las funciones que faltan
 const handleCreate = (type) => {
-  selectedType.value = type
+  if (type && type !== 'ALL') {
+    selectedType.value = type
+    showForm.value = true
+  } else {
+    showTypeSelector.value = true
+  }
+}
+
+// Agregar función para manejar la selección de tipo
+const handleTypeSelect = (typeId) => {
+  selectedType.value = typeId
   showForm.value = true
+  showTypeSelector.value = false
 }
 
 const handleEdit = (component) => {
@@ -194,6 +231,26 @@ onMounted(() => {
         @saved="handleSaved"
       />
     </div>
+
+    <!-- Modal de selección de tipo -->
+    <BaseModal
+      :show="showTypeSelector"
+      :title="t('components.selectType')"
+      @close="showTypeSelector = false"
+    >
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <BaseButton
+          v-for="type in componentTypes"
+          :key="type._id"
+          variant="secondary"
+          class="w-full text-left px-4 py-3"
+          @click="handleTypeSelect(type._id)"
+        >
+          <span class="mr-2">{{ componentIcons[type._id] }}</span>
+          {{ type.name }}
+        </BaseButton>
+      </div>
+    </BaseModal>
 
     <BaseModal
       :show="showDeleteModal"

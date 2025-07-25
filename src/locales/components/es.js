@@ -4,6 +4,7 @@ export default {
   noComponents: 'No hay componentes de este tipo',
   noComponentsOfType: 'No hay componentes de este tipo',
   addFirst: 'Añadir {type}',
+  selectType: 'Seleccionar tipo de componente',
   form: {
     name: 'Nombre',
     brand: 'Marca',

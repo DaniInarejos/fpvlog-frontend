@@ -4,6 +4,7 @@ export default {
   noComponents: 'Don\'t have component type',
   noComponentsOfType: 'Don\'t havent component of this type.',
   addFirst: 'Add {type}',
+  selectType: 'Select component type',
   form: {
     name: 'Name',
     brand: 'Brand',

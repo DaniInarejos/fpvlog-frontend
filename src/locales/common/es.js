@@ -9,4 +9,19 @@ export default {
   select: 'Seleccionar',
   likes: 'Me gusta',
   filters: 'Filtros',
+  info: 'Información',
+  close: 'Cerrar',
+  today: 'Hoy',
+  yesterday: 'Ayer',
+  daysAgo: 'Hace {days} días',
+  create: 'Crear',
+  update: 'Actualizar',
+  pagination: {
+    showing: 'Mostrando',
+    to: 'a',
+    of: 'de',
+    results: 'resultados'
+  },
+  previous: 'Anterior',
+  next: 'Siguiente'
 }

@@ -1,0 +1,389 @@
+# Documentación API - Sistema de Comentarios para Grupos
+## Endpoints Disponibles
+### 1. Crear Comentario
+POST /api/v1/groups/{groupId}/posts/{postId}/comments
+
+Headers:
+
+Body:
+
+Respuesta (201):
+
+### 2. Obtener Comentarios de un Post
+GET /api/v1/groups/{groupId}/posts/{postId}/comments
+
+Query Parameters:
+
+- page (opcional): Número de página (default: 1)
+- limit (opcional): Elementos por página (default: 10, max: 50)
+Respuesta (200):
+
+### 3. Obtener Respuestas de un Comentario
+GET /api/v1/groups/{groupId}/comments/{commentId}/replies
+
+Query Parameters:
+
+- page (opcional): Número de página (default: 1)
+- limit (opcional): Elementos por página (default: 10, max: 50)
+Respuesta (200):
+
+### 4. Actualizar Comentario
+PATCH /api/v1/groups/{groupId}/posts/{postId}/comments/{commentId}
+
+Headers:
+
+Body:
+
+Respuesta (200):
+
+### 5. Eliminar Comentario
+DELETE /api/v1/groups/{groupId}/posts/{postId}/comments/{commentId}
+
+Headers:
+
+Respuesta (200):
+
+### 6. Dar/Quitar Like a Comentario
+POST /api/v1/groups/{groupId}/comments/{commentId}/like
+
+Headers:
+
+Respuesta (200):
+
+## Estructura del Objeto Comentario
+## Códigos de Error Comunes
+- 400 : Datos de entrada inválidos
+- 401 : No autenticado
+- 403 : Sin permisos (no es miembro del grupo)
+- 404 : Comentario, post o grupo no encontrado
+- 500 : Error interno del servidor
+## Notas Importantes
+1. 1.
+   Autenticación : Todos los endpoints excepto GET requieren autenticación
+2. 2.
+   Permisos : Solo miembros del grupo pueden ver/crear comentarios
+3. 3.
+   Edición : Solo el autor puede editar sus comentarios
+4. 4.
+   Eliminación : El autor, admin o owner del grupo pueden eliminar comentarios
+5. 5.
+   Comentarios Anidados : Máximo 1 nivel de anidación (respuestas a comentarios principales)
+6. 6.
+   Paginación : Implementada en listados de comentarios y respuestas
+7. 7.
+   Cache : Los datos se cachean automáticamente para mejor rendimiento
+8. 8.
+   Contadores : likesCount y repliesCount se actualizan automáticamente
+## Ejemplo de Implementación Frontend
+
+Daniel Inarejos Aroca
+
+Copy
+
+Delete
+
+genera en un archivo todo lo que has escrito
+
+Trae
+
+# Documentación API - Sistema de Comentarios para Grupos
+## Endpoints Disponibles
+### 1. Crear Comentario
+POST /api/v1/groups/{groupId}/posts/{postId}/comments
+
+Headers:
+
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+Body:
+
+```
+{
+  "content": "Este es mi comentario",
+  "parentId": 
+  "optional-parent-comment-id" // Para 
+  respuestas anidadas
+}
+```
+Respuesta (201):
+
+```
+{
+  "success": true,
+  "data": {
+    "_id": "64f8a1b2c3d4e5f6a7b8c9d0",
+    "postId": "64f8a1b2c3d4e5f6a7b8c9d1",
+    "authorId": {
+      "_id": "64f8a1b2c3d4e5f6a7b8c9d2",
+      "username": "piloto_fpv",
+      "profilePicture": "https://example.
+      com/avatar.jpg"
+    },
+    "content": "Este es mi comentario",
+    "parentId": null,
+    "likesCount": 0,
+    "repliesCount": 0,
+    "createdAt": "2024-01-15T10:30:00.
+    000Z",
+    "updatedAt": "2024-01-15T10:30:00.
+    000Z"
+  }
+}
+```
+### 2. Obtener Comentarios de un Post
+GET /api/v1/groups/{groupId}/posts/{postId}/comments
+
+Query Parameters:
+
+- page (opcional): Número de página (default: 1)
+- limit (opcional): Elementos por página (default: 10, max: 50)
+Respuesta (200):
+
+```
+{
+  "success": true,
+  "data": {
+    "comments": [
+      {
+        "_id": "64f8a1b2c3d4e5f6a7b8c9d0",
+        "postId": 
+        "64f8a1b2c3d4e5f6a7b8c9d1",
+        "authorId": {
+          "_id": 
+          "64f8a1b2c3d4e5f6a7b8c9d2",
+          "username": "piloto_fpv",
+          "profilePicture": "https://
+          example.com/avatar.jpg"
+        },
+        "content": "¡Excelente vuelo!",
+        "parentId": null,
+        "likesCount": 5,
+        "repliesCount": 2,
+        "createdAt": "2024-01-15T10:30:00.
+        000Z",
+        "updatedAt": "2024-01-15T10:30:00.
+        000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 3,
+      "totalComments": 25,
+      "hasNextPage": true,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+### 3. Obtener Respuestas de un Comentario
+GET /api/v1/groups/{groupId}/comments/{commentId}/replies
+
+Query Parameters:
+
+- page (opcional): Número de página (default: 1)
+- limit (opcional): Elementos por página (default: 10, max: 50)
+Respuesta (200):
+
+```
+{
+  "success": true,
+  "data": {
+    "replies": [
+      {
+        "_id": "64f8a1b2c3d4e5f6a7b8c9d3",
+        "postId": 
+        "64f8a1b2c3d4e5f6a7b8c9d1",
+        "authorId": {
+          "_id": 
+          "64f8a1b2c3d4e5f6a7b8c9d4",
+          "username": "otro_piloto",
+          "profilePicture": "https://
+          example.com/avatar2.jpg"
+        },
+        "content": "Totalmente de 
+        acuerdo, muy buena técnica",
+        "parentId": 
+        "64f8a1b2c3d4e5f6a7b8c9d0",
+        "likesCount": 2,
+        "repliesCount": 0,
+        "createdAt": "2024-01-15T11:15:00.
+        000Z",
+        "updatedAt": "2024-01-15T11:15:00.
+        000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 1,
+      "totalReplies": 2,
+      "hasNextPage": false,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+### 4. Actualizar Comentario
+PATCH /api/v1/groups/{groupId}/posts/{postId}/comments/{commentId}
+
+Headers:
+
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+Body:
+
+```
+{
+  "content": "Comentario actualizado"
+}
+```
+Respuesta (200):
+
+```
+{
+  "success": true,
+  "data": {
+    "_id": "64f8a1b2c3d4e5f6a7b8c9d0",
+    "postId": "64f8a1b2c3d4e5f6a7b8c9d1",
+    "authorId": {
+      "_id": "64f8a1b2c3d4e5f6a7b8c9d2",
+      "username": "piloto_fpv",
+      "profilePicture": "https://example.
+      com/avatar.jpg"
+    },
+    "content": "Comentario actualizado",
+    "parentId": null,
+    "likesCount": 5,
+    "repliesCount": 2,
+    "createdAt": "2024-01-15T10:30:00.
+    000Z",
+    "updatedAt": "2024-01-15T12:45:00.
+    000Z"
+  }
+}
+```
+### 5. Eliminar Comentario
+DELETE /api/v1/groups/{groupId}/posts/{postId}/comments/{commentId}
+
+Headers:
+
+```
+Authorization: Bearer {token}
+```
+Respuesta (200):
+
+```
+{
+  "success": true,
+  "message": "Comentario eliminado 
+  exitosamente"
+}
+```
+### 6. Dar/Quitar Like a Comentario
+POST /api/v1/groups/{groupId}/comments/{commentId}/like
+
+Headers:
+
+```
+Authorization: Bearer {token}
+```
+Respuesta (200):
+
+```
+{
+  "success": true,
+  "data": {
+    "liked": true,
+    "likesCount": 6
+  }
+}
+```
+## Estructura del Objeto Comentario
+```
+interface GroupComment {
+  _id: string;
+  postId: string;
+  authorId: {
+    _id: string;
+    username: string;
+    profilePicture?: string;
+  };
+  content: string;
+  parentId?: string; // null para 
+  comentarios principales, ID para 
+  respuestas
+  likesCount: number;
+  repliesCount: number;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+```
+## Códigos de Error Comunes
+- 400 : Datos de entrada inválidos
+- 401 : No autenticado
+- 403 : Sin permisos (no es miembro del grupo)
+- 404 : Comentario, post o grupo no encontrado
+- 500 : Error interno del servidor
+## Notas Importantes
+1. 1.
+   Autenticación : Todos los endpoints excepto GET requieren autenticación
+2. 2.
+   Permisos : Solo miembros del grupo pueden ver/crear comentarios
+3. 3.
+   Edición : Solo el autor puede editar sus comentarios
+4. 4.
+   Eliminación : El autor, admin o owner del grupo pueden eliminar comentarios
+5. 5.
+   Comentarios Anidados : Máximo 1 nivel de anidación (respuestas a comentarios principales)
+6. 6.
+   Paginación : Implementada en listados de comentarios y respuestas
+7. 7.
+   Cache : Los datos se cachean automáticamente para mejor rendimiento
+8. 8.
+   Contadores : likesCount y repliesCount se actualizan automáticamente
+## Ejemplo de Implementación Frontend
+```
+// Crear comentario
+const createComment = async (groupId, 
+postId, content, parentId = null) => {
+  const response = await fetch(`/api/v1/
+  groups/${groupId}/posts/${postId}/
+  comments`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ content, 
+    parentId })
+  });
+  return response.json();
+};
+
+// Obtener comentarios
+const getComments = async (groupId, 
+postId, page = 1) => {
+  const response = await fetch(`/api/v1/
+  groups/${groupId}/posts/${postId}/
+  comments?page=${page}`);
+  return response.json();
+};
+
+// Toggle like
+const toggleLike = async (groupId, 
+commentId) => {
+  const response = await fetch(`/api/v1/
+  groups/${groupId}/comments/${commentId}/
+  like`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return response.json();
+};
+```
+Nota : Esta documentación describe el sistema de comentarios implementado para los grupos de FPVLog. Todos los endpoints están protegidos por middleware de autenticación y verificación de membresía del grupo según corresponda.

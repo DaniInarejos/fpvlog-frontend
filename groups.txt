@@ -1,0 +1,483 @@
+
+## ENDPOINTS DE LA API
+
+### RUTAS PÚBLICAS (Sin autenticación)
+
+#### GET /groups
+**Descripción:** Obtener lista de grupos públicos
+**Query Parameters:**
+- page?: number (default: 1)
+- limit?: number (default: 10)
+- search?: string
+- tags?: string (separados por comas)
+- isPrivate?: boolean
+
+**Respuesta 200:**
+```json
+{
+  "groups": [
+    {
+      "_id": "string",
+      "name": "string",
+      "description": "string",
+      "createdBy": {
+        "_id": "string",
+        "username": "string",
+        "name": "string",
+        "lastName": "string",
+        "profilePicture": "string"
+      },
+      "isPrivate": false,
+      "membersCount": 0,
+      "postsCount": 0,
+      "tags": ["string"],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 100,
+    "totalPages": 10
+  }
+}
+```
+
+#### GET /groups/search
+**Descripción:** Buscar grupos públicos
+**Query Parameters:**
+- q: string (requerido, mín 2 caracteres)
+- page?: number (default: 1)
+- limit?: number (default: 10)
+
+**Respuesta:** Igual que GET /groups
+
+#### GET /groups/:id
+**Descripción:** Obtener grupo por ID
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+
+**Respuesta 200:**
+```json
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "createdBy": {
+    "_id": "string",
+    "username": "string",
+    "name": "string",
+    "lastName": "string",
+    "profilePicture": "string"
+  },
+  "isPrivate": false,
+  "avatarUrl": "string",
+  "bannerUrl": "string",
+  "membersCount": 0,
+  "postsCount": 0,
+  "tags": ["string"],
+  "createdAt": "2024-01-01T00:00:00.000Z"
+}
+```
+
+**Errores:**
+- 404: Grupo no encontrado
+- 403: Sin acceso (grupo privado)
+
+### RUTAS PROTEGIDAS (Requieren autenticación)
+
+#### POST /groups
+**Descripción:** Crear nuevo grupo
+**Headers:** Authorization: Bearer {token}
+**Body:**
+```json
+{
+  "name": "string",           // Requerido, 1-100 caracteres
+  "description": "string",   // Opcional, máx 500 caracteres
+  "isPrivate": false,        // Opcional, default: false
+  "tags": ["string"]         // Opcional, máx 10 tags
+}
+```
+
+**Respuesta 201:** Objeto Group creado
+**Errores:**
+- 400: Error de validación
+- 401: No autorizado
+
+#### POST /groups/:id/join
+**Descripción:** Unirse a un grupo
+**Headers:** Authorization: Bearer {token}
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+
+**Respuesta 200:**
+```json
+{
+  "message": "Te has unido al grupo exitosamente"
+}
+```
+
+**Errores:**
+- 400: Ya eres miembro, estás baneado, o solicitud pendiente
+- 401: No autorizado
+- 404: Grupo no encontrado
+
+**Nota:** Si el grupo es privado, se crea solicitud PENDING
+
+#### DELETE /groups/:id/leave
+**Descripción:** Abandonar un grupo
+**Headers:** Authorization: Bearer {token}
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+
+**Respuesta 200:**
+```json
+{
+  "message": "Has abandonado el grupo exitosamente"
+}
+```
+
+**Errores:**
+- 400: No eres miembro o eres el propietario
+- 401: No autorizado
+- 404: Grupo no encontrado
+
+### RUTAS PARA MIEMBROS
+
+#### GET /groups/:id/members
+**Descripción:** Obtener miembros del grupo
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupMemberMiddleware (debe ser miembro)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+**Query Parameters:**
+- role?: string (OWNER|ADMIN|MOD|MEMBER|PENDING|BANNED)
+- page?: number (default: 1)
+- limit?: number (default: 20)
+
+**Respuesta 200:**
+```json
+{
+  "members": [
+    {
+      "_id": "string",
+      "groupId": "string",
+      "userId": {
+        "_id": "string",
+        "username": "string",
+        "name": "string",
+        "lastName": "string",
+        "profilePicture": "string"
+      },
+      "role": "MEMBER",
+      "joinedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 50,
+    "totalPages": 3
+  }
+}
+```
+
+### RUTAS PARA ADMINISTRADORES
+
+#### PATCH /groups/:id
+**Descripción:** Actualizar grupo
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupAdminMiddleware (OWNER o ADMIN)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+**Body:**
+```json
+{
+  "name": "string",           // Opcional, 1-100 caracteres
+  "description": "string",   // Opcional, máx 500 caracteres
+  "isPrivate": false,        // Opcional
+  "tags": ["string"],        // Opcional, máx 10 tags
+  "avatarUrl": "string",     // Opcional, URL válida
+  "bannerUrl": "string"      // Opcional, URL válida
+}
+```
+
+**Respuesta 200:** Objeto Group actualizado
+
+#### GET /groups/:id/members/pending
+**Descripción:** Obtener solicitudes pendientes
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupAdminMiddleware (OWNER o ADMIN)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+**Query Parameters:**
+- page?: number (default: 1)
+- limit?: number (default: 20)
+
+**Respuesta 200:**
+```json
+{
+  "members": [
+    {
+      "_id": "string",
+      "groupId": "string",
+      "userId": {
+        "_id": "string",
+        "username": "string",
+        "name": "string",
+        "lastName": "string",
+        "profilePicture": "string"
+      },
+      "role": "PENDING",
+      "joinedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "totalPages": 1
+}
+```
+
+#### PATCH /groups/:id/members/:userId
+**Descripción:** Gestionar miembro (aprobar, rechazar, banear, promover, etc.)
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupAdminMiddleware (OWNER o ADMIN)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+- userId: string (ObjectId del usuario)
+**Body:**
+```json
+{
+  "action": "approve|reject|ban|unban|promote|demote",
+  "newRole": "ADMIN|MEMBER"  // Requerido para promote/demote
+}
+```
+
+**Acciones disponibles:**
+- **approve**: PENDING → MEMBER
+- **reject**: PENDING → eliminado
+- **ban**: cualquier rol → BANNED
+- **unban**: BANNED → MEMBER
+- **promote**: MEMBER → ADMIN (solo OWNER puede crear ADMIN)
+- **demote**: ADMIN → MEMBER
+
+**Respuesta 200:**
+```json
+{
+  "message": "Acción realizada exitosamente"
+}
+```
+
+**Restricciones de jerarquía:**
+- No se puede gestionar usuarios con rol igual o superior
+- Solo OWNER puede gestionar otros OWNER
+- Solo OWNER puede asignar rol OWNER
+
+### RUTAS PARA PROPIETARIOS
+
+#### DELETE /groups/:id
+**Descripción:** Eliminar grupo
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupOwnerMiddleware (solo OWNER)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+
+**Respuesta 200:**
+```json
+{
+  "message": "Grupo eliminado exitosamente"
+}
+```
+
+**Nota:** Elimina también todos los miembros, posts y comentarios
+
+#### POST /groups/:id/transfer-ownership
+**Descripción:** Transferir propiedad del grupo
+**Headers:** Authorization: Bearer {token}
+**Middleware:** groupOwnerMiddleware (solo OWNER)
+**Path Parameters:**
+- id: string (ObjectId del grupo)
+**Body:**
+```json
+{
+  "newOwnerId": "string"  // ObjectId del nuevo propietario
+}
+```
+
+**Respuesta 200:**
+```json
+{
+  "message": "Propiedad transferida exitosamente"
+}
+```
+
+**Proceso:**
+1. Propietario actual → ADMIN
+2. Nuevo propietario → OWNER
+3. El nuevo propietario debe ser miembro activo (no PENDING/BANNED)
+
+## VALIDACIONES ZOD
+
+### Crear Grupo
+```typescript
+const createGroupSchema = z.object({
+  name: z.string().min(1, 'El nombre es requerido').max(100, 'El nombre es muy largo'),
+  description: z.string().max(500, 'La descripción es muy larga').optional(),
+  isPrivate: z.boolean().default(false),
+  tags: z.array(z.string()).max(10, 'Máximo 10 tags').optional()
+})
+```
+
+### Actualizar Grupo
+```typescript
+const updateGroupSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).optional(),
+  isPrivate: z.boolean().optional(),
+  tags: z.array(z.string()).max(10).optional(),
+  avatarUrl: z.string().url().optional(),
+  bannerUrl: z.string().url().optional()
+})
+```
+
+## MIDDLEWARES DE AUTORIZACIÓN
+
+### authMiddleware
+- Verifica token JWT válido
+- Agrega usuario a context.user
+
+### groupMemberMiddleware
+- Verifica que el usuario sea miembro del grupo
+- Excluye BANNED y PENDING
+
+### groupAdminMiddleware
+- Verifica que el usuario sea OWNER o ADMIN
+- Hereda de groupMemberMiddleware
+
+### groupOwnerMiddleware
+- Verifica que el usuario sea OWNER
+- Hereda de groupMemberMiddleware
+
+## LÓGICA DE NEGOCIO IMPORTANTE
+
+### Grupos Privados vs Públicos
+- **Públicos**: Cualquiera puede unirse directamente
+- **Privados**: Requieren aprobación de administradores
+
+### Contadores Automáticos
+- `membersCount`: Se actualiza automáticamente al agregar/remover miembros
+- `postsCount`: Se actualiza automáticamente al crear/eliminar posts
+- No cuenta PENDING ni BANNED en membersCount
+
+### Cache
+- Grupos individuales: `group:{id}`
+- Listas de grupos: `groups:*`
+- Miembros de grupo: `group:{id}:members`
+- Posts de grupo: `group:{id}:posts`
+- Grupos de usuario: `user:{id}:groups`
+- Se invalida automáticamente en operaciones CUD
+
+### Búsqueda
+- Busca en: nombre, descripción, tags
+- Solo grupos públicos en búsqueda
+- Ordenado por: membersCount DESC, createdAt DESC
+- Mínimo 2 caracteres
+
+### Permisos de Acceso
+- **Grupos públicos**: Visible para todos
+- **Grupos privados**: Solo miembros activos pueden ver
+- **Miembros**: Pueden ver lista de miembros
+- **Administradores**: Pueden gestionar miembros y contenido
+- **Propietarios**: Pueden eliminar grupo y transferir propiedad
+
+## CÓDIGOS DE ERROR COMUNES
+
+### 400 - Bad Request
+- Error de validación Zod
+- Ya eres miembro del grupo
+- Usuario baneado
+- Solicitud pendiente
+- Acción inválida
+
+### 401 - Unauthorized
+- Token JWT inválido o faltante
+
+### 403 - Forbidden
+- Sin permisos para la acción
+- Grupo privado sin membresía
+- Jerarquía de roles insuficiente
+
+### 404 - Not Found
+- Grupo no encontrado
+- Usuario no encontrado
+- Miembro no encontrado
+
+### 500 - Internal Server Error
+- Error de base de datos
+- Error de cache
+- Error interno no controlado
+
+## REPOSITORIOS DISPONIBLES
+
+### Groups Repository
+- createGroupRepository(groupData)
+- findGroupByIdRepository(id)
+- findGroupsRepository(filters, page, limit)
+- updateGroupRepository(id, updateData)
+- deleteGroupRepository(id)
+- searchGroupsRepository(searchTerm, page, limit)
+
+### Group Members Repository
+- addMemberRepository(groupId, userId, role)
+- findMemberRepository(groupId, userId)
+- findGroupMembersRepository(groupId, page, limit, roles?)
+- countMembersRepository(groupId, roles?)
+- updateMemberRoleRepository(groupId, userId, newRole)
+- removeMemberRepository(groupId, userId)
+- findUserGroupsRepository(userId)
+
+### Group Posts Repository
+- createPostRepository(postData)
+- findPostByIdRepository(id)
+- findGroupPostsRepository(groupId, page, limit)
+- updatePostRepository(id, updateData)
+- deletePostRepository(id)
+- findUserPostsRepository(userId, page, limit)
+
+### Group Comments Repository
+- createCommentRepository(commentData)
+- findCommentByIdRepository(id)
+- findPostCommentsRepository(postId, page, limit)
+- updateCommentRepository(id, updateData)
+- deleteCommentRepository(id)
+- findUserCommentsRepository(userId, page, limit)
+
+## NOTAS PARA EL FRONTEND
+
+1. **Autenticación**: Todos los endpoints protegidos requieren header `Authorization: Bearer {token}`
+
+2. **Paginación**: Usar query parameters `page` y `limit` en endpoints de listado
+
+3. **Roles**: Verificar rol del usuario para mostrar/ocultar funcionalidades:
+   - OWNER: Todos los permisos
+   - ADMIN: Gestión de miembros y contenido
+   - MEMBER: Acceso básico
+   - PENDING: Acceso limitado hasta aprobación
+   - BANNED: Sin acceso
+
+4. **Estados de UI**:
+   - Mostrar indicador de "Solicitud pendiente" para grupos privados
+   - Deshabilitar botones según permisos del usuario
+   - Mostrar contadores de miembros y posts
+
+5. **Validaciones**: Implementar validaciones del lado cliente que coincidan con Zod schemas
+
+6. **Manejo de errores**: Mostrar mensajes de error apropiados según código de respuesta
+
+7. **Cache**: Considerar cache local para listas de grupos y miembros
+
+8. **Búsqueda**: Implementar debounce para búsqueda en tiempo real
+
+9. **Filtros**: Permitir filtrar por tags, privacidad, etc.
+
+10. **Responsive**: Adaptar límites de paginación según tamaño de pantalla

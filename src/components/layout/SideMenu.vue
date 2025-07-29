@@ -19,6 +19,12 @@ const menuItems = computed(() => [
     icon: 'feed',
     exact: true
   },
+   {
+    name:  t('nav.groups'),
+    path: '/groups',
+    icon: 'groups',
+    exact: true
+  },
   {
     name: t('nav.spots'),
     path: '/feedSpots',
@@ -35,6 +41,7 @@ const getIcon = (icon) => {
     drone: '🚁',
     feedSpots: '📍',
     components: '🔧',
+    groups: '👥 '
   }
   return icons[icon] || ''
 }

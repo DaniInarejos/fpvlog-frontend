@@ -4,7 +4,7 @@ export default {
   subtitle: 'Conecta con otros pilotos de FPV',
   createGroup: 'Crear Grupo',
   editGroup: 'Editar Grupo',
-  joinGroup: 'Unirse al Grupo',
+  joinGroup: 'Unirse al grupo',
   leaveGroup: 'Abandonar Grupo',
   join: 'Unirse',
   leave: 'Abandonar',
@@ -13,13 +13,27 @@ export default {
   pending: 'Pendiente',
   public: 'Público',
   private: 'Privado',
+  joinAndComment: 'Únete al grupo para participar en discusiones y comentar en los temas',
   memberCount: '{count} miembro | {count} miembros',
   createdBy: 'Creado por {owner}',
   owner: 'Propietario',
   description: 'Descripción',
   privacy: 'Privacidad',
   createdAt: 'Creado el',
-  
+  deleteGroup: 'Eliminar Grupo',
+deleteConfirmation: '¿Estás seguro de que quieres eliminar el grupo "{name}"?',
+deleteWarning: 'Esta acción no se puede deshacer. Se eliminarán todos los topics, comentarios y miembros.',
+confirmDelete: 'Sí, Eliminar',
+tags: 'Etiquetas',
+
+  // Agregar la sección de roles faltante
+  roles: {
+    owner: 'Propietario',
+    admin: 'Administrador',
+    member: 'Miembro',
+    pending: 'Pendiente',
+    banned: 'Baneado'
+  },
   // Nuevas traducciones que faltan
   notFound: 'Grupo no encontrado',
   posts: 'Posts',
@@ -75,6 +89,13 @@ export default {
     pin: 'Fijar',
     unpin: 'Desfijar',
     confirmDelete: '¿Estás seguro de que quieres eliminar el tema "{title}"?',
+    comments: 'Comentarios',
+    noComments: 'Aún no hay comentarios. ¡Sé el primero en comentar!',
+    addComment: 'Agregar Comentario',
+    commentPlaceholder: 'Escribe tu comentario aquí...',
+    postComment: 'Publicar Comentario',
+    createdBy: 'Creado por',
+    pinned: 'Fijado',
     validation: {
       titleRequired: 'El título es requerido'
     },
@@ -99,7 +120,10 @@ export default {
     edited: 'editado',
     confirmDelete: '¿Estás seguro de que quieres eliminar este comentario?',
     empty: 'Aún no hay comentarios. ¡Sé el primero en comentar!',
-    showReplies: 'Ver {count} respuestas'
+    showReplies: 'Ver {count} respuestas',
+    addComment: 'Agregar Comentario',
+    writeComment: 'Escribe un comentario...',
+    comment: 'Comentar'
   },
   
   posts: {

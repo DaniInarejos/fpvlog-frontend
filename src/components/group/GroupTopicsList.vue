@@ -1,13 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '../../stores/user'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import DOMPurify from 'dompurify'
 import groupTopicService from '../../services/groupTopicService'
 import BaseCard from '../base/BaseCard.vue'
 import BaseButton from '../base/BaseButton.vue'
 import BaseModal from '../base/BaseModal.vue'
 import BaseInput from '../base/BaseInput.vue'
 import BaseAlert from '../base/BaseAlert.vue'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 const props = defineProps({
   groupId: {
@@ -17,13 +20,22 @@ const props = defineProps({
   canManage: {
     type: Boolean,
     default: false
+  },
+  userRole: {
+    type: String,
+    default: null
+  },
+  currentUserId: {
+    type: String,
+    default: null
   }
 })
 
-const emit = defineEmits(['topic-created', 'topic-updated', 'topic-deleted'])
+const emit = defineEmits(['topic-created', 'topic-updated', 'topic-deleted', 'topic-selected'])
 
 const userStore = useUserStore()
 const { t } = useI18n()
+const router = useRouter()
 
 const topics = ref([])
 const isLoading = ref(false)
@@ -41,6 +53,27 @@ const topicForm = ref({
   description: '',
   isPinned: false
 })
+const canPinTopics = computed(() => {
+  return props.userRole === 'OWNER' || props.userRole === 'ADMIN'
+})
+
+const canEditTopic = computed(() => {
+  return (topic) => {
+    if (props.userRole === 'OWNER' || props.userRole === 'ADMIN') {
+      return true
+    }
+    return topic.createdBy?._id === props.currentUserId
+  }
+})
+
+const canDeleteTopic = computed(() => {
+  return (topic) => {
+    if (props.userRole === 'OWNER') {
+      return true
+    }
+    return topic.createdBy?._id === props.currentUserId
+  }
+})
 
 const fetchTopics = async (page = 1) => {
   isLoading.value = true
@@ -51,10 +84,13 @@ const fetchTopics = async (page = 1) => {
       limit: 10,
       sort: '-isPinned,-createdAt' // Primero fijados, luego por fecha
     })
-      console.log(response)
     if (response.topics) {
       topics.value = response.topics
-      pagination.value = response.pagination
+      pagination.value = {
+        currentPage: response.page,
+        totalPages: response.totalPages,
+        totalTopics: response.total
+      }
     }
   } catch (error) {
     console.error('Error fetching topics:', error)
@@ -163,9 +199,34 @@ const handlePageChange = (page) => {
   fetchTopics(page)
 }
 
+const navigateToTopic = (topic) => {
+  router.push({
+    name: 'topic-detail',
+    params: {
+      groupId: props.groupId,
+      topicId: topic._id
+    }
+  })
+}
+
 onMounted(() => {
   fetchTopics()
 })
+
+const sanitizeHtml = (html) => {
+  return DOMPurify.sanitize(html)
+}
+
+const truncateDescription = (description, wordLimit = 100) => {
+  console.log(description)
+  if (!description) return ''
+  
+  // Primero sanitizamos el HTML
+  const sanitized = sanitizeHtml(description)
+ return  sanitized.length > wordLimit
+    ? `${sanitized.slice(0, wordLimit)}...`
+    : sanitized
+}
 </script>
 
 <template>
@@ -215,7 +276,7 @@ onMounted(() => {
         v-for="topic in topics"
         :key="topic._id"
         class="p-4 hover:shadow-md transition-shadow cursor-pointer"
-        @click="$emit('topic-selected', topic)"
+        @click="navigateToTopic(topic)"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
@@ -237,9 +298,11 @@ onMounted(() => {
               </h3>
             </div>
             
-            <p v-if="topic.description" class="text-gray-600 dark:text-gray-400 mb-3">
-              {{ topic.description }}
-            </p>
+            <div 
+              v-if="topic.description" 
+              class="text-gray-600 dark:text-gray-400 mb-3 prose prose-sm max-w-none"
+              v-html="truncateDescription(topic.description)"
+            ></div>
             
             <div class="flex items-center gap-4 text-sm text-gray-500">
               <span>{{ t('groups.topics.postCount', { count: topic.postCount || 0 }) }}</span>
@@ -254,9 +317,11 @@ onMounted(() => {
           
           <!-- Actions -->
           <div v-if="canManage" class="flex items-center gap-2 ml-4">
+            <!-- Pin button - solo para OWNER/ADMIN -->
             <BaseButton
+              v-if="canPinTopics"
               @click.stop="handleTogglePin(topic)"
-              variant="ghost"
+              variant="secondary"
               size="sm"
               :title="topic.isPinned ? t('groups.topics.unpin') : t('groups.topics.pin')"
             >
@@ -267,9 +332,11 @@ onMounted(() => {
               </svg>
             </BaseButton>
             
+            <!-- Edit button - para OWNER/ADMIN o creador del topic -->
             <BaseButton
+              v-if="canEditTopic(topic)"
               @click.stop="handleEditTopic(topic)"
-              variant="ghost"
+              variant="secondary"
               size="sm"
               :title="t('common.edit')"
             >
@@ -278,9 +345,11 @@ onMounted(() => {
               </svg>
             </BaseButton>
             
+            <!-- Delete button - para OWNER o creador del topic -->
             <BaseButton
+              v-if="canDeleteTopic(topic)"
               @click.stop="handleDeleteTopic(topic)"
-              variant="ghost"
+              variant="danger"
               size="sm"
               :title="t('common.delete')"
               class="text-red-600 hover:text-red-700"
@@ -343,17 +412,13 @@ onMounted(() => {
           required
         />
         
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {{ t('groups.topics.form.description') }}
-          </label>
-          <textarea
-            v-model="topicForm.description"
-            :placeholder="t('groups.topics.form.descriptionPlaceholder')"
-            rows="3"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          ></textarea>
-        </div>
+        <RichTextEditor
+          v-model="topicForm.description"
+          :label="t('groups.topics.form.description')"
+          :placeholder="t('groups.topics.form.descriptionPlaceholder')"
+          :height="200"
+          toolbar="advanced"
+        />
         
         <div v-if="canManage" class="flex items-center">
           <input

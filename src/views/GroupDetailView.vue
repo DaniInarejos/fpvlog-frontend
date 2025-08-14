@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import groupService from '../services/groupService'
 import groupTopicService from '../services/groupTopicService'
 
+import BaseAlert from '../components/base/BaseAlert.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 import TabSelector from '../components/base/TabSelector.vue'
@@ -19,11 +20,6 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const { t } = useI18n()
-
-// Debug logs
-console.log('GroupDetailView: Component initialized')
-console.log('Route params:', route.params)
-console.log('User store:', userStore.user)
 
 // State
 const group = ref(null)
@@ -40,7 +36,8 @@ const userMembership = ref(null)
 const modals = ref({
   members: false,
   joinGroup: false,
-  leaveGroup: false
+  leaveGroup: false,
+  deleteGroup: false  
 })
 
 // Pagination
@@ -51,41 +48,65 @@ const pagination = ref({
   totalPages: 0
 })
 
-// Computed - Tabs definition (reactive to translations)
-const tabs = computed(() => [
-  { id: 'topics', label: t('groups.detail.tabs.topics') },
-  { id: 'about', label: t('groups.detail.tabs.about') }
-])
+// Computed - Basic user info
+const isUserAuthenticated = computed(() => userStore.isAuthenticated)
+const currentUserId = computed(() => userStore.user?._id)
 
-// Computed - Access Control
+// Computed - User membership status
+const userRole = computed(() => userMembership.value?.role || null)
+const isOwner = computed(() => userRole.value === 'OWNER')
+const isPending = computed(() => userRole.value === 'PENDING')
+const isBanned = computed(() => userRole.value === 'BANNED')
+const isMember = computed(() => {
+  if (!userMembership.value) return false
+  const memberRoles = ['OWNER', 'ADMIN', 'MEMBER']
+  return memberRoles.includes(userMembership.value.role)
+})
+
+// Computed - Permissions
 const canViewContent = computed(() => {
   if (!group.value) return false
   if (!group.value.isPrivate) return true
-  return userMembership.value && userMembership.value.status === 'approved'
+  
+  // Si el usuario es el creador del grupo, siempre puede ver el contenido
+  if (isUserAuthenticated.value && group.value.createdBy === currentUserId.value) {
+    return true
+  }
+  
+  // Para otros usuarios, verificar membresía
+  return isMember.value
 })
 
-const canPost = computed(() => {
-  return canViewContent.value && userMembership.value
-})
+const canPost = computed(() => canViewContent.value && isMember.value)
 
 const canManageGroup = computed(() => {
   return userMembership.value && 
     (userMembership.value.role === 'admin' || userMembership.value.role === 'owner')
 })
 
-// Computed - User Status
-const userStatus = computed(() => {
-  if (!userMembership.value) return 'not_member'
-  return userMembership.value.status // 'approved', 'pending', 'rejected'
+const canJoinGroup = computed(() => {
+  if (!isUserAuthenticated.value) return false
+  if (!userMembership.value) return true
+  return !isBanned.value
 })
 
-const userRole = computed(() => {
-  return userMembership.value?.role || null // 'owner', 'admin', 'member'
+const canLeaveGroup = computed(() => {
+  if (!isUserAuthenticated.value || !userMembership.value) return false
+  return !isOwner.value && !isBanned.value
 })
 
-const isMember = computed(() => userStatus.value === 'approved')
-const isPending = computed(() => userStatus.value === 'pending')
-const isOwner = computed(() => userRole.value === 'owner')
+// Computed - UI logic
+const shouldShowJoinButton = computed(() => {
+  if (!isUserAuthenticated.value) return false
+  if (group.value?.createdBy === currentUserId.value) return false
+  return !isMember.value && !isPending.value && !isBanned.value
+})
+
+// Computed - Tabs definition (reactive to translations)
+const tabs = computed(() => [
+  { id: 'topics', label: t('groups.detail.tabs.topics') },
+  { id: 'about', label: t('groups.detail.tabs.about') }
+])
 
 // Methods - Data Fetching
 const fetchGroup = async () => {
@@ -94,25 +115,26 @@ const fetchGroup = async () => {
     errors.value = {}
     
     const response = await groupService.getGroup(route.params.id)
-    // La API devuelve directamente el objeto grupo, no { group: ... }
     group.value = response.data || response
     
-    // Obtener membresía del usuario por separado si es necesario
-    if (userStore.isAuthenticated) {
-      try {
-        const memberResponse = await groupService.getGroupMembers(route.params.id, {
-          userId: userStore.user.id // Filtrar por usuario actual
-        })
-        userMembership.value = memberResponse.members?.find(m => m.userId._id === userStore.user.id)
-      } catch (memberError) {
-        // Usuario no es miembro
-        userMembership.value = null
-      }
-    }
+    // Obtener membresía del usuario usando la misma lógica que GroupInfo.vue
+    if (isUserAuthenticated.value) {
+  try {
+    const memberResponse = await groupService.getGroupMembers(route.params.id, { limit: 100 })
+    const members = memberResponse.members || []
+    
+    // Find current user's membership status
+    userMembership.value = members.find(member => 
+      member.userId?._id == currentUserId.value
+    ) || null
+  } catch (memberError) {
+    userMembership.value = null
+  }
+}
   } catch (error) {
     console.error('Error fetching group:', error)
     errors.value.group = error.message || t('common.error')
-    group.value = null // Ensure group is null on error
+    group.value = null
   } finally {
     isLoading.value = false
   }
@@ -181,6 +203,17 @@ const handleLeaveGroup = async () => {
   }
 }
 
+const handleDeleteGroup = async () => {
+  try {
+    await groupService.deleteGroup(route.params.id)
+    modals.value.deleteGroup = false
+    router.push('/groups')
+  } catch (error) {
+    console.error('Error deleting group:', error)
+    errors.value.delete = error.message || t('common.error')
+  }
+}
+
 // Methods - UI Handlers
 const handleTabChange = (tabId) => {
   activeTab.value = tabId
@@ -201,12 +234,10 @@ const closeModal = (modalName) => {
 
 // Lifecycle
 onMounted(async () => {
-  console.log('Component mounted, starting data fetch...')
   await fetchGroup()
   if (canViewContent.value) {
     await fetchTopics()
   }
-  console.log('Mount completed')
 })
 </script>
 
@@ -287,7 +318,7 @@ onMounted(async () => {
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ t('groups.createdBy') }}: {{ group.createdBy.name }} {{ group.createdBy.lastName }}</span>
+                <span>{{ t('groups.createdBy') }}: {{ group.createdBy.username }}</span>
               </div>
             </div>
             
@@ -314,7 +345,7 @@ onMounted(async () => {
               >
                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path v-if="group?.isPrivate" fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                  <path v-else fill-rule="evenodd" d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                 <path v-else fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 {{ group?.isPrivate ? t('groups.private') : t('groups.public') }}
               </span>
@@ -325,7 +356,7 @@ onMounted(async () => {
           <div class="mt-6 lg:mt-0 lg:ml-6 flex flex-col sm:flex-row lg:flex-col gap-3">
             <!-- Join/Leave buttons based on user status -->
             <BaseButton 
-              v-if="!isMember && !isPending && userStore.isAuthenticated"
+              v-if="shouldShowJoinButton"
               @click="openModal('joinGroup')"
               variant="primary"
               class="whitespace-nowrap"
@@ -345,7 +376,7 @@ onMounted(async () => {
             <BaseButton 
               v-else-if="isMember && !isOwner"
               @click="openModal('leaveGroup')"
-              variant="outline"
+              variant="danger" 
               class="whitespace-nowrap"
             >
               {{ t('groups.leave') }}
@@ -353,12 +384,22 @@ onMounted(async () => {
             
             <!-- Management button for admins/owners -->
             <BaseButton 
-              v-if="canManageGroup"
+              v-if="canManageGroup" 
               @click="openModal('members')"
               variant="secondary"
               class="whitespace-nowrap"
             >
               {{ t('groups.manageMembers') }}
+            </BaseButton>
+            
+            <!-- Delete Group button - Only for owners -->
+            <BaseButton 
+              v-if="isOwner"
+              @click="openModal('deleteGroup')"
+              variant="danger"
+              class="whitespace-nowrap"
+            >
+              {{ t('groups.deleteGroup') }}
             </BaseButton>
           </div>
         </div>
@@ -378,12 +419,14 @@ onMounted(async () => {
       
       <!-- Tab Content -->
       <div class="p-6">
-        <!-- Topics Tab -->
+                <!-- Topics Tab -->
         <div v-if="activeTab === 'topics'">
           <GroupTopicsList 
             v-if="canViewContent" 
             :group-id="route.params.id" 
-            :can-post="canPost" 
+            :can-manage="isMember || isOwner"
+            :user-role="userRole"
+            :current-user-id="currentUserId"
           />
           <div v-else class="text-center py-8">
             <p class="text-gray-500">{{ t('groups.privateGroupMessage') }}</p>
@@ -399,7 +442,6 @@ onMounted(async () => {
                 {{ t('groups.createPost') }}
               </BaseButton>
             </div>
-
           </div>
           <div v-else class="text-center py-8">
             <p class="text-gray-500">{{ t('groups.privateGroupMessage') }}</p>
@@ -473,7 +515,6 @@ onMounted(async () => {
     </div>
   </BaseModal>
   
-
   <!-- Members Modal -->
   <BaseModal 
     :show="modals.members" 
@@ -489,5 +530,32 @@ onMounted(async () => {
       @member-action="handleMemberAction" 
       @transfer-ownership="handleTransferOwnership"
     />
+  </BaseModal>
+  
+  <!-- Delete Group Modal -->
+  <BaseModal 
+    :show="modals.deleteGroup" 
+    @close="closeModal('deleteGroup')"
+    :title="t('groups.deleteGroup')"
+  >
+    <div class="space-y-4">
+      <BaseAlert
+        v-if="errors.delete"
+        type="error"
+        :message="errors.delete"
+      />
+      
+      <p class="text-gray-600">{{ t('groups.deleteConfirmation', { name: group?.name }) }}</p>
+      <p class="text-red-600 font-medium">{{ t('groups.deleteWarning') }}</p>
+    </div>
+    
+    <div class="flex justify-end space-x-3 mt-6">
+      <BaseButton @click="closeModal('deleteGroup')" variant="outline">
+        {{ t('common.cancel') }}
+      </BaseButton>
+      <BaseButton @click="handleDeleteGroup" variant="danger">
+        {{ t('groups.confirmDelete') }}
+      </BaseButton>
+    </div>
   </BaseModal>
 </template>

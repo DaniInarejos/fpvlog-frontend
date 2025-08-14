@@ -1,6 +1,7 @@
 <script>
 import { useUserStore } from '../../stores/user'
 import groupTopicService from '../../services/groupTopicService'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 export default {
   name: 'GroupComments',
@@ -30,12 +31,12 @@ export default {
         })
         
         if (page === 1) {
-          this.comments = response.data.comments
+          this.comments = response.comments
         } else {
-          this.comments.push(...response.data.comments)
+          this.comments.push(...response.comments)
         }
         
-        this.pagination = response.data.pagination
+        this.pagination = response.pagination
       } catch (error) {
         console.error('Error fetching comments:', error)
       } finally {
@@ -101,12 +102,12 @@ export default {
       <div class="flex gap-3">
         <UserAvatar :user="currentUser" size="sm" />
         <div class="flex-1">
-          <textarea
-            v-model="newComment"
-            :placeholder="t('groups.comments.placeholder')"
-            rows="3"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none"
-          ></textarea>
+          <RichTextEditor
+  v-model="newComment"
+  :placeholder="t('groups.comments.placeholder')"
+  :height="120"
+  toolbar="forum"
+/>
           <div class="flex justify-end mt-2">
             <BaseButton
               @click="handleCreateComment"
@@ -156,11 +157,12 @@ export default {
           
           <!-- Comment Content -->
           <div v-if="editingComment === comment._id" class="mb-3">
-            <textarea
+            <RichTextEditor
               v-model="editContent"
-              rows="3"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none"
-            ></textarea>
+              :height="120"
+              toolbar="bold italic underline | link | removeformat"
+              :plugins="['paste', 'link']"
+            />
             <div class="flex justify-end gap-2 mt-2">
               <BaseButton @click="cancelEdit" variant="ghost" size="sm">
                 {{ t('common.cancel') }}
@@ -171,9 +173,9 @@ export default {
             </div>
           </div>
           
-          <p v-else class="text-gray-700 dark:text-gray-300 mb-3">
-            {{ comment.content }}
-          </p>
+          <div v-else class="text-gray-700 dark:text-gray-300 mb-3" v-html="comment.content">
+            <!-- Contenido HTML del comentario -->
+          </div>
           
           <!-- Comment Actions -->
           <div class="flex items-center gap-4 text-sm">

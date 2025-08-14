@@ -16,6 +16,13 @@ export default {
   daysAgo: 'Hace {days} días',
   create: 'Crear',
   update: 'Actualizar',
+  unknown: 'Desconocido',
+  submitting: 'Enviando...',
+  sending: 'Enviando...',
+  sortBy: 'Ordenar por',
+  newest: 'Más reciente',
+  oldest: 'Más antiguo',
+  views: 'Visualizaciones',
   pagination: {
     showing: 'Mostrando',
     to: 'a',

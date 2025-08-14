@@ -30,7 +30,6 @@ const handleShowDroneInfo = (drone) => {
 }
 
 const handleShowSpotInfo = (spot) => {
-  console.log("GHOLAA")
   emit('showSpotInfo', spot)
 }
 

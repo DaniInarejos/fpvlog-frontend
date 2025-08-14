@@ -7,8 +7,15 @@ export default {
   joinGroup: 'Join Group',
   leaveGroup: 'Leave Group',
   requestJoin: 'Request to Join',
+  notFound: 'Group not found',
+  join: 'Join',
   private: 'Private',
   public: 'Public',
+  deleteGroup: 'Delete Group',
+  deleteConfirmation: 'Are you sure you want to delete the group "{name}"?',
+  deleteWarning: 'This action cannot be undone. All topics, comments, and members will be deleted.',
+  confirmDelete: 'Yes, Delete',
+  joinAndComment: 'Join the group to participate in discussions and comment on topics',
   
   tabs: {
     all: 'All',
@@ -95,11 +102,23 @@ export default {
   enterUsernameOrEmail: 'Enter a username or email',
   sendInvite: 'Send Invite',
   confirmRemoveMember: 'Are you sure you want to remove {username} from the group?',
+  confirmRemoveMemberWarning: 'This action cannot be undone. The user will be removed from the group, and they will no longer have access to the group content.',
+  confirmRemoveMemberSuccess: 'Member removed successfully',
+  confirmRemoveMemberError: 'Failed to remove member',
+  privateGroupMessage: 'This is a private group. Request to join to view the content.',
+
   topics: {
     title: 'Discussion Topics',
     createTopic: 'Create Topic',
     editTopic: 'Edit Topic',
     postCount: '{count} posts',
+    comments: 'Comments',
+    noComments: 'No comments yet. Be the first to comment!',
+    addComment: 'Add Comment',
+    commentPlaceholder: 'Write your comment here...',
+    postComment: 'Post Comment',
+    createdBy: 'Created by',
+    pinned: 'Pinned',
     empty: {
       title: 'No topics yet',
       description: 'Be the first to create a discussion topic for this group.'
@@ -112,6 +131,19 @@ export default {
       pinTopic: 'Pin this topic'
     }
   },
+  comments: {
+    placeholder: 'Write a comment...',
+    post: 'Comment',
+    reply: 'Reply',
+    replyPlaceholder: 'Write a reply...',
+    edited: 'edited',
+    confirmDelete: 'Are you sure you want to delete this comment?',
+    empty: 'No comments yet. Be the first to comment!',
+    showReplies: 'Show {count} replies',
+    addComment: 'Add Comment',
+    writeComment: 'Write a comment...',
+    comment: 'Comment'
+  },
   detail: {
     view: 'View',
     tabs: {
@@ -120,5 +152,11 @@ export default {
       members: 'Members',
       about: 'About'
     }
+  },
+  about: {
+    description: 'Description',
+    details: 'Group Details',
+    created: 'Created on {date}',
+    privacy: 'Privacy'
   }
 }

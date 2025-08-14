@@ -22,6 +22,10 @@ const props = defineProps({
   pagination: {
     type: Object,
     default: () => ({})
+  },
+  currentUser: {
+    type: Object,
+    default: null
   }
 })
 
@@ -36,6 +40,11 @@ const getGroupIcon = (isPrivate) => {
 
 const getMemberCountText = (memberCount) => {
   return t('groups.memberCount', { count: memberCount })
+}
+
+// Función para verificar si el usuario actual es el propietario del grupo
+const isOwner = (group) => {
+  return props.currentUser && group.createdBy && props.currentUser._id === group.createdBy._id
 }
 </script>
 
@@ -88,11 +97,14 @@ const getMemberCountText = (memberCount) => {
             <div class="flex items-center gap-2">
               <span class="text-2xl">{{ getGroupIcon(group.isPrivate) }}</span>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white">
+                <h3 
+                  class="font-semibold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  @click="$router.push(`/groups/${group._id}`)"
+                >
                   {{ group.name }}
                 </h3>
                 <p class="text-sm text-gray-500">
-                  {{ getMemberCountText(group.memberCount || 0) }}
+                  {{ getMemberCountText(group.membersCount || 0) }}
                 </p>
               </div>
             </div>
@@ -124,7 +136,7 @@ const getMemberCountText = (memberCount) => {
 
           <!-- Owner Info -->
           <div class="text-xs text-gray-500 mb-4">
-            {{ t('groups.createdBy', { owner: group.owner?.username || 'Unknown' }) }}
+            {{ t('groups.createdBy', { owner: group.createdBy.username || 'Unknown' }) }}
           </div>
         </div>
 
@@ -144,7 +156,9 @@ const getMemberCountText = (memberCount) => {
             {{ t('common.info') }}
           </BaseButton>
           
+          <!-- Solo mostrar botón de editar si es el propietario -->
           <BaseButton
+            v-if="isOwner(group)"
             variant="secondary"
             size="sm"
             @click="emit('edit', group)"
@@ -157,8 +171,8 @@ const getMemberCountText = (memberCount) => {
             {{ t('common.edit') }}
           </BaseButton>
           
-          <!-- Changed from variant="ghost" to variant="secondary" -->
-          <BaseButton 
+          <!-- ELIMINAR ESTE BOTÓN DE VER -->
+          <!-- <BaseButton 
             variant="secondary" 
             size="sm" 
             class="flex-1"
@@ -171,9 +185,11 @@ const getMemberCountText = (memberCount) => {
               </svg>
             </template>
             {{ t('groups.detail.view') }}
-          </BaseButton>
+          </BaseButton> -->
           
+          <!-- Solo mostrar botón de borrar si es el propietario -->
           <BaseButton
+            v-if="isOwner(group)"
             variant="secondary"
             size="sm"
             @click="emit('delete', group)"

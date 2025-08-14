@@ -17,6 +17,7 @@ import Components from '../views/ComponentsView.vue'
 import Spots from '../views/SpotView.vue'
 import Groups from '../views/GroupsView.vue'
 import GroupDetail from '../views/GroupDetailView.vue'
+import TopicDetail from '../views/TopicDetailView.vue'
 
 const routes = [
   {
@@ -148,6 +149,15 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: 'Grupo'
+    }
+  },
+  {
+    path: '/groups/:groupId/topics/:topicId',
+    name: 'topic-detail',
+    component: TopicDetail,
+    meta: {
+      requiresAuth: true,
+      title: 'Topic'
     }
   },
   {

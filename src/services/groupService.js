@@ -8,9 +8,18 @@ const groupService = {
     if (params.limit) queryParams.append('limit', params.limit)
     if (params.search) queryParams.append('search', params.search)
     if (params.tags) queryParams.append('tags', params.tags)
-    if (params.isPrivate !== undefined) queryParams.append('isPrivate', params.isPrivate)
+    if (params.createdBy) queryParams.append('createdBy', params.createdBy)
     
     return api.get(`/groups?${queryParams.toString()}`)
+  },
+
+  // Obtener grupos del usuario (grupos a los que se ha unido)
+  getUserGroups(userId, params = {}) {
+    const queryParams = new URLSearchParams()
+    if (params.page) queryParams.append('page', params.page)
+    if (params.limit) queryParams.append('limit', params.limit)
+    
+    return api.get(`/users/${userId}/groups?${queryParams.toString()}`)
   },
 
   // Buscar grupos

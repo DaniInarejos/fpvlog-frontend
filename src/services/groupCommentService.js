@@ -1,42 +1,40 @@
 import api from './api'
 
 const groupCommentService = {
-  // Obtener comentarios de un post
-  getPostComments(groupId, postId, params = {}) {
-    const queryParams = new URLSearchParams()
-    if (params.page) queryParams.append('page', params.page)
-    if (params.limit) queryParams.append('limit', params.limit)
-    
-    return api.get(`/groups/${groupId}/posts/${postId}/comments?${queryParams.toString()}`)
+  // Obtener comentarios de un topic (público)
+  async getTopicComments(groupId, topicId, params = {}) {
+    const response = await api.get(`/groups/${groupId}/topics/${topicId}/comments`, { params })
+    return response
   },
 
-  // Obtener respuestas de un comentario
-  getCommentReplies(groupId, commentId, params = {}) {
-    const queryParams = new URLSearchParams()
-    if (params.page) queryParams.append('page', params.page)
-    if (params.limit) queryParams.append('limit', params.limit)
-    
-    return api.get(`/groups/${groupId}/comments/${commentId}/replies?${queryParams.toString()}`)
+  // Obtener respuestas de un comentario (público)
+  async getCommentReplies(groupId, commentId, params = {}) {
+    const response = await api.get(`/groups/${groupId}/topics/comments/${commentId}/replies`, { params })
+    return response.data
   },
 
-  // Crear comentario
-  createComment(groupId, postId, commentData) {
-    return api.post(`/groups/${groupId}/posts/${postId}/comments`, commentData)
+  // Crear comentario en topic (protegido)
+  async createComment(groupId, topicId, commentData) {
+    const response = await api.post(`/groups/${groupId}/topics/${topicId}/comments`, commentData)
+    return response.data
   },
 
-  // Actualizar comentario
-  updateComment(groupId, postId, commentId, commentData) {
-    return api.patch(`/groups/${groupId}/posts/${postId}/comments/${commentId}`, commentData)
+  // Actualizar comentario (protegido)
+  async updateComment(groupId, commentId, commentData) {
+    const response = await api.patch(`/groups/${groupId}/topics/comments/${commentId}`, commentData)
+    return response.data
   },
 
-  // Eliminar comentario
-  deleteComment(groupId, postId, commentId) {
-    return api.delete(`/groups/${groupId}/posts/${postId}/comments/${commentId}`)
+  // Eliminar comentario (protegido)
+  async deleteComment(groupId, commentId) {
+    const response = await api.delete(`/groups/${groupId}/topics/comments/${commentId}`)
+    return response.data
   },
 
-  // Toggle like en comentario
-  toggleCommentLike(groupId, commentId) {
-    return api.post(`/groups/${groupId}/comments/${commentId}/like`)
+  // Toggle like en comentario (protegido)
+  async toggleCommentLike(groupId, commentId) {
+    const response = await api.post(`/groups/${groupId}/topics/comments/${commentId}/like`)
+    return response.data
   }
 }
 

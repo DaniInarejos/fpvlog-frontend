@@ -10,12 +10,22 @@ export default {
   likes: 'Likes',
   filters: 'Filters',
   info: 'Info',
-  // Agregar estas claves faltantes:
   today: 'Today',
   yesterday: 'Yesterday',
   daysAgo: '{days} days ago',
   create: 'Create',
   update: 'Update',
+  unknown: 'Unknown',
+  close: 'Close',
+  submitting: 'Submitting...',
+  sending: 'Sending...',
+  sortBy: 'Sort by',
+  newest: 'Newest',
+  oldest: 'Oldest',
+  views: 'Views',
+  error: {
+    generic: 'An error occurred. Please try again.'
+  },
   pagination: {
     showing: 'Showing',
     to: 'to', 

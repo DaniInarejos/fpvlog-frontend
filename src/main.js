@@ -1,15 +1,17 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
+import { createPinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import './assets/styles/main.css'
 import i18nConfig from './locales/index.js'
 
 const i18n = createI18n({
   ...i18nConfig,
-  legacy: false, // Deshabilitar modo legacy para Composition API
-  globalInjection: true // Habilitar inyección global para Options API
+  legacy: false,
+  globalInjection: true
 })
 
 function loadGoogleMaps(callbackName = 'initMap') {
@@ -29,10 +31,11 @@ window.initMap = function() {
 const app = createApp(App)
 const pinia = createPinia()
 
-// Configuración global
+
 app.config.globalProperties.$api = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 loadGoogleMaps();
+app.component('QuillEditor', QuillEditor)
 app.use(pinia)
 app.use(router)
 app.use(i18n)

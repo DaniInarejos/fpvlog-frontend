@@ -36,9 +36,7 @@ const pagination = ref({
 const tabs = [
   { id: 'all', label: t('groups.tabs.all') },
   { id: 'my-groups', label: t('groups.tabs.myGroups') },
-  { id: 'joined', label: t('groups.tabs.joined') },
-  { id: 'public', label: t('groups.tabs.public') },
-  { id: 'private', label: t('groups.tabs.private') }
+  { id: 'joined', label: t('groups.tabs.joined') }
 ]
 
 const fetchGroups = async () => {
@@ -53,13 +51,46 @@ const fetchGroups = async () => {
       params.search = searchQuery.value
     }
     
-    if (selectedTab.value === 'public') {
-      params.isPrivate = false
-    } else if (selectedTab.value === 'private') {
-      params.isPrivate = true
+    let response
+    
+    if (selectedTab.value === 'my-groups') {
+      // Grupos creados por el usuario
+      params.createdBy = userStore.user?._id
+      response = await groupService.getGroups(params)
+    } else if (selectedTab.value === 'joined') {
+      // Grupos a los que el usuario se ha unido
+      response = await groupService.getUserGroups(userStore.user?._id, params)
+      // La respuesta tiene una estructura diferente, necesitamos extraer los grupos
+      if (response.groups) {
+        // Transformar la estructura de respuesta para que coincida con el formato esperado
+        const transformedGroups = response.groups.map(item => ({
+          ...item.group,
+          userRole: item.role,
+          joinedAt: item.joinedAt
+        }))
+        groups.value = transformedGroups
+      }
+      
+      // Actualizar pagination si está disponible en la respuesta
+      if (response.pagination) {
+        pagination.value = {
+          ...pagination.value,
+          ...response.pagination
+        }
+      } else if (response.summary) {
+        // Si no hay pagination pero hay summary, usar esa información
+        pagination.value = {
+          ...pagination.value,
+          total: response.summary.totalGroups,
+          totalPages: Math.ceil(response.summary.totalGroups / pagination.value.limit)
+        }
+      }
+      return // Salir temprano para evitar el procesamiento normal
+    } else {
+      // Todos los grupos
+      response = await groupService.getGroups(params)
     }
     
-    const response = await groupService.getGroups(params)
     groups.value = response.groups || []
     // Asegurar que pagination siempre tenga una estructura válida
     if (response.pagination) {
@@ -76,7 +107,6 @@ const fetchGroups = async () => {
     isLoading.value = false
   }
 }
-
 const handleCreate = () => {
   selectedGroup.value = null
   showForm.value = true
@@ -208,6 +238,7 @@ onMounted(() => {
       :is-loading="isLoading"
       :errors="errors"
       :pagination="pagination"
+      :current-user="userStore.user"
       @edit="handleEdit"
       @delete="openDeleteModal"
       @show-info="handleShowGroupInfo"

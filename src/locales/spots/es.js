@@ -32,6 +32,8 @@ export default {
   map: {
     restrictedZone: 'Zona Restringida',
     limitedZone: 'Zona Limitada',
-    allowedZone: 'Zona Permitida'
+    allowedZone: 'Zona Permitida',
+    aeronauticalZone: 'Zona Aeronáutica',
+    notamZone: 'NOTAM Activo'
   }
 }

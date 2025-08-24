@@ -394,6 +394,8 @@ const truncateDescription = (description, wordLimit = 100) => {
     <!-- Modal para crear/editar topic -->
     <BaseModal
       :show="showTopicForm"
+      :showAcceptButton=false
+      :showCancelButton=false
       :title="selectedTopic ? t('groups.topics.editTopic') : t('groups.topics.createTopic')"
       @close="showTopicForm = false"
     >

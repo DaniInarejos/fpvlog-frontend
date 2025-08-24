@@ -12,6 +12,7 @@ import componentService from '../../services/componentService'
 import BaseCheckbox from '../base/BaseCheckbox.vue'
 import BaseDivider from '../base/BaseDivider.vue'
 import BaseImageUpload from '../base/BaseImageUpload.vue'
+import MultiSelect from '../base/MultiSelect.vue'
 
 const props = defineProps({
   drone: {
@@ -328,7 +329,7 @@ const handleImageUpload = async (file) => {
           v-model="formData.description"
           type="textarea"
         />
-           <BaseDivider title="Privacidad" />    
+  <!---      <BaseDivider title="Privacidad" />    
 
         <div class="md:col-span-2 space-y-2">
           <BaseCheckbox
@@ -339,7 +340,7 @@ const handleImageUpload = async (file) => {
             v-model="formData.visibility.isPublic"
             :label="t('drones.form.visibility.public')"
           />
-        </div>
+        </div> -->
 
         <BaseDivider title="Informacion Avanzada" />    
 
@@ -393,7 +394,7 @@ const handleImageUpload = async (file) => {
           />
 
           <!-- Motors -->
-          <BaseSelect
+          <MultiSelect
             v-model="formData.components.motors"
             label="Motors"
             :options="components.MOTOR"
@@ -404,7 +405,7 @@ const handleImageUpload = async (file) => {
             @create="(value) => handleCreateComponent('MOTOR', value)"
           />
           <BaseSelect
-            v-model="formData.components.esc"
+            v-model="formData.components.escId"
             label="ESC"
             :options="components.ESC"
             :error="errors.esc"
@@ -415,7 +416,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- FC -->
           <BaseSelect
-            v-model="formData.components.fc"
+            v-model="formData.components.flightControllerId"
             label="FC"
             :options="components.FC"
             :error="errors.fc"
@@ -426,7 +427,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- VTX -->
           <BaseSelect
-            v-model="formData.components.vtx"
+            v-model="formData.components.vtxId"
             label="VTX"
             :options="components.VTX"
             :error="errors.vtx"
@@ -437,7 +438,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- ANTENNA -->
           <BaseSelect
-            v-model="formData.components.antenna"
+            v-model="formData.components.antennaId"
             label="ANTENNA"
             :options="components.ANTENNA"
             :error="errors.antenna"
@@ -448,7 +449,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- RECEIVER -->
           <BaseSelect
-            v-model="formData.components.receiver"
+            v-model="formData.components.receiverId"
             label="RECEIVER"
             :options="components.RECEIVER"
             :error="errors.receiver"
@@ -459,7 +460,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- BATTERY -->
           <BaseSelect
-            v-model="formData.components.battery"
+            v-model="formData.components.batteryId"
             label="BATTERY"
             :options="components.BATTERY"
             :error="errors.battery"
@@ -470,7 +471,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- PROPS -->
           <BaseSelect
-            v-model="formData.components.props"
+            v-model="formData.components.propsId"
             label="PROPS"
             :options="components.PROPS"
             :error="errors.props"
@@ -481,7 +482,7 @@ const handleImageUpload = async (file) => {
           />
           <!-- MOUNT -->
           <BaseSelect
-            v-model="formData.components.mount"
+            v-model="formData.components.mountId"
             label="MOUNT"
             :options="components.MOUNT"
             :error="errors.mount"
@@ -491,16 +492,17 @@ const handleImageUpload = async (file) => {
             @create="(value) => handleCreateComponent('MOUNT', value)"
           />    
           <!-- OTHER -->
-          <BaseSelect
+          <MultiSelect
             v-model="formData.components.others"
-            label="OTHERS"
+            label="Others"
             :options="components.OTHER"
-            :error="errors.other"
-            placeholder="Seleccionar OTHERS"
+            :error="errors.others"
+            placeholder="Seleccionar Others"
             filterable
             canCreate
             @create="(value) => handleCreateComponent('OTHER', value)"
-          />    
+          />
+ 
          
         </div>
       </div>

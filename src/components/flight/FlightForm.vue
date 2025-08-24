@@ -116,6 +116,7 @@ const handleImageChange = (image) => {
       <BaseImageUpload
         :label="t('flights.form.image')"
         :current-image="formData.image"
+        :alt="formData.title || t('flights.form.image')"
         @change="handleImageChange"
       />
 
@@ -186,7 +187,7 @@ const handleImageChange = (image) => {
         />
       </div>
 
-      <BaseDivider :title="t('flights.form.sections.privacy')" />
+   <!--   <BaseDivider :title="t('flights.form.sections.privacy')" />
       <div class="md:col-span-2 space-y-2">
         <BaseCheckbox
           v-model="formData.visibility.isVisibleToFollowers"
@@ -197,7 +198,7 @@ const handleImageChange = (image) => {
           :label="t('flights.form.visibility.public')"
         />
       </div>
-
+    -->
       <div class="flex justify-end space-x-4">
         <BaseButton
           type="button"

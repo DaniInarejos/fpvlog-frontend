@@ -12,6 +12,7 @@ export default {
     name: 'Nombre',
     type: 'Selecciona un estilo',
     brand: 'Selecciona una marca',
+    brandName: 'Marca',
     model: 'Modelo',
     serialNumber: 'Número de Serie',
     weight: 'Peso (g)',

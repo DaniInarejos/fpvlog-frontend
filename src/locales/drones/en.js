@@ -12,6 +12,7 @@ export default {
     name: 'Name',
     type: 'Select a style',
     brand: 'Select a brand',
+    brandName: 'Brand',
     model: 'Model',
     serialNumber: 'Serial Number',
     weight: 'Weight (g)',

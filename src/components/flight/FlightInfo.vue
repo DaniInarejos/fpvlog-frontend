@@ -52,6 +52,7 @@ const getYouTubeEmbedUrl = (url) => {
     v-if="flight && show"
     :show="show"
     :title="flight.title || ''"
+    :show-cancel-button="false"
     @close="handleClose"
   >
     <div class="space-y-6">

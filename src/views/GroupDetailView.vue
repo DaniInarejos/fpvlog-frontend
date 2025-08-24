@@ -501,12 +501,14 @@ onMounted(async () => {
   <!-- Leave Group Modal -->
   <BaseModal 
     :show="modals.leaveGroup" 
+    :showCancelButton=false
+    :showAcceptButton=false
     @close="closeModal('leaveGroup')"
     :title="t('groups.leaveGroup')"
   >
     <p class="mb-4">{{ t('groups.leaveConfirmation', { name: group?.name }) }}</p>
     <div class="flex justify-end space-x-3">
-      <BaseButton @click="closeModal('leaveGroup')" variant="outline">
+      <BaseButton @click="closeModal('leaveGroup')" variant="secondary">
         {{ t('common.cancel') }}
       </BaseButton>
       <BaseButton @click="handleLeaveGroup" variant="danger">

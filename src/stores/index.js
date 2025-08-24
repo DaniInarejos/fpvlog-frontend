@@ -14,3 +14,8 @@ export const useMainStore = defineStore('main', {
     }
   }
 })
+
+// Exportar todos los stores
+export { useUserStore } from './user'
+export { useFlightStore } from './flight'
+export { useComponentsStore } from './components'

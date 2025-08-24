@@ -83,7 +83,7 @@ const toolbarConfigs = {
     [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
     [{ 'direction': 'rtl' }],
     [{ 'align': [] }],
-    ['link', 'image', 'video'],
+    ['link'],
     ['blockquote', 'code-block'],
     ['clean']
   ],
@@ -98,7 +98,7 @@ const toolbarConfigs = {
     [{ 'indent': '-1'}, { 'indent': '+1' }],
     [{ 'direction': 'rtl' }],
     [{ 'align': [] }],
-    ['link', 'image', 'video', 'formula'],
+    ['link', 'formula'],
     ['blockquote', 'code-block'],
     ['clean']
   ],
@@ -107,7 +107,7 @@ const toolbarConfigs = {
     ['bold', 'italic', 'underline', 'strike'],
     [{ 'color': [] }],
     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    ['link', 'image'],
+    ['link'],
     ['blockquote', 'code-block'],
     [{ 'align': ['', 'center', 'right'] }],
     ['clean']

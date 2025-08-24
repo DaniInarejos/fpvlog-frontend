@@ -6,6 +6,7 @@ export default {
   editGroup: 'Edit Group',
   joinGroup: 'Join Group',
   leaveGroup: 'Leave Group',
+  leave: 'Leave',
   requestJoin: 'Request to Join',
   notFound: 'Group not found',
   join: 'Join',

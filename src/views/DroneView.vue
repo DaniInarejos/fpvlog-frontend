@@ -11,6 +11,7 @@ import DroneForm from '../components/drone/DroneForm.vue'
 const userStore = useUserStore()
 const { t } = useI18n()
 const drones = ref([])
+const droneBrands = ref([]) // Nueva variable para almacenar las marcas
 const isLoading = ref(false)
 const showForm = ref(false)
 const selectedDrone = ref(null)
@@ -66,8 +67,19 @@ const handleSaved = async () => {
   await fetchDrones()
 }
 
+// Nueva función para cargar marcas de drones
+const fetchDroneBrands = async () => {
+  try {
+    droneBrands.value = await droneService.getDroneBrands()
+  } catch (error) {
+    console.error('Error fetching drone brands:', error)
+    errors.value.brands = 'Error cargando marcas de drones'
+  }
+}
+
 onMounted(() => {
   fetchDrones()
+  fetchDroneBrands() // Cargar marcas al montar el componente
 })
 </script>
 
@@ -76,6 +88,7 @@ onMounted(() => {
     <div v-if="!showForm">
       <DroneList
         :drones="drones"
+        :drone-brands="droneBrands"
         :is-loading="isLoading"
         :errors="errors"
         @edit="handleEdit"

@@ -101,10 +101,11 @@ const handleSubmit = async () => {
         <BaseMap
           v-model="form.location"
           :error="errors.location"
+          :show-aeronautical-zones="true"
         />
       </div>
 
-      <BaseDivider title="Privacidad" />
+    <!--  <BaseDivider title="Privacidad" />
 
       <div class="space-y-3">
         <BaseCheckbox
@@ -116,7 +117,7 @@ const handleSubmit = async () => {
           :label="t('spots.form.visibleToFollowersOnly')"
         />
       </div>
-
+    -->
       <div class="flex justify-end space-x-4 mt-6">
         <BaseButton
           type="button"

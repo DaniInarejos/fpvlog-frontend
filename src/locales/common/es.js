@@ -23,6 +23,7 @@ export default {
   newest: 'Más reciente',
   oldest: 'Más antiguo',
   views: 'Visualizaciones',
+  viewSource: 'Ver Fuente',
   pagination: {
     showing: 'Mostrando',
     to: 'a',

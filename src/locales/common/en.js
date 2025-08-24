@@ -23,6 +23,7 @@ export default {
   newest: 'Newest',
   oldest: 'Oldest',
   views: 'Views',
+  viewSource: 'View Source',
   error: {
     generic: 'An error occurred. Please try again.'
   },

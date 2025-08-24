@@ -27,12 +27,12 @@ const form = ref({
     tiktok: '',
     linkedin: '',
     x: ''
-  },
+  }/*,
   privacySettings: {
     allowFollowersToSeeFlights: true,
     allowFollowersToSeeDrones: true,
     profileVisibility: 'public'
-  }
+  } */
 })
 
 const { t } = useI18n()
@@ -52,7 +52,7 @@ const loadProfile = async () => {
         email: profile.email,
         profilePicture: profile.profilePicture,
         socialMedia: { ...profile.socialMedia },
-        privacySettings: { ...profile.privacySettings }
+  //      privacySettings: { ...profile.privacySettings }
       }
     } else {
       // Solo si no hay datos en el store, hacemos la petición
@@ -66,7 +66,7 @@ const loadProfile = async () => {
         email: profile.email,
         profilePicture: profile.profilePicture,
         socialMedia: { ...profile.socialMedia },
-        privacySettings: { ...profile.privacySettings }
+   //     privacySettings: { ...profile.privacySettings }
       }
     }
   } catch (err) {
@@ -276,7 +276,7 @@ onMounted(() => {
             </div>
 
             <!-- Configuración de privacidad -->
-            <div class="space-y-6">
+            <!-- <div class="space-y-6">
               <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('profile.privacy.title') }}</h3>
               
               <div class="space-y-4">
@@ -310,7 +310,7 @@ onMounted(() => {
                   <option value="private">{{ t('profile.privacy.options.private') }}</option>
                 </select>
               </div>
-            </div>
+            </div>-->
 
             <!-- Añadir después de la sección de privacidad y antes del botón de guardar -->
             <div class="space-y-6">

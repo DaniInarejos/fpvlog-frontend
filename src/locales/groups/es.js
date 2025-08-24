@@ -172,5 +172,38 @@ tags: 'Etiquetas',
   usernameOrEmail: 'Usuario o email',
   enterUsernameOrEmail: 'Ingresa un nombre de usuario o email',
   sendInvite: 'Enviar invitación',
-  confirmRemoveMember: '¿Estás seguro de que quieres eliminar a {username} del grupo?'
+  confirmRemoveMember: '¿Estás seguro de que quieres eliminar a {username} del grupo?',
+  
+  // Agregar esta sección form que falta
+  form: {
+    name: 'Nombre del Grupo',
+    namePlaceholder: 'Ingresa el nombre del grupo',
+    description: 'Descripción',
+    descriptionPlaceholder: 'Describe de qué trata tu grupo',
+    isPrivate: 'Grupo Privado',
+    isPrivateDescription: 'Los grupos privados requieren aprobación para unirse',
+    tags: 'Etiquetas',
+    tagsPlaceholder: 'Agregar etiqueta',
+    addTag: 'Agregar',
+    tagsHelp: '{count} de {max} etiquetas'
+  },
+  
+  // También agregar la sección validation que falta
+  validation: {
+    nameRequired: 'El nombre del grupo es requerido',
+    nameTooLong: 'El nombre no puede exceder 100 caracteres',
+    descriptionRequired: 'La descripción es requerida',
+    descriptionTooLong: 'La descripción no puede exceder 500 caracteres',
+    tooManyTags: 'Máximo 10 etiquetas permitidas'
+  },
+  
+  // Y la sección messages
+  messages: {
+    created: 'Grupo creado exitosamente',
+    updated: 'Grupo actualizado exitosamente',
+    deleted: 'Grupo eliminado exitosamente',
+    joined: 'Te has unido al grupo',
+    left: 'Has abandonado el grupo',
+    requestSent: 'Solicitud enviada, esperando aprobación'
+  },
 }

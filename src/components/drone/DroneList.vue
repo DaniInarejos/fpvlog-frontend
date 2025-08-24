@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '../../stores/user'
 import { useI18n } from 'vue-i18n'
 import BaseButton from '../base/BaseButton.vue'
@@ -12,6 +12,10 @@ const props = defineProps({
   showCreateButton: {
     type: Boolean,
     default: true
+  },
+  droneBrands: { // Nueva prop para recibir las marcas
+    type: Array,
+    default: () => []
   }
 })
 
@@ -62,6 +66,13 @@ const handleCloseInfo = () => {
   showInfo.value = false
   selectedDroneInfo.value = null
 }
+
+// Función para resolver brandId a nombre de marca
+const getBrandName = (brandId) => {
+  if (!brandId || !props.droneBrands.length) return '-'
+  const brand = props.droneBrands.find(b => b._id === brandId)
+  return brand?.name || '-'
+}
 </script>
 
 <template>
@@ -110,7 +121,8 @@ const handleCloseInfo = () => {
               >
                 {{ drone.name }}
               </h3>
-              <p class="text-sm text-gray-600">{{ drone.brand?.name }} {{ drone.model }}</p>
+              <!-- Usar la función getBrandName en lugar de drone.brand?.name -->
+              <p class="text-sm text-gray-600">{{ getBrandName(drone.brandId) }} {{ drone.model }}</p>
             </div>
           </div>
 
@@ -152,9 +164,10 @@ const handleCloseInfo = () => {
       </BaseCard>
     </div>
 
-    <!-- Add the DroneInfo component -->
+    <!-- Pasar droneBrands al componente DroneInfo -->
     <DroneInfo
       :drone="selectedDroneInfo"
+      :drone-brands="droneBrands"
       :show="showInfo"
       @close="handleCloseInfo"
     />

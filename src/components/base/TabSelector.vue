@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, ref, onMounted, nextTick } from 'vue'
 
 const props = defineProps({
   tabs: {
@@ -15,17 +15,87 @@ const props = defineProps({
 
 const emit = defineEmits(['tab-change'])
 
+const tabsContainer = ref(null)
+const showLeftArrow = ref(false)
+const showRightArrow = ref(false)
+const scrollAmount = 200
+
 const handleTabChange = (tabId) => {
   emit('tab-change', tabId)
 }
+
+const scrollLeft = () => {
+  if (tabsContainer.value) {
+    tabsContainer.value.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+  }
+}
+
+const scrollRight = () => {
+  if (tabsContainer.value) {
+    tabsContainer.value.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+  }
+}
+
+const updateArrowVisibility = () => {
+  if (!tabsContainer.value) return
+  
+  const { scrollLeft, scrollWidth, clientWidth } = tabsContainer.value
+  
+  showLeftArrow.value = scrollLeft > 0
+  showRightArrow.value = scrollLeft < scrollWidth - clientWidth - 1
+}
+
+const handleScroll = () => {
+  updateArrowVisibility()
+}
+
+onMounted(async () => {
+  await nextTick()
+  updateArrowVisibility()
+  
+  if (tabsContainer.value) {
+    tabsContainer.value.addEventListener('scroll', handleScroll)
+  }
+  
+  // Actualizar visibilidad cuando cambie el tamaño de ventana
+  window.addEventListener('resize', updateArrowVisibility)
+})
 </script>
 
 <template>
   <div class="relative w-full">
     <!-- Container con padding y mejor espaciado -->
-    <div class="px-4 sm:px-6 lg:px-8">
-      <!-- Scroll horizontal para móviles -->
-      <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+    <div class="px-4 sm:px-6 lg:px-8 relative">
+      <!-- Flecha izquierda -->
+      <button
+        v-show="showLeftArrow"
+        @click="scrollLeft"
+        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-xl"
+        aria-label="Scroll left"
+      >
+        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
+      <!-- Flecha derecha -->
+      <button
+        v-show="showRightArrow"
+        @click="scrollRight"
+        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-xl"
+        aria-label="Scroll right"
+      >
+        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+      
+      <!-- Container de tabs con scroll oculto -->
+      <div 
+        ref="tabsContainer"
+        class="overflow-x-auto scrollbar-hide mx-8"
+        :class="{ 'mx-0': !showLeftArrow && !showRightArrow }"
+      >
         <div class="flex space-x-1 sm:space-x-2 border-b border-gray-200 dark:border-gray-700 min-w-max">
           <button
             v-for="tab in tabs"
@@ -55,22 +125,14 @@ const handleTabChange = (tabId) => {
 </template>
 
 <style scoped>
-/* Mejoras en el scrollbar para móviles */
-.scrollbar-thin::-webkit-scrollbar {
-  height: 4px;
+/* Ocultar scrollbar completamente */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 2px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Animación suave para el indicador activo */
@@ -85,5 +147,22 @@ const handleTabChange = (tabId) => {
 
 .border-blue-600 {
   animation: slideIn 0.2s ease-out;
+}
+
+/* Gradientes para indicar más contenido */
+.scroll-gradient-left {
+  background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+}
+
+.scroll-gradient-right {
+  background: linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+}
+
+.dark .scroll-gradient-left {
+  background: linear-gradient(to right, rgba(31,41,55,1) 0%, rgba(31,41,55,0) 100%);
+}
+
+.dark .scroll-gradient-right {
+  background: linear-gradient(to left, rgba(31,41,55,1) 0%, rgba(31,41,55,0) 100%);
 }
 </style>

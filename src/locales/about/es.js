@@ -14,9 +14,56 @@ export default {
     vue: 'Vue.js 3 con Composition API',
     tailwind: 'Tailwind CSS',
     vite: 'Vite',
-    claude: 'Claude-3.5 IA',
+    claude: 'Trae IA',
     backend: 'Bunjs + hono Backend',
     database: 'MongoDB Atlas + Redis Upstash'
+  },
+  externalTools: {
+    title: 'Herramientas Externas',
+    github: {
+      title: 'GitHub',
+      description: 'Control de versiones y repositorio del código fuente del proyecto.'
+    },
+    render: {
+      title: 'Render',
+      description: 'Plataforma de despliegue y hosting para el backend de la aplicación.'
+    },
+    cloudflare: {
+      title: 'Cloudflare',
+      description: 'CDN, protección DDoS y optimización de rendimiento web.'
+    },
+    namecheap: {
+      title: 'Namecheap',
+      description: 'Registro y gestión del dominio skysphere.app.'
+    },
+    upstash: {
+      title: 'Upstash',
+      description: 'Sistema de caché Redis para optimizar el rendimiento de la aplicación.'
+    },
+    firebase: {
+      title: 'Firebase',
+      description: 'Almacenamiento de imágenes y archivos multimedia de la plataforma.'
+    },
+    googleCloud: {
+      title: 'Google Cloud',
+      description: 'Credenciales y API de Google Maps para funcionalidades de mapas.'
+    },
+    jira: {
+      title: 'Jira',
+      description: 'Gestión de proyectos, tareas y seguimiento del desarrollo.'
+    },
+    searchConsole: {
+      title: 'Google Search Console',
+      description: 'Monitoreo y optimización del SEO y visibilidad en buscadores.'
+    },
+    mongoAtlas: {
+      title: 'MongoDB Atlas',
+      description: 'Base de datos principal en la nube para almacenar toda la información.'
+    },
+    aena: {
+      title: 'AENA/ENAIRE',
+      description: 'API oficial para obtener información de zonas aeronáuticas restringidas en España.'
+    }
   },
   guidelines: {
     title: 'Principios del Proyecto',

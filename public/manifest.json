@@ -1,0 +1,16 @@
+{
+  "name": "SkySphere - Comunidad FPV",
+  "short_name": "SkySphere",
+  "description": "Plataforma social para pilotos de drones FPV",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/images/logoSkySphere.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

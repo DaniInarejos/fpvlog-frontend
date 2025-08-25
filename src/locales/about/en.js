@@ -14,9 +14,56 @@ export default {
     vue: 'Vue.js 3 with Composition API',
     tailwind: 'Tailwind CSS',
     vite: 'Vite',
-    claude: 'Claude-3.5 AI',
+    claude: 'Trae AI',
     backend: 'Bunjs + hono Backend',
     database: 'MongoDB Atlas + Redis Upstash'
+  },
+  externalTools: {
+    title: 'External Tools',
+    github: {
+      title: 'GitHub',
+      description: 'Version control and source code repository for the project.'
+    },
+    render: {
+      title: 'Render',
+      description: 'Deployment platform and hosting for the application backend.'
+    },
+    cloudflare: {
+      title: 'Cloudflare',
+      description: 'CDN, DDoS protection and web performance optimization.'
+    },
+    namecheap: {
+      title: 'Namecheap',
+      description: 'Domain registration and management for skysphere.app.'
+    },
+    upstash: {
+      title: 'Upstash',
+      description: 'Redis caching system to optimize application performance.'
+    },
+    firebase: {
+      title: 'Firebase',
+      description: 'Storage for images and multimedia files of the platform.'
+    },
+    googleCloud: {
+      title: 'Google Cloud',
+      description: 'Credentials and Google Maps API for map functionalities.'
+    },
+    jira: {
+      title: 'Jira',
+      description: 'Project management, tasks and development tracking.'
+    },
+    searchConsole: {
+      title: 'Google Search Console',
+      description: 'SEO monitoring and optimization for search engine visibility.'
+    },
+    mongoAtlas: {
+      title: 'MongoDB Atlas',
+      description: 'Main cloud database for storing all application information.'
+    },
+    aena: {
+      title: 'AENA/ENAIRE',
+      description: 'Official API to obtain information about restricted aeronautical zones in Spain.'
+    }
   },
   guidelines: {
     title: 'Project Principles',

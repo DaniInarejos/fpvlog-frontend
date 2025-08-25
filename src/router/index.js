@@ -1,163 +1,178 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '../stores/user'
 
-// Vistas
-import Home from '../views/HomeView.vue'
-import Login from '../views/LoginView.vue'
-import Register from '../views/RegisterView.vue'
-import Profile from '../views/ProfileView.vue'
-import Flights from '../views/FlightView.vue'
-import Drones from '../views/DroneView.vue'
-import Followers from '../views/FollowersView.vue'
-import Following from '../views/FollowingView.vue'
-import Dashboard from '../views/DashboardView.vue'
-import About from '../views/About.vue'
-import Feed from '../views/FeedView.vue'
-import Components from '../views/ComponentsView.vue'
-import Spots from '../views/SpotView.vue'
-import Groups from '../views/GroupsView.vue'
-import GroupDetail from '../views/GroupDetailView.vue'
-import TopicDetail from '../views/TopicDetailView.vue'
-
+// Añadir estas propiedades adicionales a las rutas más importantes:
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home,
+    component: () => import('../views/HomeView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Inicio'
+      title: 'Inicio',
+      description: 'Bienvenido a SkySphere, la plataforma social para pilotos de drones FPV. Conecta con otros pilotos, comparte tus vuelos y descubre nuevos spots.',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/login',
     name: 'login',
-    component: Login,
+    component: () => import('../views/LoginView.vue'), 
     meta: {
       layout: 'auth',
-      title: 'Iniciar Sesión'
+      title: 'Iniciar Sesión',
+      description: 'Inicia sesión en SkySphere para conectar con otros pilotos de drones FPV y compartir tus experiencias de vuelo.',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/register',
     name: 'register',
-    component: Register,
+    component: () => import('../views/RegisterView.vue'), 
     meta: {
       layout: 'auth',
-      title: 'Registro'
+      title: 'Registro',
+      description: 'Únete a la comunidad de SkySphere. Regístrate gratis para compartir tus experiencias con drones FPV y conectar con otros pilotos.',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/profile',
     name: 'profile',
-    component: Profile,
+    component: () => import('../views/ProfileView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Perfil'
+      title: 'Perfil',
+      description: 'Gestiona tu perfil de piloto en SkySphere',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/flights',
     name: 'flights',
-    component: Flights,
+    component: () => import('../views/FlightView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Vuelos'
+      title: 'Vuelos',
+      description: 'Explora y gestiona tus vuelos de drones FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/drones',
     name: 'drones',
-    component: Drones,
+    component: () => import('../views/DroneView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Mis Drones'
+      title: 'Mis Drones',
+      description: 'Gestiona tu colección de drones FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/followers',
     name: 'followers',
-    component: Followers,
+    component: () => import('../views/FollowersView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Seguidores'
+      title: 'Seguidores',
+      description: 'Descubre quién te sigue en la comunidad de SkySphere',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/following',
     name: 'following',
-    component: Following,
+    component: () => import('../views/FollowingView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Siguiendo'
+      title: 'Siguiendo',
+      description: 'Gestiona a los pilotos que sigues en SkySphere',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/dashboard/:username',
     name: 'dashboard',
-    component: Dashboard,
+    component: () => import('../views/DashboardView.vue'), 
     meta: {
-      title: 'Dashboard'
+      title: 'Dashboard',
+      description: 'Panel de control del piloto - Explora drones, vuelos y actividad',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
    {
     path: '/feed',
     name: 'feed',
-    component: Feed,
+    component: () => import('../views/FeedView.vue'), 
     meta: {
-      title: 'Feed'
+      title: 'Feed',
+      description: 'Descubre las últimas novedades de la comunidad de pilotos FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },{
     path: '/about',
     name: 'about',
-    component: About,
+    component: () => import('../views/About.vue'), 
     meta: {
-      title: 'Acerca de'
+      title: 'Acerca de',
+      description: 'Conoce más sobre SkySphere, la plataforma social para pilotos de drones FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/components',
     name: 'components',
-    component: Components,
+    component: () => import('../views/ComponentsView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Componentes'
+      title: 'Componentes',
+      description: 'Explora y gestiona componentes para tus drones FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/spots',
     name: 'spots',
-    component: Spots, 
+    component: () => import('../views/SpotView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Spots'
+      title: 'Spots',
+      description: 'Descubre y comparte los mejores lugares para volar drones FPV',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/groups',
     name: 'groups',
-    component: Groups,
+    component: () => import('../views/GroupsView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Grupos'
+      title: 'Grupos',
+      description: 'Únete a grupos de pilotos FPV y participa en discusiones',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/groups/:id',
     name: 'group-detail',
-    component: GroupDetail,
+    component: () => import('../views/GroupDetailView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Grupo'
+      title: 'Grupo',
+      description: 'Participa en discusiones y conecta con otros miembros del grupo',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
     path: '/groups/:groupId/topics/:topicId',
     name: 'topic-detail',
-    component: TopicDetail,
+    component: () => import('../views/TopicDetailView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Topic'
+      title: 'Topic',
+      description: 'Participa en la conversación sobre este tema específico',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
@@ -166,18 +181,25 @@ const routes = [
     component: () => import('../views/SpotsMapView.vue'),
     meta: {
       requiresAuth: true,
-      title: 'Mapa de Spots'
+      title: 'Mapa de Spots',
+      description: 'Explora spots de vuelo en el mapa interactivo',
+      ogImage: '/images/logoSkySphere.png'
     }
   },
   {
-  path: '/:pathMatch(.*)*',
-  redirect: '/'
-},
-{
-  path: '/terms',
-  name: 'terms',
-  component: () => import('../views/TermsView.vue')
-}
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: () => import('../views/TermsView.vue'),
+    meta: {
+      title: 'Términos y Condiciones',
+      description: 'Lee los términos y condiciones de uso de SkySphere',
+      ogImage: '/images/logoSkySphere.png'
+    }
+  }
 ]
 
 const router = createRouter({

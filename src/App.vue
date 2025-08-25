@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from './stores/user'
 import NavBar from './components/layout/NavBar.vue'
@@ -11,6 +11,96 @@ const userStore = useUserStore()
 const isAuthPage = computed(() => route.meta.layout === 'auth')
 const isAuthenticated = computed(() => userStore.isAuthenticated)
 
+// Función para actualizar el título, metadescripciones y Open Graph
+const updatePageMeta = () => {
+  const baseTitle = 'SkySphere'
+  const pageTitle = route.meta.title
+  const pageDescription = route.meta.description || 'Plataforma social para pilotos de drones FPV'
+  const fullTitle = pageTitle ? `${pageTitle} | ${baseTitle}` : baseTitle
+  const currentUrl = window.location.href
+  const siteName = 'SkySphere'
+  const defaultImage = `${window.location.origin}/images/placeholder.png`
+  
+  // Actualizar el título de la página
+  document.title = fullTitle
+  
+  // Función helper para crear o actualizar meta tags
+  const updateMetaTag = (selector, attribute, attributeValue, content) => {
+    let metaTag = document.querySelector(selector)
+    if (!metaTag) {
+      metaTag = document.createElement('meta')
+      metaTag.setAttribute(attribute, attributeValue)
+      document.head.appendChild(metaTag)
+    }
+    metaTag.setAttribute('content', content)
+  }
+  
+  // Meta descripción estándar
+  updateMetaTag('meta[name="description"]', 'name', 'description', pageDescription)
+  
+  // Open Graph básico
+  updateMetaTag('meta[property="og:title"]', 'property', 'og:title', fullTitle)
+  updateMetaTag('meta[property="og:description"]', 'property', 'og:description', pageDescription)
+  updateMetaTag('meta[property="og:url"]', 'property', 'og:url', currentUrl)
+  updateMetaTag('meta[property="og:site_name"]', 'property', 'og:site_name', siteName)
+  updateMetaTag('meta[property="og:type"]', 'property', 'og:type', 'website')
+  updateMetaTag('meta[property="og:image"]', 'property', 'og:image', defaultImage)
+  updateMetaTag('meta[property="og:image:width"]', 'property', 'og:image:width', '1200')
+  updateMetaTag('meta[property="og:image:height"]', 'property', 'og:image:height', '630')
+  updateMetaTag('meta[property="og:image:alt"]', 'property', 'og:image:alt', pageDescription)
+  
+  // Twitter Cards
+  updateMetaTag('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image')
+  updateMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', fullTitle)
+  updateMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', pageDescription)
+  updateMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', defaultImage)
+  updateMetaTag('meta[name="twitter:image:alt"]', 'name', 'twitter:image:alt', pageDescription)
+  
+  // Meta tags adicionales para SEO
+  updateMetaTag('meta[name="robots"]', 'name', 'robots', 'index, follow')
+  updateMetaTag('meta[name="author"]', 'name', 'author', 'SkySphere')
+  updateMetaTag('meta[name="viewport"]', 'name', 'viewport', 'width=device-width, initial-scale=1.0')
+  
+  // Canonical URL
+  let canonicalLink = document.querySelector('link[rel="canonical"]')
+  if (!canonicalLink) {
+    canonicalLink = document.createElement('link')
+    canonicalLink.setAttribute('rel', 'canonical')
+    document.head.appendChild(canonicalLink)
+  }
+  canonicalLink.setAttribute('href', currentUrl)
+  
+  // Add structured data
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': 'SkySphere',
+    'description': route.meta.description || 'Plataforma social para pilotos de drones FPV',
+    'url': window.location.href,
+    'applicationCategory': 'SocialNetworkingApplication',
+    'operatingSystem': 'Web'
+  }
+  
+  // Remove existing structured data
+  const existingScript = document.querySelector('script[type="application/ld+json"]')
+  if (existingScript) {
+    existingScript.remove()
+  }
+  
+  // Add new structured data
+  const script = document.createElement('script')
+  script.type = 'application/ld+json'
+  script.textContent = JSON.stringify(structuredData)
+  document.head.appendChild(script)
+}
+
+// Actualizar metadatos cuando cambia la ruta
+watch(() => route.path, updatePageMeta, { immediate: true })
+
+// También actualizar metadatos al montar el componente
+onMounted(() => {
+  updatePageMeta()
+})
 </script>
 
 <template>

@@ -44,7 +44,7 @@ const { t } = useI18n()
             <li class="flex items-center space-x-2 p-3 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
               <span class="text-sky-500 dark:text-sky-400">⚡</span>
               <span>{{ $t('about.techs.vue') }}</span>
-              <span class="text-sm text-gray-500 dark:text-gray-400 ml-auto">Composition API</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-auto">v3.5.13</span>
             </li>
             <li class="flex items-center space-x-2 p-3 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
               <span class="text-sky-500 dark:text-sky-400">🎨</span>
@@ -59,7 +59,7 @@ const { t } = useI18n()
             <li class="flex items-center space-x-2 p-3 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
               <span class="text-sky-500 dark:text-sky-400">🤖</span>
               <span>{{ $t('about.techs.claude') }}</span>
-              <span class="text-sm text-gray-500 dark:text-gray-400 ml-auto">v3.5</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-auto"></span>
             </li>
             <li class="flex items-center space-x-2 p-3 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
               <span class="text-sky-500 dark:text-sky-400">🔧</span>
@@ -73,13 +73,97 @@ const { t } = useI18n()
             </li>
           </ul>
 
+          <!-- External Tools Section -->
+          <div class="mt-8 space-y-4">
+            <h2 class="text-2xl font-semibold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">{{ $t('about.externalTools.title') }}</h2>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🐙</span>
+                  <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.github.title') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.github.description') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🚀</span>
+                  <a href="https://render.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.render.title', 'Render') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.render.description', 'Plataforma de despliegue y hosting para el backend de la aplicación.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">☁️</span>
+                  <a href="https://www.cloudflare.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.cloudflare.title', 'Cloudflare') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.cloudflare.description', 'CDN, protección DDoS y optimización de rendimiento web.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🌐</span>
+                  <a href="https://www.namecheap.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.namecheap.title', 'Namecheap') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.namecheap.description', 'Registro y gestión del dominio skysphere.app.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">⚡</span>
+                  <a href="https://upstash.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.upstash.title', 'Upstash') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.upstash.description', 'Sistema de caché Redis para optimizar el rendimiento de la aplicación.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🔥</span>
+                  <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.firebase.title', 'Firebase') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.firebase.description', 'Almacenamiento de imágenes y archivos multimedia de la plataforma.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🗺️</span>
+                  <a href="https://cloud.google.com" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.googleCloud.title', 'Google Cloud') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.googleCloud.description', 'Credenciales y API de Google Maps para funcionalidades de mapas.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">📋</span>
+                  <a href="https://www.atlassian.com/software/jira" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.jira.title', 'Jira') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.jira.description', 'Gestión de proyectos, tareas y seguimiento del desarrollo.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🔍</span>
+                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.searchConsole.title', 'Google Search Console') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.searchConsole.description', 'Monitoreo y optimización del SEO y visibilidad en buscadores.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">🍃</span>
+                  <a href="https://www.mongodb.com/atlas" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.mongoAtlas.title', 'MongoDB Atlas') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.mongoAtlas.description', 'Base de datos principal en la nube para almacenar toda la información.') }}</p>
+              </li>
+              <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="text-sky-500 dark:text-sky-400">✈️</span>
+                  <a href="https://www.enaire.es" target="_blank" rel="noopener noreferrer" class="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors duration-200">{{ $t('about.externalTools.aena.title', 'AENA/ENAIRE') }}</a>
+                </div>
+                <p class="text-sm">{{ $t('about.externalTools.aena.description', 'API oficial para obtener información de zonas aeronáuticas restringidas en España.') }}</p>
+              </li>
+            </ul>
+          </div>
+
           <!-- Project Guidelines Section -->
           <div class="mt-8 space-y-4">
             <h2 class="text-2xl font-semibold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">{{ $t('about.guidelines.title', 'Principios del Proyecto') }}</h2>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
                 <h3 class="font-medium text-sky-600 dark:text-sky-400 mb-2">{{ $t('about.guidelines.code.title', 'Código') }}</h3>
-                <p class="text-sm">{{ $t('about.guidelines.code.description', 'Desarrollo basado en Vue 3 Composition API con TypeScript y componentes modulares.') }}</p>
+                <p class="text-sm">{{ $t('about.guidelines.code.description', 'Desarrollo basado en Vue 3 Composition API con componentes modulares.') }}</p>
               </li>
               <li class="p-4 rounded-lg bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
                 <h3 class="font-medium text-sky-600 dark:text-sky-400 mb-2">{{ $t('about.guidelines.design.title', 'Diseño') }}</h3>

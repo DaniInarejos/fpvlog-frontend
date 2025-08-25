@@ -1,15 +1,30 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import Sitemap from 'vite-plugin-sitemap'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(),
+    Sitemap({
+      hostname: 'https://skysphere.app',
+      dynamicRoutes: [
+        '/spots',
+        '/flights',
+        '/drones',
+        '/components',
+        '/dashboard',
+        '/feed',
+        '/profile',
+        '/login',
+        '/groups',
+        '/feedSpots',
+        '/about',
+        '/followers'
+      ],
+    })
+  ],
   base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
   }
 })
-
-// Necesitarás configurar tu servidor para manejar correctamente las rutas. Cuando uses `createWebHistory`, todas las URLs deben redirigir a tu `index.html` para que Vue Router pueda manejarlas correctamente.
-
-// Si estás usando Vite (que parece ser el caso por la URL que proporcionaste), necesitarás actualizar la configuración de Vite para manejar el enrutamiento del lado del servidor. Añade esto a tu `vite.config.js`:

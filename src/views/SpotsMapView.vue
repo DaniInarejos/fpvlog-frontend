@@ -105,9 +105,10 @@ const initMap = () => {
     center: CONFIG.MAP_CENTER,
     zoom: CONFIG.MAP_ZOOM,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-   
+    gestureHandling: 'greedy' // Permite desplazamiento sin Control
   })
-map.value.addListener('click', () => {
+  
+  map.value.addListener('click', () => {
     if (currentInfoWindow.value) {
       currentInfoWindow.value.close()
       currentInfoWindow.value = null

@@ -53,9 +53,10 @@ const topicForm = ref({
   description: '',
   isPinned: false
 })
-const canPinTopics = computed(() => {
-  return props.userRole === 'OWNER' || props.userRole === 'ADMIN'
-})
+// Comentar o eliminar esta computed property
+// const canPinTopics = computed(() => {
+//   return props.userRole === 'OWNER' || props.userRole === 'ADMIN'
+// })
 
 const canEditTopic = computed(() => {
   return (topic) => {
@@ -136,8 +137,8 @@ const handleSaveTopic = async () => {
   try {
     const topicData = {
       title: topicForm.value.title.trim(),
-      description: topicForm.value.description.trim(),
-      isPinned: topicForm.value.isPinned
+      description: topicForm.value.description.trim()
+      // Eliminar: isPinned: topicForm.value.isPinned
     }
     
     if (selectedTopic.value) {
@@ -158,27 +159,38 @@ const handleSaveTopic = async () => {
   }
 }
 
+const showDeleteModal = ref(false)
+const topicToDelete = ref(null)
+
 const handleDeleteTopic = async (topic) => {
-  if (!confirm(t('groups.topics.confirmDelete', { title: topic.title }))) return
+  topicToDelete.value = topic
+  showDeleteModal.value = true
+}
+
+const confirmDeleteTopic = async () => {
+  if (!topicToDelete.value) return
   
   try {
-    await groupTopicService.deleteTopic(props.groupId, topic._id)
+    await groupTopicService.deleteTopic(props.groupId, topicToDelete.value._id)
     emit('topic-deleted')
     await fetchTopics(pagination.value.currentPage)
+    showDeleteModal.value = false
+    topicToDelete.value = null
   } catch (error) {
     console.error('Error deleting topic:', error)
     errors.value.delete = error.response?.data?.message || t('common.error.generic')
   }
 }
 
-const handleTogglePin = async (topic) => {
-  try {
-    await groupTopicService.togglePinTopic(props.groupId, topic._id)
-    await fetchTopics(pagination.value.currentPage)
-  } catch (error) {
-    console.error('Error toggling pin:', error)
-  }
-}
+// Comentar o eliminar esta función
+// const handleTogglePin = async (topic) => {
+//   try {
+//     await groupTopicService.togglePinTopic(props.groupId, topic._id)
+//     await fetchTopics(pagination.value.currentPage)
+//   } catch (error) {
+//     console.error('Error toggling pin:', error)
+//   }
+// }
 
 const formatLastActivity = (date) => {
   const now = new Date()
@@ -281,8 +293,8 @@ const truncateDescription = (description, wordLimit = 100) => {
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-2">
-              <!-- Pin Icon -->
-              <svg
+              <!-- Comentar o eliminar el Pin Icon -->
+              <!-- <svg
                 v-if="topic.isPinned"
                 class="w-4 h-4 text-yellow-500"
                 fill="currentColor"
@@ -291,7 +303,7 @@ const truncateDescription = (description, wordLimit = 100) => {
                 <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
                 <path fill-rule="evenodd" d="M3 8a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                 <path d="M8 11v5l4-2v-3H8z" />
-              </svg>
+              </svg> -->
               
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ topic.title }}
@@ -317,8 +329,8 @@ const truncateDescription = (description, wordLimit = 100) => {
           
           <!-- Actions -->
           <div v-if="canManage" class="flex items-center gap-2 ml-4">
-            <!-- Pin button - solo para OWNER/ADMIN -->
-            <BaseButton
+            <!-- Comentar o eliminar el Pin button -->
+            <!-- <BaseButton
               v-if="canPinTopics"
               @click.stop="handleTogglePin(topic)"
               variant="secondary"
@@ -330,9 +342,9 @@ const truncateDescription = (description, wordLimit = 100) => {
                 <path fill-rule="evenodd" d="M3 8a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                 <path d="M8 11v5l4-2v-3H8z" />
               </svg>
-            </BaseButton>
+            </BaseButton> -->
             
-            <!-- Edit button - para OWNER/ADMIN o creador del topic -->
+            <!-- Edit button - mantener -->
             <BaseButton
               v-if="canEditTopic(topic)"
               @click.stop="handleEditTopic(topic)"
@@ -345,7 +357,7 @@ const truncateDescription = (description, wordLimit = 100) => {
               </svg>
             </BaseButton>
             
-            <!-- Delete button - para OWNER o creador del topic -->
+            <!-- Delete button - mantener -->
             <BaseButton
               v-if="canDeleteTopic(topic)"
               @click.stop="handleDeleteTopic(topic)"
@@ -443,6 +455,21 @@ const truncateDescription = (description, wordLimit = 100) => {
           {{ selectedTopic ? t('common.update') : t('common.create') }}
         </BaseButton>
       </div>
+    </BaseModal>
+    
+    <!-- Modal para confirmar eliminación de topic -->
+    <BaseModal
+      :show="showDeleteModal"
+      :title="t('groups.topics.deleteTitle')"
+      :show-warning-icon="true"
+      :show-delete-button="true"
+      :show-accept-button="false"
+      @close="showDeleteModal = false"
+      @confirm="confirmDeleteTopic"
+    >
+      <p class="text-sm text-gray-500">
+        {{ t('groups.topics.deleteConfirmation', { title: topicToDelete?.title }) }}
+      </p>
     </BaseModal>
   </div>
 </template>

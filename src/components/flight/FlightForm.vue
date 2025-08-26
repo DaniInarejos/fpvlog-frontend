@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref,computed  } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseCard from '../base/BaseCard.vue'
 import BaseInput from '../base/BaseInput.vue'
@@ -8,6 +8,7 @@ import BaseImageUpload from '../base/BaseImageUpload.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import BaseDivider from '../base/BaseDivider.vue'
 import BaseCheckbox from '../base/BaseCheckbox.vue'
+import BaseSelect from '../base/BaseSelect.vue'
 import flightService from '../../services/flightService'
 
 const { t } = useI18n()
@@ -97,6 +98,15 @@ const handleSubmit = async () => {
 const handleImageChange = (image) => {
   formData.value.image = image
 }
+
+// Transformar drones y spots al formato esperado por BaseSelect
+const droneOptions = computed(() => 
+  props.drones.map(drone => ({ _id: drone._id, name: drone.name }))
+)
+
+const spotOptions = computed(() => 
+  props.spots.map(spot => ({ _id: spot._id, name: spot.name }))
+)
 </script>
 
 <template>
@@ -135,25 +145,19 @@ const handleImageChange = (image) => {
           type="date"
         />
 
-        <select
+        <BaseSelect
           v-model="formData.droneId"
-          class="input"
-        >
-          <option value="">{{ t('flights.form.drone') }}</option>
-          <option v-for="drone in drones" :key="drone._id" :value="drone._id">
-            {{ drone.name }}
-          </option>
-        </select>
+          :label="t('flights.form.drone')"
+          :options="droneOptions"
+          :placeholder="t('flights.form.drone')"
+        />
 
-        <select
+        <BaseSelect
           v-model="formData.spotId"
-          class="input"
-        >
-          <option value="">{{ t('flights.form.spot') }}</option>
-          <option v-for="spot in spots" :key="spot._id" :value="spot._id">
-            {{ spot.name }}
-          </option>
-        </select>
+          :label="t('flights.form.spot')"
+          :options="spotOptions"
+          :placeholder="t('flights.form.spot')"
+        />
 
         <BaseInput
           v-model="formData.duration"

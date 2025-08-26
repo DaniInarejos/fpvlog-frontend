@@ -1,12 +1,11 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseCard from '../base/BaseCard.vue'
 import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import StaticMap from '../base/StaticMap.vue'
 import SpotInfo from './SpotInfo.vue'
-import aeronauticsService from '../../services/aeronauticsService'
 
 const props = defineProps({
   spots: {
@@ -28,17 +27,6 @@ const { t } = useI18n()
 
 const showSpotInfo = ref(false)
 const selectedSpot = ref(null)
-const aeronauticalData = ref(null)
-const spotZoneStatus = ref(new Map()) // Cache para el estado de zonas por spot
-
-// Reglas de clasificación de zonas (simplificadas para el listado)
-const ZONE_RULES = [
-  { keywords: ['no permitido el vuelo', 'prohibido el vuelo', 'zona geográfica de uas prohibida'], style: 'red' },
-  { keywords: ['danger', 'peligro', 'military', 'militar'], style: 'red' },
-  { heightCheck: (h) => h === 0, style: 'red' },
-  { keywords: ['req_authorization', 'tma', 'ctr', 'restricted'], style: 'yellow' },
-  { keywords: [''], style: 'yellow' }
-]
 
 const handleShowSpotInfo = (spot) => {
   selectedSpot.value = spot
@@ -50,134 +38,25 @@ const handleCloseSpotInfo = () => {
   selectedSpot.value = null
 }
 
-// Convertir altura a metros
-const convertHeight = (height, uom) => {
-  const numHeight = Number(height)
-  if (isNaN(numHeight)) return NaN
-  return uom?.toUpperCase() === 'FT' ? numHeight * 0.3048 : numHeight
-}
-
-// Detectar zona aeronáutica para un spot específico
-const detectAeronauticalZoneForSpot = (spot) => {
-  if (!spot.location?.coordinates?.length === 2 || !aeronauticalData.value?.features) {
-    return { status: 'unknown', zones: [] }
-  }
-  const lat = spot.location.coordinates[1]
-  const lng = spot.location.coordinates[0]
-  const point = new google.maps.LatLng(lat, lng)
-  let detectedZones = []
-  
-  aeronauticalData.value.features.forEach(feature => {
-    try {
-      const geometry = feature.geometry
-      
-      if (geometry && (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon')) {
-        let isInside = false
-        
-        if (geometry.type === 'Polygon') {
-          const coordinates = geometry.coordinates[0]
-          const pathsArray = coordinates.map(coord => ({ lat: coord[1], lng: coord[0] }))
-          const tempPolygon = new google.maps.Polygon({ paths: [pathsArray] })
-          isInside = google.maps.geometry.poly.containsLocation(point, tempPolygon)
-        } else if (geometry.type === 'MultiPolygon') {
-          for (let i = 0; i < geometry.coordinates.length; i++) {
-            const coordinates = geometry.coordinates[i][0]
-            const pathsArray = coordinates.map(coord => ({ lat: coord[1], lng: coord[0] }))
-            const tempPolygon = new google.maps.Polygon({ paths: [pathsArray] })
-            if (google.maps.geometry.poly.containsLocation(point, tempPolygon)) {
-              isInside = true
-              break
-            }
-          }
-        }
-        
-        if (isInside) {
-          const name = feature.properties?.Name || 'Zona sin nombre'
-          const type = feature.properties?.Type || 'Sin tipo'
-          const zoneType = type.toLowerCase()
-          const zoneName = name.toLowerCase()
-          const upperHeight = convertHeight(feature.properties?.Upper, feature.properties?.UOM)
-          
-          let zoneColor = 'yellow'
-          
-          for (const rule of ZONE_RULES) {
-            let ruleMatches = false
-            
-            if (rule.keywords && rule.keywords.some(keyword => 
-              zoneType.includes(keyword) || zoneName.includes(keyword)
-            )) {
-              ruleMatches = true
-            }
-            
-            if (rule.heightCheck && !isNaN(upperHeight) && rule.heightCheck(upperHeight)) {
-              ruleMatches = true
-            }
-            
-            if (ruleMatches) {
-              zoneColor = rule.style
-              break
-            }
-          }
-          
-          detectedZones.push({ name, type, color: zoneColor })
-        }
-      }
-    } catch (error) {
-      console.warn('Error procesando feature aeronáutico:', error)
-    }
-  })
-  
-  // Determinar el estado general
-  const hasRedZones = detectedZones.some(zone => zone.color === 'red')
-  const hasYellowZones = detectedZones.some(zone => zone.color === 'yellow')
-  
-  let status = 'clear'
-  if (hasRedZones) status = 'prohibited'
-  else if (hasYellowZones) status = 'restricted'
-  
-  return { status, zones: detectedZones }
-}
-
-// Cargar datos aeronáuticos
-const loadAeronauticalData = async () => {
-  try {
-    const response = await aeronauticsService.getAeronauticsData()
-    
-    if (response.success && response.data) {
-      aeronauticalData.value = response.data
-      
-      // Procesar spots si Google Maps ya está disponible
-      if (window.google && window.google.maps && window.google.maps.geometry) {
-        processSpotZones()
-      }
-    }
-  } catch (error) {
-    console.error('Error cargando datos aeronáuticos:', error)
+// Mapear legalStatus del endpoint a estados internos
+const mapLegalStatusToInternalStatus = (legalStatus) => {
+  switch (legalStatus) {
+    case 'NORESTRICTIONS':
+      return 'clear'
+    case 'RESTRICTEDZONE':
+      return 'restricted'
+    case 'PROHIBITEDZONE':
+      return 'prohibited'
+    case 'WITHOUT_ANALIZED':
+    default:
+      return 'unknown'
   }
 }
 
-// Procesar zonas aeronáuticas para todos los spots
-const processSpotZones = () => {
-  if (!aeronauticalData.value) return
-  
-  props.spots.forEach(spot => {
-    const zoneInfo = detectAeronauticalZoneForSpot(spot)
-    spotZoneStatus.value.set(spot._id, zoneInfo)
-  })
-}
-
-// Verificar si podemos procesar las zonas
-const checkAndProcessZones = () => {
-  if (window.google && window.google.maps && window.google.maps.geometry && aeronauticalData.value) {
-    processSpotZones()
-    return true
-  }
-  return false
-}
-
-// Obtener el estado aeronáutico de un spot
+// Obtener el estado aeronáutico de un spot usando legalStatus
 const getSpotZoneStatus = (spot) => {
-  return spotZoneStatus.value.get(spot._id) || { status: 'unknown', zones: [] }
+  const status = mapLegalStatusToInternalStatus(spot.legalStatus)
+  return { status, zones: [] }
 }
 
 // Obtener el icono y color para el estado aeronáutico
@@ -207,73 +86,6 @@ const getZoneStatusText = (status) => {
       return 'Estado desconocido'
   }
 }
-
-onMounted(() => {
-  // Cargar datos aeronáuticos inmediatamente
-  loadAeronauticalData()
-  
-  // Verificar periódicamente si podemos procesar las zonas
-  const intervalId = setInterval(() => {
-    if (checkAndProcessZones()) {
-      clearInterval(intervalId)
-    }
-  }, 500)
-  
-  // Limpiar el intervalo después de 10 segundos para evitar bucles infinitos
-  setTimeout(() => {
-    clearInterval(intervalId)
-  }, 10000)
-  
-  // Procesar inmediatamente si tanto los spots como los datos aeronáuticos ya están disponibles
-  if (props.spots && props.spots.length > 0 && aeronauticalData.value) {
-    setTimeout(() => {
-      checkAndProcessZones()
-    }, 500)
-  }
-})
-// Observar cambios en los spots para reprocessar las zonas
-watch(() => props.spots, (newSpots, oldSpots) => {
-  // Procesar cuando se reciben spots por primera vez o cuando cambian
-  if (newSpots && newSpots.length > 0 && aeronauticalData.value) {
-    // Esperar un poco para asegurar que Google Maps esté listo
-    setTimeout(() => {
-      checkAndProcessZones()
-    }, 100)
-  }
-}, { deep: true, immediate: true }) // Agregar immediate: true
-
-// Agregar un watcher adicional para cuando se cargan los datos aeronáuticos
-watch(() => aeronauticalData.value, (newData) => {
-  if (newData && props.spots && props.spots.length > 0) {
-    setTimeout(() => {
-      checkAndProcessZones()
-    }, 100)
-  }
-})
-
-onMounted(() => {
-  // Cargar datos aeronáuticos inmediatamente
-  loadAeronauticalData()
-  
-  // Verificar periódicamente si podemos procesar las zonas
-  const intervalId = setInterval(() => {
-    if (checkAndProcessZones()) {
-      clearInterval(intervalId)
-    }
-  }, 500)
-  
-  // Limpiar el intervalo después de 10 segundos para evitar bucles infinitos
-  setTimeout(() => {
-    clearInterval(intervalId)
-  }, 10000)
-  
-  // Procesar inmediatamente si tanto los spots como los datos aeronáuticos ya están disponibles
-  if (props.spots && props.spots.length > 0 && aeronauticalData.value) {
-    setTimeout(() => {
-      checkAndProcessZones()
-    }, 500)
-  }
-})
 </script>
 
 <template>

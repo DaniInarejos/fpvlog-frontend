@@ -112,6 +112,8 @@ export default {
     title: 'Discussion Topics',
     createTopic: 'Create Topic',
     editTopic: 'Edit Topic',
+    deleteTitle: 'Delete Topic',
+    deleteConfirmation: 'Are you sure you want to delete the topic "{title}"?',
     postCount: '{count} posts',
     comments: 'Comments',
     noComments: 'No comments yet. Be the first to comment!',

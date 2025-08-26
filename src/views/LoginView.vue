@@ -45,7 +45,10 @@ const toastMessage = ref('')
 
 // Función para manejar el clic en "¿Olvidaste tu contraseña?"
 const handleForgotPassword = () => {
-  toastMessage.value = '🚧 Work in Progress - Función en desarrollo'
+  toastMessage.value = `🚧 Función en desarrollo.
+  Envia un Correo a danielinarejosaroca@gmail.com 
+  desde el correo que quieres cambiar indicando que olvidaste la contraseña.
+  Disculpa las molestias.`
   showToast.value = true
 }
 </script>
@@ -146,7 +149,7 @@ const handleForgotPassword = () => {
     <BaseToast
       v-model:show="showToast"
       :message="toastMessage"
-      :duration="2000"
+      :duration="10000"
     />
 </template>
 

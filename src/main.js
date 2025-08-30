@@ -28,15 +28,27 @@ window.initMap = function() {
   console.log('Google Maps API loaded')
 }
 
+// Función para cargar Google Maps solo si el usuario está autenticado
+function loadGoogleMapsIfAuthenticated() {
+  const token = localStorage.getItem('auth_token')
+  if (token) {
+    loadGoogleMaps()
+  }
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 
-
 app.config.globalProperties.$api = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-loadGoogleMaps();
+// Solo cargar Google Maps si hay un usuario autenticado
+loadGoogleMapsIfAuthenticated()
+
 app.component('QuillEditor', QuillEditor)
 app.use(pinia)
 app.use(router)
 app.use(i18n)
 app.mount('#app')
+
+// Exportar la función para poder usarla desde otros componentes
+export { loadGoogleMaps }

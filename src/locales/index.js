@@ -14,6 +14,7 @@ import following from './following'
 import profile from './profile'
 import spots from './spots'
 import groups from './groups'
+import landing from './landing'
 
 export const loadViewTranslations = async (viewName, lang) => {
   const messages = await import(`./${viewName}/${lang}.js`)
@@ -29,6 +30,7 @@ export default {
     en: { 
       login: login.en,
       nav: navbar.en,
+      navbar: navbar.en,
       terms: terms.en,
       about: about.en,
       dashboard: dashboard.en,
@@ -41,11 +43,13 @@ export default {
       following: following.en,
       profile: profile.en,
       spots: spots.en,
-      groups: groups.en
+      groups: groups.en,
+      landing: landing.en
     },
     es: { 
       login: login.es,
       nav: navbar.es,
+      navbar: navbar.es,  // Cambiar de 'nav' a 'navbar'
       terms: terms.es,
       about: about.es,
       dashboard: dashboard.es,
@@ -58,7 +62,8 @@ export default {
       following: following.es,
       profile: profile.es,
       spots: spots.es,
-      groups: groups.es
+      groups: groups.es,
+      landing: landing.es
     }
   }
 }

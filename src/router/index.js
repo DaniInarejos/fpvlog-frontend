@@ -5,12 +5,22 @@ import { useUserStore } from '../stores/user'
 const routes = [
   {
     path: '/',
+    name: 'landing',
+    component: () => import('../views/LandingView.vue'),
+    meta: {
+      title: 'SkySphere - Plataforma Social para Pilotos FPV',
+      description: 'Bienvenido a SkySphere, la plataforma social para pilotos de drones FPV. Conecta con otros pilotos, comparte tus vuelos y descubre nuevos spots.',
+      ogImage: '/images/logoSkySphere.png'
+    }
+  },
+  {
+    path: '/home',
     name: 'home',
     component: () => import('../views/HomeView.vue'), 
     meta: {
       requiresAuth: true,
       title: 'Inicio',
-      description: 'Bienvenido a SkySphere, la plataforma social para pilotos de drones FPV. Conecta con otros pilotos, comparte tus vuelos y descubre nuevos spots.',
+      description: 'Panel de control personal en SkySphere.',
       ogImage: '/images/logoSkySphere.png'
     }
   },
@@ -216,14 +226,12 @@ router.beforeEach(async (to, from, next) => {
   // Esperar a que se inicialice la autenticación
   await userStore.initAuth()
 
-  if (to.path === '/') {
-    if (!userStore.isAuthenticated) {
-      next('/login')
-    } else {
-      next(`/dashboard/${userStore.user.username}`)
-    }
+  if (to.path === '/' && userStore.isAuthenticated) {
+    // Si está autenticado y va a la landing, redirigir al dashboard
+    next(`/dashboard/${userStore.user.username}`)
   } else if (requiresAuth && !userStore.isAuthenticated && !isDashboard) {
-    next('/login')
+    // Si requiere auth y no está autenticado, ir a landing
+    next('/')
   } else {
     next()
   }

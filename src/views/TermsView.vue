@@ -8,6 +8,7 @@ const { t } = useI18n()
 // Estado para el control de aceptación
 const hasAccepted = ref(false)
 const showPrintVersion = ref(false)
+const showFullContent = ref(true)
 
 // Método para manejar la aceptación de términos
 const handleAcceptTerms = () => {
@@ -19,170 +20,355 @@ const handleAcceptTerms = () => {
 const printTerms = () => {
   window.print()
 }
+
+// Método para descargar PDF
+const downloadPdf = () => {
+  // Implementar lógica de descarga PDF
+  console.log('Downloading PDF...')
+}
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <div class="space-y-8">
-      <!-- Encabezado -->
-      <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+      <!-- Encabezado Expandido -->
+      <div class="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 px-8 rounded-2xl">
+        <h1 class="text-4xl font-bold mb-4">
           {{ t('terms.title') }}
         </h1>
-        <p class="mt-4 text-gray-500 dark:text-gray-400">
+        <p class="text-xl opacity-90 mb-2">
           {{ t('terms.lastUpdated') }}: {{ t('terms.updateDate') }}
+        </p>
+        <p class="text-sm opacity-75">
+          {{ t('terms.effectiveDate') }}: {{ t('terms.updateDate') }}
         </p>
       </div>
 
-      <!-- Controles -->
-      <div class="flex justify-end space-x-4 print:hidden">
-        <button
-          @click="showPrintVersion = !showPrintVersion"
-          class="text-sm text-primary-600 hover:text-primary-500"
-        >
-          {{ showPrintVersion ? t('terms.viewNormal') : t('terms.viewPrint') }}
-        </button>
-        <button
-          @click="printTerms"
-          class="text-sm text-primary-600 hover:text-primary-500"
-        >
-          {{ t('terms.print') }}
-        </button>
-      </div>
-
-      <!-- Contenido de los términos -->
-      <div class="space-y-12">
-        <!-- Sección 1: Definiciones -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.definitions.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.definitions.user') }}</h3>
-            <p>{{ t('terms.definitions.userDesc') }}</p>
-
-            <h3>{{ t('terms.definitions.fpvPilot') }}</h3>
-            <p>{{ t('terms.definitions.fpvPilotDesc') }}</p>
-
-            <h3>{{ t('terms.definitions.content') }}</h3>
-            <p>{{ t('terms.definitions.contentDesc') }}</p>
-
-            <h3>{{ t('terms.definitions.services') }}</h3>
-            <p>{{ t('terms.definitions.servicesDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 2: Registro -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.registration.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.registration.requirements') }}</h3>
-            <p>{{ t('terms.registration.requirementsDesc') }}</p>
-
-            <h3>{{ t('terms.registration.verification') }}</h3>
-            <p>{{ t('terms.registration.verificationDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 3: Contenido -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.content.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.content.rules') }}</h3>
-            <p>{{ t('terms.content.rulesDesc') }}</p>
-
-            <h3>{{ t('terms.content.safety') }}</h3>
-            <p>{{ t('terms.content.safetyDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 4: Programa de Afiliados -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.affiliates.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.affiliates.disclosure') }}</h3>
-            <p>{{ t('terms.affiliates.disclosureDesc') }}</p>
-
-            <h3>{{ t('terms.affiliates.commission') }}</h3>
-            <p>{{ t('terms.affiliates.commissionDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 5: Privacidad -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.privacy.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.privacy.data') }}</h3>
-            <p>{{ t('terms.privacy.dataDesc') }}</p>
-
-            <h3>{{ t('terms.privacy.location') }}</h3>
-            <p>{{ t('terms.privacy.locationDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 6: Responsabilidad -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.liability.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.liability.disclaimer') }}</h3>
-            <p>{{ t('terms.liability.disclaimerDesc') }}</p>
-
-            <h3>{{ t('terms.liability.compliance') }}</h3>
-            <p>{{ t('terms.liability.complianceDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 7: Ofertas -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.offers.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.offers.conditions') }}</h3>
-            <p>{{ t('terms.offers.conditionsDesc') }}</p>
-
-            <h3>{{ t('terms.offers.validity') }}</h3>
-            <p>{{ t('terms.offers.validityDesc') }}</p>
-          </div>
-        </BaseCard>
-
-        <!-- Sección 8: Modificaciones -->
-        <BaseCard>
-          <h2 class="text-2xl font-semibold mb-4">{{ t('terms.modifications.title') }}</h2>
-          <div class="prose dark:prose-invert max-w-none">
-            <h3>{{ t('terms.modifications.changes') }}</h3>
-            <p>{{ t('terms.modifications.changesDesc') }}</p>
-
-            <h3>{{ t('terms.modifications.termination') }}</h3>
-            <p>{{ t('terms.modifications.terminationDesc') }}</p>
-          </div>
-        </BaseCard>
-      </div>
-
-      <!-- Aceptación de términos -->
-      <div class="mt-8 print:hidden">
-        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div class="flex items-center">
-            <input
-              type="checkbox"
-              id="accept-terms"
-              v-model="hasAccepted"
-              class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-            >
-            <label for="accept-terms" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
-              {{ t('terms.acceptanceText') }}
-            </label>
-          </div>
+      <!-- Controles Expandidos -->
+      <div class="flex flex-wrap justify-between items-center gap-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl print:hidden">
+        <div class="flex flex-wrap gap-4">
           <button
-            @click="handleAcceptTerms"
-            :disabled="!hasAccepted"
-            class="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="showPrintVersion = !showPrintVersion"
+            class="px-4 py-2 text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg transition-colors"
           >
-            {{ t('terms.acceptButton') }}
+            {{ showPrintVersion ? t('terms.viewNormal') : t('terms.viewPrint') }}
+          </button>
+          <button
+            @click="printTerms"
+            class="px-4 py-2 text-sm bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
+          >
+            {{ t('terms.print') }}
+          </button>
+          <button
+            @click="downloadPdf"
+            class="px-4 py-2 text-sm bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-colors"
+          >
+            {{ t('terms.downloadPdf') }}
           </button>
         </div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          {{ t('terms.lastReview') }}: {{ t('terms.updateDate') }}
+        </div>
       </div>
+
+      <!-- Contenido Expandido de los términos -->
+      <div class="space-y-8">
+        <!-- Introducción -->
+        <BaseCard class="border-l-4 border-blue-500">
+          <h2 class="text-3xl font-bold mb-6 text-blue-600">{{ t('terms.introduction.title') }}</h2>
+          <div class="prose dark:prose-invert max-w-none space-y-6">
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.introduction.welcome') }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.introduction.welcomeDesc') }}</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.introduction.acceptance') }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.introduction.acceptanceDesc') }}</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.introduction.updates') }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.introduction.updatesDesc') }}</p>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Definiciones Expandidas -->
+        <BaseCard class="border-l-4 border-green-500">
+          <h2 class="text-3xl font-bold mb-6 text-green-600">{{ t('terms.definitions.title') }}</h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">{{ t('terms.definitions.intro') }}</p>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.user') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.userDesc') }}</p>
+              </div>
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.fpvPilot') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.fpvPilotDesc') }}</p>
+              </div>
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.content') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.contentDesc') }}</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.services') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.servicesDesc') }}</p>
+              </div>
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.platform') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.platformDesc') }}</p>
+              </div>
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ t('terms.definitions.spot') }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.definitions.spotDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Registro Expandido -->
+        <BaseCard class="border-l-4 border-purple-500">
+          <h2 class="text-3xl font-bold mb-6 text-purple-600">{{ t('terms.registration.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.registration.requirements') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.registration.requirementsDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.registration.verification') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.registration.verificationDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.registration.security') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.registration.securityDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.registration.suspension') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.registration.suspensionDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Continuar con todas las demás secciones expandidas... -->
+        <!-- Contenido -->
+        <BaseCard class="border-l-4 border-red-500">
+          <h2 class="text-3xl font-bold mb-6 text-red-600">{{ t('terms.content.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.content.rules') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.content.rulesDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.content.safety') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.content.safetyDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.content.intellectual') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.content.intellectualDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.content.moderation') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.content.moderationDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Programa de Afiliados Expandido -->
+        <BaseCard class="border-l-4 border-yellow-500">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-600">{{ t('terms.affiliates.title') }}</h2>
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.affiliates.overview') }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.affiliates.overviewDesc') }}</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.affiliates.disclosure') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.affiliates.disclosureDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.affiliates.commission') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.affiliates.commissionDesc') }}</p>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.affiliates.conduct') }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.affiliates.conductDesc') }}</p>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Privacidad Expandida -->
+        <BaseCard class="border-l-4 border-indigo-500">
+          <h2 class="text-3xl font-bold mb-6 text-indigo-600">{{ t('terms.privacy.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.privacy.data') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.privacy.dataDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.privacy.location') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.privacy.locationDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.privacy.sharing') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.privacy.sharingDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.privacy.rights') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.privacy.rightsDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Responsabilidad Expandida -->
+        <BaseCard class="border-l-4 border-orange-500">
+          <h2 class="text-3xl font-bold mb-6 text-orange-600">{{ t('terms.liability.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.liability.disclaimer') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.liability.disclaimerDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.liability.compliance') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.liability.complianceDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.liability.limitation') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.liability.limitationDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.liability.indemnification') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.liability.indemnificationDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Ofertas Expandidas -->
+        <BaseCard class="border-l-4 border-pink-500">
+          <h2 class="text-3xl font-bold mb-6 text-pink-600">{{ t('terms.offers.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.offers.conditions') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.offers.conditionsDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.offers.validity') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.offers.validityDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.offers.transactions') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.offers.transactionsDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.offers.returns') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.offers.returnsDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Modificaciones Expandidas -->
+        <BaseCard class="border-l-4 border-teal-500">
+          <h2 class="text-3xl font-bold mb-6 text-teal-600">{{ t('terms.modifications.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.modifications.changes') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.modifications.changesDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.modifications.service') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.modifications.serviceDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.modifications.termination') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.modifications.terminationDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.modifications.survival') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.modifications.survivalDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Disposiciones Legales -->
+        <BaseCard class="border-l-4 border-gray-500">
+          <h2 class="text-3xl font-bold mb-6 text-gray-600">{{ t('terms.legal.title') }}</h2>
+          <div class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.legal.jurisdiction') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.legal.jurisdictionDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.legal.disputes') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.legal.disputesDesc') }}</p>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.legal.severability') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.legal.severabilityDesc') }}</p>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ t('terms.legal.entire') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ t('terms.legal.entireDesc') }}</p>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <!-- Información de Contacto -->
+        <BaseCard class="border-l-4 border-cyan-500">
+          <h2 class="text-3xl font-bold mb-6 text-cyan-600">{{ t('terms.contact.title') }}</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ t('terms.contact.support') }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.contact.supportDesc') }}</p>
+            </div>
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ t('terms.contact.business') }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.contact.businessDesc') }}</p>
+            </div>
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">{{ t('terms.contact.legal') }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('terms.contact.legalDesc') }}</p>
+            </div>
+          </div>
+        </BaseCard>
+      </div>
+
+
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 @media print {
   .print\:hidden {
     display: none !important;
@@ -191,5 +377,22 @@ const printTerms = () => {
   .prose {
     max-width: none !important;
   }
+  
+  .space-y-8 > * + * {
+    margin-top: 1rem !important;
+  }
+}
+
+.prose {
+  line-height: 1.7;
+}
+
+.prose h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose p {
+  margin-bottom: 1rem;
 }
 </style>

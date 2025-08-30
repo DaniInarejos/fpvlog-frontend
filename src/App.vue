@@ -9,6 +9,7 @@ const route = useRoute()
 const userStore = useUserStore()
 
 const isAuthPage = computed(() => route.meta.layout === 'auth')
+const isLandingPage = computed(() => route.name === 'landing')
 const isAuthenticated = computed(() => userStore.isAuthenticated)
 
 // Función para actualizar el título, metadescripciones y Open Graph
@@ -108,6 +109,13 @@ onMounted(() => {
     <!-- Layout para páginas de autenticación -->
     <template v-if="isAuthPage">
       <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 min-h-screen">
+        <router-view />
+      </main>
+    </template>
+
+    <!-- Layout para landing page (sin navegación) -->
+    <template v-else-if="isLandingPage">
+      <main class="min-h-screen">
         <router-view />
       </main>
     </template>

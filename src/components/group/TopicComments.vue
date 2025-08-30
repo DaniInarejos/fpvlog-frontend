@@ -172,7 +172,14 @@ const handleSortChange = () => {
                 <!-- User Badge -->
                 <div class="mt-2 text-center">
                   <div class="text-xs font-medium text-gray-900 dark:text-white">{{ comment.authorId?.username }}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ t('groups.roles.member') }}</div>
+                  <div 
+                    class="text-xs"
+                    :class="comment.authorId?.username === 'DanicoRock' 
+                      ? 'text-yellow-600 font-bold' 
+                      : 'text-gray-500 dark:text-gray-400'"
+                  >
+                    {{ comment.authorId?.username === 'DanicoRock' ? '⭐ Master ⭐' : t('groups.roles.member') }}
+                  </div>
                 </div>
               </div>
             </div>

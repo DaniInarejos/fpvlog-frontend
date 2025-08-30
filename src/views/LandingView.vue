@@ -18,10 +18,19 @@
           <img src="/images/logoSkySphere.png" alt="SkySphere" class="logo" />
           <span class="logo-text">SkySphere</span>
         </div>
-        <div class="nav-links">
-          <button @click="showLoginModal = true" class="nav-link">{{ $t('navbar.login') }}</button>
-          <button @click="showRegisterModal = true" class="nav-link nav-link-primary">{{ $t('navbar.register') }}</button>
-          <router-link to="/about" class="nav-link">{{ $t('navbar.about') }}</router-link>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" @click="toggleMobileMenu" v-show="isMobile">
+          <span class="hamburger-line" :class="{ active: showMobileMenu }"></span>
+          <span class="hamburger-line" :class="{ active: showMobileMenu }"></span>
+          <span class="hamburger-line" :class="{ active: showMobileMenu }"></span>
+        </button>
+        
+        <!-- Desktop Navigation -->
+        <div class="nav-links" :class="{ 'mobile-nav-open': showMobileMenu }">
+          <button @click="showLoginModal = true; closeMobileMenu()" class="nav-link">{{ $t('navbar.login') }}</button>
+          <button @click="showRegisterModal = true; closeMobileMenu()" class="nav-link nav-link-primary">{{ $t('navbar.register') }}</button>
+          <router-link to="/about" class="nav-link" @click="closeMobileMenu()">{{ $t('navbar.about') }}</router-link>
           <!-- Language Selector moved after About -->
           <button @click="toggleLanguage" class="nav-link language-btn">
             {{ locale === 'es' ? 'ES' : 'EN' }}
@@ -54,7 +63,7 @@
 
         <!-- Drone Showcase -->
         <div class="drone-showcase">
-          <div class="drone-container">
+          <div class="drone-container" :class="{ 'mobile-scroll': isMobile }">
             <div class="drone-card active" v-for="(drone, index) in drones" :key="index" :style="{animationDelay: index * 0.2 + 's'}">
               <div class="drone-image">
                 <img :src="drone.image" :alt="drone.name" />
@@ -456,14 +465,33 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
-import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
-const { t, locale } = useI18n()
+
+// Mobile responsiveness
+const isMobile = ref(false)
+const showMobileMenu = ref(false)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+  if (!isMobile.value) {
+    showMobileMenu.value = false
+  }
+}
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+}
 
 // Datos reactivos para la landing page
 const drones = ref([
@@ -803,6 +831,9 @@ const toggleLanguage = () => {
 
 // Load saved language preference on mount
 onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+  
   const savedLanguage = localStorage.getItem('preferred-language')
   if (savedLanguage && ['es', 'en'].includes(savedLanguage)) {
     locale.value = savedLanguage
@@ -823,6 +854,10 @@ onMounted(() => {
   document.querySelectorAll('.feature-card, .stat-card').forEach(el => {
     observer.observe(el)
   })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 </script>
 
@@ -1510,36 +1545,305 @@ onMounted(() => {
 }
 
 /* Responsive Design */
+/* Mobile Navigation Improvements */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  width: 25px;
+  height: 3px;
+  background: #ffffff;
+  margin: 3px 0;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.hamburger-line.active:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-line.active:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-line.active:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Enhanced Mobile Responsive Design */
 @media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transition: right 0.3s ease;
+    border-left: 1px solid rgba(14, 165, 233, 0.3);
+  }
+  
+  .nav-links.mobile-nav-open {
+    right: 0;
+  }
+  
+  .nav-link {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    width: 200px;
+    text-align: center;
+    border-radius: 12px;
+  }
+  
+  .language-btn {
+    background: rgba(14, 165, 233, 0.2);
+    border: 1px solid rgba(14, 165, 233, 0.4);
+  }
+  
   .nav-container {
     padding: 1rem;
   }
   
-  .nav-links {
-    gap: 1rem;
+  .hero-section {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    margin-bottom: 1rem;
+  }
+  
+  .hero-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
   }
   
   .hero-actions {
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
   }
   
-  .drone-container {
-    flex-direction: column;
-    align-items: center;
+  .btn-primary, .btn-secondary {
+    width: 280px;
+    max-width: 90vw;
+    padding: 1.2rem 2rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Mobile Drone Showcase */
+  .drone-showcase {
+    margin-top: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .drone-container.mobile-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 1rem 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .drone-container.mobile-scroll .drone-card {
+    flex: 0 0 280px;
+    scroll-snap-align: center;
+  }
+  
+  .drone-card {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .drone-image img {
+    width: 100%;
+    height: auto;
+    max-width: 200px;
   }
   
   .features-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .feature-card {
+    padding: 2rem 1.5rem;
   }
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .section-container {
+    padding: 2rem 1rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
   }
   
   .footer-content {
     flex-direction: column;
     text-align: center;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(2rem, 12vw, 3rem);
+  }
+  
+  .hero-description {
+    font-size: 1rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .drone-container.mobile-scroll .drone-card {
+    flex: 0 0 250px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-container {
+    padding: 2rem 0.5rem;
+  }
+  
+  .nav-links {
+    width: 100vw;
+    right: -100vw;
+  }
+  
+  .nav-links.mobile-nav-open {
+    right: 0;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .nav-link, .btn-primary, .btn-secondary {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .drone-card:hover {
+    transform: none;
+  }
+  
+  .drone-card:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-primary:active, .btn-secondary:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Improved Modal Responsiveness */
+@media (max-width: 768px) {
+  .register-modal-container,
+  .terms-modal-container,
+  .login-modal-container {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .register-modal-header,
+  .terms-modal-header,
+  .login-modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+  
+  .register-modal-content,
+  .terms-modal-content,
+  .login-modal-content {
+    padding: 1.5rem;
+  }
+  
+  .form-group input,
+  .form-group select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+  }
+  
+  .register-submit-button,
+  .login-submit-button {
+    padding: 1.2rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-modal-container,
+  .terms-modal-container,
+  .login-modal-container {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+    border-radius: 16px;
+  }
+  
+  .register-modal-header,
+  .terms-modal-header,
+  .login-modal-header {
+    padding: 1rem 1rem 0.5rem;
+  }
+  
+  .register-modal-title,
+  .terms-modal-title,
+  .login-modal-title {
+    font-size: 1.5rem;
+  }
+  
+  .register-modal-content,
+  .terms-modal-content,
+  .login-modal-content {
+    padding: 1rem;
+  }
+}
+
+/* Reduce animations on mobile for better performance */
+@media (prefers-reduced-motion: reduce) {
+  .orb, .grid-overlay, .gradient-text {
+    animation: none;
+  }
+  
+  .drone-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 @media (max-width: 480px) {

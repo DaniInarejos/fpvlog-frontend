@@ -68,6 +68,8 @@ const toggleForm = () => {
           <RichTextEditor
             v-model="commentContent"
             :placeholder="t('groups.comments.placeholder')"
+            :height="150"
+            toolbar="forum"
             class="min-h-[120px]"
           />
         </div>

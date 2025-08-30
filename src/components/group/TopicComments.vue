@@ -1,7 +1,10 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '../../stores/user'
 import BaseButton from '../base/BaseButton.vue'
+import BaseModal from '../base/BaseModal.vue'
+import RichTextEditor from '../common/RichTextEditor.vue'
 
 const props = defineProps({
   comments: {
@@ -22,9 +25,56 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['sort-change', 'page-change', 'like-comment', 'reply-comment'])
+const emit = defineEmits(['sort-change', 'page-change', 'like-comment', 'reply-comment', 'edit-comment', 'delete-comment'])
 
 const { t } = useI18n()
+const userStore = useUserStore()
+
+// Estados para edición y eliminación
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const editingComment = ref(null)
+const deletingComment = ref(null)
+const editContent = ref('')
+
+// Verificar si el usuario puede editar/eliminar el comentario
+const canEditComment = (comment) => {
+  return userStore.user && comment.authorId?._id === userStore.user._id
+}
+
+const canDeleteComment = (comment) => {
+  return userStore.user && comment.authorId?._id === userStore.user._id
+}
+
+// Funciones para manejar edición
+const handleEditComment = (comment) => {
+  editingComment.value = comment
+  editContent.value = comment.content
+  showEditModal.value = true
+}
+
+const confirmEditComment = () => {
+  if (editingComment.value && editContent.value.trim()) {
+    emit('edit-comment', editingComment.value._id, editContent.value.trim())
+    showEditModal.value = false
+    editingComment.value = null
+    editContent.value = ''
+  }
+}
+
+// Funciones para manejar eliminación
+const handleDeleteComment = (comment) => {
+  deletingComment.value = comment
+  showDeleteModal.value = true
+}
+
+const confirmDeleteComment = () => {
+  if (deletingComment.value) {
+    emit('delete-comment', deletingComment.value._id)
+    showDeleteModal.value = false
+    deletingComment.value = null
+  }
+}
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('es-ES', {
@@ -134,9 +184,36 @@ const handleSortChange = () => {
                 <div class="flex items-center gap-3">
                   <span class="font-semibold text-gray-900 dark:text-white">{{ comment.authorId?.username }}</span>
                   <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(comment.createdAt) }}</span>
+                  <span v-if="comment.updatedAt && comment.updatedAt !== comment.createdAt" class="text-xs text-gray-400 dark:text-gray-500">
+                    ({{ t('groups.comments.edited') }})
+                  </span>
                   <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full">
                     #{{ getCommentNumber(comment, index) }}
                   </span>
+                </div>
+                
+                <!-- Comment Actions Menu -->
+                <div v-if="canEditComment(comment) || canDeleteComment(comment)" class="flex items-center gap-1">
+                  <button 
+                    v-if="canEditComment(comment)"
+                    @click="handleEditComment(comment)"
+                    class="p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded"
+                    :title="t('common.edit')"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button 
+                    v-if="canDeleteComment(comment)"
+                    @click="handleDeleteComment(comment)"
+                    class="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded"
+                    :title="t('common.delete')"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </div>
               </div>
               
@@ -246,4 +323,54 @@ const handleSortChange = () => {
       <p class="text-gray-500 dark:text-gray-400">{{ t('groups.comments.empty') }}</p>
     </div>
   </div>
+
+  <!-- Modal para editar comentario -->
+  <BaseModal
+    :show="showEditModal"
+    :show-accept-button="false"
+    :show-cancel-button="false"
+    :title="t('common.edit') + ' ' + t('groups.comments.comment')"
+    @close="showEditModal = false"
+  >
+    <div class="space-y-4">
+      <RichTextEditor
+        v-model="editContent"
+        :label="t('groups.comments.placeholder')"
+        :placeholder="t('groups.comments.placeholder')"
+        :height="150"
+        toolbar="forum"
+      />
+    </div>
+    
+    <div class="flex justify-end gap-2 mt-6">
+      <BaseButton variant="secondary" @click="showEditModal = false">
+        {{ t('common.cancel') }}
+      </BaseButton>
+      <BaseButton @click="confirmEditComment" :disabled="!editContent.trim()">
+        {{ t('common.save') }}
+      </BaseButton>
+    </div>
+  </BaseModal>
+
+  <!-- Modal para confirmar eliminación -->
+  <BaseModal
+    :show="showDeleteModal"
+    :show-accept-button="false"
+    :show-cancel-button="false"
+    :title="t('common.delete') + ' ' + t('groups.comments.comment')"
+    @close="showDeleteModal = false"
+  >
+    <p class="text-sm text-gray-500 mb-4">
+      {{ t('groups.comments.confirmDelete') }}
+    </p>
+    
+    <div class="flex justify-end gap-2">
+      <BaseButton variant="secondary" @click="showDeleteModal = false">
+        {{ t('common.cancel') }}
+      </BaseButton>
+      <BaseButton variant="danger" @click="confirmDeleteComment">
+        {{ t('common.delete') }}
+      </BaseButton>
+    </div>
+  </BaseModal>
 </template>

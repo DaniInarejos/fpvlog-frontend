@@ -5,11 +5,13 @@
     </label>
     <div class="quill-wrapper" :class="wrapperClasses">
       <QuillEditor
+        ref="quillEditor"
         v-model:content="content"
         :options="editorOptions"
         :style="{ minHeight: height + 'px' }"
         @textChange="handleTextChange"
         @blur="handleBlur"
+        @ready="handleEditorReady"
         contentType="html"
       />
     </div>
@@ -20,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { QuillEditor } from '@vueup/vue-quill'
 
 const props = defineProps({
@@ -57,6 +59,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'blur'])
 
 const content = ref(props.modelValue)
+const quillEditor = ref(null)
 
 // Configuraciones de toolbar expandidas
 const toolbarConfigs = {
@@ -143,6 +146,58 @@ watch(() => props.modelValue, (newValue) => {
     content.value = newValue
   }
 })
+
+const handleEditorReady = (quill) => {
+  // Configurar el manejo de pegado para HTML
+  quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+    // Permitir que las etiquetas HTML básicas se mantengan
+    const allowedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'strong', 'em', 'u', 'br']
+    
+    if (allowedTags.includes(node.tagName.toLowerCase())) {
+      return delta
+    }
+    
+    return delta
+  })
+  
+  // Manejar pegado de HTML
+  quill.root.addEventListener('paste', (e) => {
+    const clipboardData = e.clipboardData || window.clipboardData
+    const htmlData = clipboardData.getData('text/html')
+    
+    if (htmlData) {
+      e.preventDefault()
+      
+      // Limpiar y procesar el HTML pegado
+      const cleanHtml = cleanPastedHtml(htmlData)
+      
+      // Insertar el HTML limpio
+      const range = quill.getSelection()
+      if (range) {
+        quill.clipboard.dangerouslyPasteHTML(range.index, cleanHtml)
+      }
+    }
+  })
+}
+
+const cleanPastedHtml = (html) => {
+  // Crear un elemento temporal para limpiar el HTML
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = html
+  
+  // Convertir etiquetas escapadas de vuelta a HTML
+  let cleanedHtml = tempDiv.innerHTML
+  
+  // Decodificar entidades HTML comunes
+  cleanedHtml = cleanedHtml
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+  
+  return cleanedHtml
+}
 </script>
 
 <style>

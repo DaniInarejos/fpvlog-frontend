@@ -77,7 +77,7 @@ const handlePageChange = (page) => {
 const handleSubmitComment = async (content) => {
   try {
     isSubmittingComment.value = true
-    await groupCommentService.createComment(route.params.topicId, { content })
+    await groupCommentService.createComment(route.params.groupId, route.params.topicId, { content })
     
     // Reload comments and go to last page if new comment was added
     await loadComments(pagination.totalPages)
@@ -90,7 +90,7 @@ const handleSubmitComment = async (content) => {
 
 const handleLikeComment = async (comment) => {
   try {
-    await groupCommentService.likeComment(comment._id)
+    await groupCommentService.toggleCommentLike(route.params.groupId, comment._id)
     // Reload current page to update like count
     await loadComments(pagination.currentPage)
   } catch (error) {
@@ -101,6 +101,27 @@ const handleLikeComment = async (comment) => {
 const handleReplyComment = (comment) => {
   // TODO: Implement reply functionality
   console.log('Reply to comment:', comment)
+}
+
+// Nuevas funciones para editar y eliminar comentarios
+const handleEditComment = async (commentId, newContent) => {
+  try {
+    await groupCommentService.updateComment(route.params.groupId, commentId, { content: newContent })
+    // Reload current page to show updated comment
+    await loadComments(pagination.currentPage)
+  } catch (error) {
+    console.error('Error editing comment:', error)
+  }
+}
+
+const handleDeleteComment = async (commentId) => {
+  try {
+    await groupCommentService.deleteComment(route.params.groupId, commentId)
+    // Reload current page to remove deleted comment
+    await loadComments(pagination.currentPage)
+  } catch (error) {
+    console.error('Error deleting comment:', error)
+  }
 }
 
 // Lifecycle
@@ -160,6 +181,8 @@ onMounted(async () => {
         @page-change="handlePageChange"
         @like-comment="handleLikeComment"
         @reply-comment="handleReplyComment"
+        @edit-comment="handleEditComment"
+        @delete-comment="handleDeleteComment"
       />
 
       <!-- Comment Form -->

@@ -104,7 +104,7 @@ const routes = [
   {
     path: '/dashboard/:username',
     name: 'dashboard',
-    component: () => import('../views/DashboardView.vue'), 
+    component: () => import('../views/DashboardView.vue'),
     meta: {
       title: 'Dashboard',
       description: 'Panel de control del piloto - Explora drones, vuelos y actividad',

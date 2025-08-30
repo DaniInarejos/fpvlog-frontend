@@ -185,7 +185,7 @@ onMounted(() => {
           <!-- Dropdown menú -->
           <div
             v-show="showUserMenu"
-            class="absolute right-4 top-14 mt-1 w-48 rounded-xl shadow-lg py-1 bg-white/80 dark:bg-gray-700/80 backdrop-blur-md ring-1 ring-black/5 transform transition-all duration-300 origin-top-right animate-fade-in"
+            class="absolute right-4 top-14 mt-1 w-48 rounded-xl shadow-lg py-1 bg-white/80 dark:bg-gray-700/80 backdrop-blur-md ring-1 ring-black/5 transform transition-all duration-300 origin-top-right animate-fade-in z-[60]"
           >
             <router-link
               to="/profile"
@@ -214,7 +214,7 @@ onMounted(() => {
         <!-- Menú móvil desplegable -->
         <div 
           v-show="showMobileMenu" 
-          class="sm:hidden py-2 space-y-1 animate-fade-in"
+          class="sm:hidden py-2 space-y-1 animate-fade-in bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-t border-gray-200/20 dark:border-gray-700/20 absolute left-0 right-0 top-16 z-[55] shadow-lg"
         >
           <router-link
             v-for="item in [
@@ -225,7 +225,7 @@ onMounted(() => {
             ]"
             :key="item.path"
             :to="item.path"
-            class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-300 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+            class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sky-500 dark:hover:text-sky-400 transition-colors duration-300 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50 mx-2"
             @click="showMobileMenu = false"
           >
             {{ item.name }}

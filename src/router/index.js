@@ -220,21 +220,18 @@ const router = createRouter({
 // Navegación protegida
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isDashboard = to.name === 'dashboard'
 
   // Esperar a que se inicialice la autenticación
   await userStore.initAuth()
 
-  if (to.path === '/' && userStore.isAuthenticated) {
-    // Si está autenticado y va a la landing, redirigir al dashboard
-    next(`/dashboard/${userStore.user.username}`)
-  } else if (requiresAuth && !userStore.isAuthenticated && !isDashboard) {
-    // Si requiere auth y no está autenticado, ir a landing
-    next('/')
-  } else {
-    next()
-  }
+if (to.path === '/' && userStore.isAuthenticated) {
+  // Si está autenticado y va a la landing, redirigir al dashboard
+  next(`/dashboard/${userStore.user.username}`)
+}  else {
+  next()
+}
 })
+
+
 
 export default router

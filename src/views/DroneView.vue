@@ -4,6 +4,7 @@ import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
 
 import BaseModal from '../components/base/BaseModal.vue'
+import LoginModal from '../components/common/LoginModal.vue'
 import droneService from '../services/droneService'
 import DroneList from '../components/drone/DroneList.vue'
 import DroneForm from '../components/drone/DroneForm.vue'
@@ -18,6 +19,7 @@ const selectedDrone = ref(null)
 const showDeleteModal = ref(false)
 const droneToDelete = ref(null)
 const errors = ref({})
+const showLoginModal = ref(false)
 
 const fetchDrones = async () => {
   isLoading.value = true
@@ -52,7 +54,19 @@ const confirmDelete = async () => {
 }
 
 const handleEdit = (drone) => {
+  if (!userStore.isAuthenticated) {
+    showLoginModal.value = true
+    return
+  }
   selectedDrone.value = drone
+  showForm.value = true
+}
+
+const handleCreate = () => {
+  if (!userStore.isAuthenticated) {
+    showLoginModal.value = true
+    return
+  }
   showForm.value = true
 }
 
@@ -67,7 +81,12 @@ const handleSaved = async () => {
   await fetchDrones()
 }
 
-// Nueva función para cargar marcas de drones
+const handleLoginSuccess = async () => {
+  showLoginModal.value = false
+  await fetchDrones()
+  await fetchDroneBrands()
+}
+
 const fetchDroneBrands = async () => {
   try {
     droneBrands.value = await droneService.getDroneBrands()
@@ -78,7 +97,9 @@ const fetchDroneBrands = async () => {
 }
 
 onMounted(() => {
-  fetchDrones()
+  if (userStore.isAuthenticated) {
+    fetchDrones()
+  }
   fetchDroneBrands() // Cargar marcas al montar el componente
 })
 </script>
@@ -92,7 +113,7 @@ onMounted(() => {
         :is-loading="isLoading"
         :errors="errors"
         @edit="handleEdit"
-        @create="showForm = true"
+        @create="handleCreate"
         @delete="openDeleteModal"
       />
     </div>
@@ -118,5 +139,12 @@ onMounted(() => {
         {{ t('drones.delete.confirmation', { name: droneToDelete?.name }) }}
       </p>
     </BaseModal>
+
+    <!-- Modal de Login -->
+    <LoginModal
+      :show="showLoginModal"
+      @close="showLoginModal = false"
+      @login-success="handleLoginSuccess"
+    />
   </div>
 </template>

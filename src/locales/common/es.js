@@ -1,6 +1,5 @@
 export default {
   loading: 'Cargando...',
-  error: 'Ha ocurrido un error',
   success: 'Operación exitosa',
   save: 'Guardar',
   cancel: 'Cancelar',
@@ -24,6 +23,12 @@ export default {
   oldest: 'Más antiguo',
   views: 'Visualizaciones',
   viewSource: 'Ver Fuente',
+  welcome: 'Bienvenido',
+  guestMode: 'Modo invitado',
+  user: 'Usuario',
+  error: {
+    generic: 'Ha ocurrido un error. Por favor, inténtalo de nuevo.'
+  },
   pagination: {
     showing: 'Mostrando',
     to: 'a',

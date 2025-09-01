@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
@@ -20,9 +21,14 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
   response => response.data,
   error => {
-    if (error.response?.status === 401 && !window.location.pathname.includes('/dashboard')) {
+    if (error.response?.status === 401) {
       localStorage.removeItem('auth_token')
-      window.location.href = '/login'
+      
+      // Verificar si el mensaje de error es específicamente "No autorizado"
+      if (error.response?.data?.error === 'No autorizado') {
+        const { openLoginModal } = useGlobalLoginModal()
+        openLoginModal()
+      }
     }
     return Promise.reject(error)
   }

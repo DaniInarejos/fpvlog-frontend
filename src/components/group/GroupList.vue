@@ -136,7 +136,7 @@ const isOwner = (group) => {
 
           <!-- Owner Info -->
           <div class="text-xs text-gray-500 mb-4">
-            {{ t('groups.createdBy', { owner: group.createdBy.username || 'Unknown' }) }}
+            {{ t('groups.createdBy', { owner: group.createdBy?.username || 'Unknown' }) }}
           </div>
         </div>
 

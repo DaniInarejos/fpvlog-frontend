@@ -55,7 +55,7 @@ const loadDashboard = async () => {
 
 const toggleFollow = async () => {
   if (!userStore.isAuthenticated) {
-    router.push('/login')
+    console.log('Usuario no autenticado - considerar mostrar modal de login')
     return
   }
 

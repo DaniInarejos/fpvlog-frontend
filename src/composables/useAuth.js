@@ -20,14 +20,15 @@ export function useAuth() {
     return { allowed: true }
   }
 
-  const goToLogin = () => {
-    router.push('/login')
-  }
+  // Eliminar función goToLogin
+  // const goToLogin = () => {
+  //   router.push('/login')
+  // }
 
   return {
     isAuthenticated,
     isPublicMode,
-    requireAuth,
-    goToLogin
+    requireAuth
+    // goToLogin - eliminado
   }
 }

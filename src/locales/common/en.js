@@ -24,6 +24,9 @@ export default {
   oldest: 'Oldest',
   views: 'Views',
   viewSource: 'View Source',
+  welcome: 'Welcome',
+  guestMode: 'Guest mode',
+  user: 'User',
   error: {
     generic: 'An error occurred. Please try again.'
   },

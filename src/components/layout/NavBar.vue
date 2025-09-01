@@ -14,7 +14,7 @@ const menuRef = ref(null)
 
 const handleLogout = async () => {
   await userStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 
 const handleAboutOf = async () => {

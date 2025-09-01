@@ -23,6 +23,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  showCloseButton: {
+    type: Boolean,
+    default: false
+  },
   acceptButtonText: {
     type: String,
     default: 'Aceptar'
@@ -97,6 +101,18 @@ const handleOverlayClick = (event) => {
             }"
             @click.stop
           >
+            <!-- Botón de cerrar -->
+            <button
+              v-if="showCloseButton"
+              @click="emit('close')"
+              class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded-full hover:bg-gray-100 z-10"
+              aria-label="Cerrar modal"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+
             <div class="sm:flex sm:items-start">
               <div v-if="showWarningIcon" class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                 <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -104,14 +120,21 @@ const handleOverlayClick = (event) => {
                 </svg>
               </div>
               <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                <h3 class="text-base font-semibold leading-6 text-gray-900">
-                  {{ title }}
-                </h3>
+                <!-- Header personalizable -->
+                <slot name="header">
+                  <h3 class="text-base font-semibold leading-6 text-gray-900">
+                    {{ title }}
+                  </h3>
+                </slot>
+                
+                <!-- Contenido del modal -->
                 <div class="mt-2">
                   <slot></slot>
                 </div>
               </div>
             </div>
+            
+            <!-- Botones del footer -->
             <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
               <BaseButton
                 v-if="showDeleteButton"

@@ -58,8 +58,8 @@ const navigateToProfile = () => {
 
 <template>
   <aside class="bg-white/30 dark:bg-gray-800/30 backdrop-blur-md shadow-xl overflow-y-auto transition-all duration-300">
-    <!-- Perfil del usuario (visible solo en desktop) -->
-    <div class="hidden sm:block p-4 border-b border-gray-200/20 dark:border-gray-700/20">
+    <!-- Perfil del usuario (visible solo en desktop y si está logueado) -->
+    <div v-if="userStore.isAuthenticated" class="hidden sm:block p-4 border-b border-gray-200/20 dark:border-gray-700/20">
       <div 
         class="flex items-center space-x-4 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 p-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
         @click="navigateToProfile"
@@ -75,6 +75,15 @@ const navigateToProfile = () => {
           <h3 class="font-medium text-gray-800 dark:text-gray-200 text-base">{{ userStore.user?.name }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400">{{ userStore.user?.username }}</p>
         </div>
+      </div>
+    </div>
+    
+    <!-- Mensaje para usuarios no autenticados (visible solo en desktop) -->
+    <div v-else class="hidden sm:block p-4 border-b border-gray-200/20 dark:border-gray-700/20">
+      <div class="text-center p-3">
+        <div class="text-2xl mb-2">👋</div>
+        <h3 class="font-medium text-gray-800 dark:text-gray-200 text-sm mb-1">{{ t('common.welcome') }}</h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('common.guestMode') }}</p>
       </div>
     </div>
     

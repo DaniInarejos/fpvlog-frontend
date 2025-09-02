@@ -50,7 +50,7 @@ const sanitizeHtml = (html) => {
 
 <template>
   <!-- Topic Header Card -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+  <div class="bg-blue-50/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden mb-6 border border-blue-100/50 dark:border-gray-700/50">
     <!-- Banner Section -->
     <div class="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
       <img 

@@ -38,9 +38,9 @@ const toggleForm = () => {
 
 <template>
   <!-- Add Comment Form -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+  <div class="bg-blue-50/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-blue-100/50 dark:border-gray-700/50">
     <!-- Form Header -->
-    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+    <div class="bg-blue-100/60 dark:bg-gray-700/60 px-6 py-4 border-b border-blue-200/50 dark:border-gray-600">
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
         <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -75,7 +75,7 @@ const toggleForm = () => {
         </div>
         
         <!-- Form Actions -->
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-600">
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-blue-200/50 dark:border-gray-600">
           <BaseButton
             @click="handleCancel"
             variant="secondary"

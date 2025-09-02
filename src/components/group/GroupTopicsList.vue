@@ -287,7 +287,7 @@ const truncateDescription = (description, wordLimit = 100) => {
       <BaseCard
         v-for="topic in topics"
         :key="topic._id"
-        class="p-4 hover:shadow-md transition-shadow cursor-pointer"
+        class="p-4 hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-blue-100/50 dark:hover:bg-gray-700/50"
         @click="navigateToTopic(topic)"
       >
         <div class="flex items-start justify-between">
@@ -392,7 +392,7 @@ const truncateDescription = (description, wordLimit = 100) => {
 
     <!-- Empty State -->
     <div v-else class="text-center py-12">
-      <BaseCard class="p-8">
+      <BaseCard class="p-8 bg-gradient-to-br from-blue-50/60 to-indigo-50/40 dark:from-gray-800/60 dark:to-gray-900/40">
         <div class="text-6xl mb-4">💬</div>
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           {{ t('groups.topics.empty.title') }}

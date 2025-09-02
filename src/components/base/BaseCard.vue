@@ -23,7 +23,7 @@ const cardClasses = computed(() => ({
 
 <template>
   <div
-    class="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 rounded-lg shadow-xl border border-gray-200/20 dark:border-gray-700/20 overflow-hidden transition-all duration-300"
+    class="backdrop-blur-md bg-blue-50/80 dark:bg-gray-800/30 rounded-lg shadow-xl border border-blue-200/30 dark:border-gray-700/20 overflow-hidden transition-all duration-300 hover:bg-blue-50/90 hover:border-blue-300/40"
     :class="cardClasses"
   >
     <slot></slot>

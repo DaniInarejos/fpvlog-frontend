@@ -255,7 +255,7 @@ onMounted(async () => {
   <!-- Group content -->
   <div v-else class="max-w-4xl mx-auto">
     <!-- Group Header Card -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+    <div class="bg-gradient-to-br from-blue-50/90 to-indigo-50/90 dark:from-gray-800/90 dark:to-gray-900/90 rounded-xl shadow-lg overflow-hidden mb-6 border border-blue-200/30 dark:border-gray-700/30">
       <!-- Banner Section -->
       <div class="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
         <img 
@@ -407,9 +407,9 @@ onMounted(async () => {
     </div>
     
     <!-- Tabs and Content Section -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-50/80 to-white/90 dark:from-gray-800/80 dark:to-gray-900/90 rounded-xl shadow-lg overflow-hidden border border-blue-200/30 dark:border-gray-700/30">
       <!-- Tab Navigation -->
-      <div class="border-b border-gray-200">
+      <div class="border-b border-blue-200/40 dark:border-gray-700/40">
         <TabSelector 
           :tabs="tabs" 
           :active-tab="activeTab" 
@@ -418,7 +418,7 @@ onMounted(async () => {
       </div>
       
       <!-- Tab Content -->
-      <div class="p-6">
+      <div class="p-6 bg-gradient-to-b from-transparent to-blue-50/30 dark:to-gray-800/30">
                 <!-- Topics Tab -->
         <div v-if="activeTab === 'topics'">
           <GroupTopicsList 

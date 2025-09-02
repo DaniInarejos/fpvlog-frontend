@@ -114,9 +114,9 @@ const handleSortChange = () => {
 
 <template>
   <!-- Comments Section -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+  <div class="bg-blue-50/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden mb-6 border border-blue-100/50 dark:border-gray-700/50">
     <!-- Comments Header -->
-    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+    <div class="bg-blue-100/60 dark:bg-gray-700/60 px-6 py-4 border-b border-blue-200/50 dark:border-gray-600">
       <div class="flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
           <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +129,7 @@ const handleSortChange = () => {
           <select 
             :value="sortOrder" 
             @change="handleSortChange"
-            class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="bg-blue-50/80 dark:bg-gray-800/90 border border-blue-200/50 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="newest">{{ t('common.newest') }}</option>
             <option value="oldest">{{ t('common.oldest') }}</option>
@@ -141,14 +141,14 @@ const handleSortChange = () => {
     <!-- Comments List -->
     <div v-if="comments.length > 0" class="relative">
       <!-- Loading overlay -->
-      <div v-if="isLoading" class="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center z-10">
+      <div v-if="isLoading" class="absolute inset-0 bg-blue-50/70 dark:bg-gray-800/70 flex items-center justify-center z-10">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
       
       <div 
         v-for="(comment, index) in comments" 
         :key="comment._id"
-        class="border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
+        class="border-b border-blue-200/50 dark:border-gray-600 last:border-b-0 hover:bg-blue-100/40 dark:hover:bg-gray-700/40 transition-colors"
       >
         <div class="p-6">
           <div class="flex gap-4">
@@ -225,7 +225,7 @@ const handleSortChange = () => {
               </div>
               
               <!-- Comment Body -->
-              <div class="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 mb-3 border border-gray-200 dark:border-gray-600">
+              <div class="bg-blue-100/50 dark:bg-gray-700/40 rounded-lg p-4 mb-3 border border-blue-200/50 dark:border-gray-600">
                 <div class="text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm max-w-none dark:prose-invert" v-html="comment.content">
                 </div>
               </div>
@@ -257,7 +257,7 @@ const handleSortChange = () => {
       </div>
       
       <!-- Pagination Controls -->
-      <div v-if="pagination.totalPages > 1" class="px-6 py-4 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-600">
+      <div v-if="pagination.totalPages > 1" class="px-6 py-4 bg-blue-100/60 dark:bg-gray-700/40 border-t border-blue-200/50 dark:border-gray-600">
         <div class="flex items-center justify-between">
           <!-- Page Info -->
           <div class="text-sm text-gray-700 dark:text-gray-300">

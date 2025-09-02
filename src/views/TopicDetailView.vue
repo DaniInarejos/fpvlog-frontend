@@ -132,7 +132,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen bg-gradient-to-br from-blue-100/80 via-indigo-100/70 to-purple-100/60 dark:from-gray-900 dark:via-blue-900/30 dark:to-purple-900/20">
     <div class="max-w-5xl mx-auto px-4 py-6">
       <!-- Loading State -->
       <div v-if="isLoading" class="flex justify-center items-center h-64">

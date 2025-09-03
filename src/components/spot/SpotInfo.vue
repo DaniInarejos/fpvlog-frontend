@@ -244,6 +244,7 @@ onMounted(() => {
     v-if="spot && show"
     :show="show"
     :title="spot.name || ''"
+    :show-cancel-button="false"
     @close="handleClose"
   >
     <div class="space-y-6">

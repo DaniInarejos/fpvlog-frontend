@@ -40,73 +40,130 @@ const handleToggleFollow = () => {
 </script>
 
 <template>
-  <BaseCard class="p-4">
-    <div class="flex items-center gap-4">
-      <UserAvatar
-        :src="dashboard.user.profilePicture || DEFAULT_IMAGE"
-        :alt="dashboard.user.name + ' ' + dashboard.user.lastName"
-        :size="'lg'"
-        class="w-20 h-20"
-      />
-      <div class="flex-1">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-xl font-bold text-gray-900">{{ dashboard.user.name }} {{ dashboard.user.lastName }}</h1>
-            <p class="text-sm text-gray-600">@{{ dashboard.user.username }}</p>
-            <!-- Redes Sociales -->
-            <div class="flex gap-2 mt-2">
-              <a v-if="dashboard.user.socialMedia?.facebook" :href="dashboard.user.socialMedia.facebook" target="_blank" class="text-gray-600 hover:text-blue-600">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              </a>
-              <a v-if="dashboard.user.socialMedia?.youtube" :href="dashboard.user.socialMedia.youtube" target="_blank" class="text-gray-600 hover:text-red-600">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              </a>
-              <a v-if="dashboard.user.socialMedia?.instagram" :href="dashboard.user.socialMedia.instagram" target="_blank" class="text-gray-600 hover:text-pink-600">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.897 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.897-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
-              </a>
-              <a v-if="dashboard.user.socialMedia?.tiktok" :href="dashboard.user.socialMedia.tiktok" target="_blank" class="text-gray-600 hover:text-black">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-              </a>
-              <a v-if="dashboard.user.socialMedia?.linkedin" :href="dashboard.user.socialMedia.linkedin" target="_blank" class="text-gray-600 hover:text-blue-700">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              </a>
-              <a v-if="dashboard.user.socialMedia?.x" :href="dashboard.user.socialMedia.x" target="_blank" class="text-gray-600 hover:text-black">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </a>
+  <!-- Header Principal con Gradiente -->
+  <div class="relative overflow-hidden">
+    <!-- Fondo con gradiente y patrón -->
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent_50%)]" />
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent_50%)]" />
+    </div>
+    
+    <BaseCard class="relative backdrop-blur-sm border-primary/20">
+      <div class="p-8">
+        <!-- Información del Usuario -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+          <!-- Avatar y Info Básica -->
+          <div class="flex items-center gap-6">
+            <div class="relative">
+              <UserAvatar
+                :src="dashboard.user.profilePicture || DEFAULT_IMAGE"
+                :alt="dashboard.user.name + ' ' + dashboard.user.lastName"
+                :size="'xl'"
+                class="w-24 h-24 ring-4 ring-primary/20 shadow-xl"
+              />
+              <!-- Indicador de estado online (opcional) -->
+              <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-4 border-card shadow-lg" />
+            </div>
+            
+            <div class="space-y-2">
+              <div>
+                <h1 class="text-3xl font-bold text-foreground bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+                  {{ dashboard.user.name }} {{ dashboard.user.lastName }}
+                </h1>
+                <p class="text-lg text-muted-foreground font-medium">@{{ dashboard.user.username }}</p>
+              </div>
+              
+              <!-- Badges/Tags del usuario -->
+              <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                  🚁 Piloto FPV
+                </span>
+                <span v-if="stats.flightsCount > 10" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 border border-green-500/20">
+                  ⭐ Experimentado
+                </span>
+              </div>
             </div>
           </div>
-          <div v-if="userStore.user?._id !== dashboard.user._id">
+          
+          <!-- Botón de Seguir -->
+          <div class="lg:ml-auto">
             <BaseButton
-              :variant="isFollowing ? 'danger' : 'primary'"
-              :disabled="followLoading"
+              v-if="userStore.user && userStore.user._id !== dashboard.user._id"
+              :variant="isFollowing ? 'secondary' : 'primary'"
+              :loading="followLoading"
               @click="handleToggleFollow"
-              size="sm"
+              class="px-8 py-3 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              {{ isFollowing ? t('dashboard.follow.unfollow') : t('dashboard.follow.follow') }}
+              <span class="flex items-center gap-2">
+                <svg v-if="!isFollowing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {{ isFollowing ? t('dashboard.unfollow') : t('dashboard.follow') }}
+              </span>
             </BaseButton>
           </div>
         </div>
-
-        <!-- Estadísticas -->
-        <div class="grid grid-cols-4 gap-2 mt-3">
-          <div class="text-center p-2 bg-gray-50 rounded">
-            <div class="text-lg font-bold text-primary-600">{{ stats.dronesCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('dashboard.stats.drones') }}</div>
-          </div>
-          <div class="text-center p-2 bg-gray-50 rounded">
-            <div class="text-lg font-bold text-primary-600">{{ stats.flightsCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('dashboard.stats.flights') }}</div>
-          </div>
-          <div class="text-center p-2 bg-gray-50 rounded">
-            <div class="text-lg font-bold text-primary-600">{{ stats.followersCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('dashboard.stats.followers') }}</div>
-          </div>
-          <div class="text-center p-2 bg-gray-50 rounded">
-            <div class="text-lg font-bold text-primary-600">{{ stats.followingCount }}</div>
-            <div class="text-xs text-gray-500">{{ t('dashboard.stats.following') }}</div>
+        
+        <!-- Estadísticas Mejoradas -->
+        <div class="mt-8">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Drones -->
+            <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div class="absolute top-2 right-2 text-blue-500/20 group-hover:text-blue-500/40 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" />
+                </svg>
+              </div>
+              <div class="relative">
+                <div class="text-3xl font-bold text-blue-600 mb-1">{{ stats.dronesCount }}</div>
+                <div class="text-sm font-medium text-blue-600/80">{{ t('dashboard.stats.drones') }}</div>
+              </div>
+            </div>
+            
+            <!-- Vuelos -->
+            <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div class="absolute top-2 right-2 text-green-500/20 group-hover:text-green-500/40 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                </svg>
+              </div>
+              <div class="relative">
+                <div class="text-3xl font-bold text-green-600 mb-1">{{ stats.flightsCount }}</div>
+                <div class="text-sm font-medium text-green-600/80">{{ t('dashboard.stats.flights') }}</div>
+              </div>
+            </div>
+            
+            <!-- Seguidores -->
+            <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div class="absolute top-2 right-2 text-purple-500/20 group-hover:text-purple-500/40 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.5 8H17c-.8 0-1.5.7-1.5 1.5v6c0 .8.7 1.5 1.5 1.5h1v5h2zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v6h1.5v7h4zm6.5 0v-4h1v-4.5c0-.83-.67-1.5-1.5-1.5h-2c-.83 0-1.5.67-1.5 1.5V18h1v4h3z" />
+                </svg>
+              </div>
+              <div class="relative">
+                <div class="text-3xl font-bold text-purple-600 mb-1">{{ stats.followersCount }}</div>
+                <div class="text-sm font-medium text-purple-600/80">{{ t('dashboard.stats.followers') }}</div>
+              </div>
+            </div>
+            
+            <!-- Siguiendo -->
+            <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 to-orange-600/5 border border-orange-500/20 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div class="absolute top-2 right-2 text-orange-500/20 group-hover:text-orange-500/40 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              </div>
+              <div class="relative">
+                <div class="text-3xl font-bold text-orange-600 mb-1">{{ stats.followingCount }}</div>
+                <div class="text-sm font-medium text-orange-600/80">{{ t('dashboard.stats.following') }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </BaseCard>
+    </BaseCard>
+  </div>
 </template>

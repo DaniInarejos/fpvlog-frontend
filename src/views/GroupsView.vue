@@ -24,7 +24,7 @@ const errors = ref({})
 const showGroupInfo = ref(false)
 const selectedGroupInfo = ref(null)
 const searchQuery = ref('')
-const selectedTab = ref('all')
+const selectedTab = ref('joined')
 const pagination = ref({
   page: 1,
   limit: 10,
@@ -34,9 +34,9 @@ const pagination = ref({
 
 // Configuración de pestañas
 const tabs = [
-  { id: 'all', label: t('groups.tabs.all') },
+  { id: 'joined', label: t('groups.tabs.joined') },
   { id: 'my-groups', label: t('groups.tabs.myGroups') },
-  { id: 'joined', label: t('groups.tabs.joined') }
+  { id: 'all', label: t('groups.tabs.all') }
 ]
 
 const fetchGroups = async () => {

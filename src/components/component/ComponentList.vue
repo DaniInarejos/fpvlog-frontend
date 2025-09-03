@@ -102,7 +102,7 @@ const getPreviewContent = (component) => {
     </div>
 
     <div v-else-if="filteredComponents.length === 0" class="text-center py-12">
-      <p class="text-gray-500 mb-4">{{ t('components.noComponents') }}</p>
+      <p class="text-muted-foreground mb-4">{{ t('components.noComponents') }}</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -138,7 +138,7 @@ const getPreviewContent = (component) => {
             <div class="flex items-start justify-between">
               <div class="space-y-1">
                 <h3 
-                  class="text-xl font-semibold text-gray-900 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer group flex items-center"
+                  class="text-xl font-semibold text-foreground hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer group flex items-center"
                   @click="emit('showInfo', component)"
                 >
                   <span class="text-2xl mr-2 group-hover:scale-110 transition-transform duration-200">
@@ -146,13 +146,13 @@ const getPreviewContent = (component) => {
                   </span>
                   {{ component.name }}
                 </h3>
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ component.brand }}</p>
+                <p class="text-sm font-medium text-muted-foreground">{{ component.brand }}</p>
               </div>
             </div>
 
             <!-- Detalles del componente -->
             <div class="space-y-2 flex-grow">
-              <div v-if="component.weightGrams" class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+              <div v-if="component.weightGrams" class="flex items-center text-sm text-muted-foreground">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
                 </svg>

@@ -8,6 +8,8 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import './assets/styles/main.css'
 import i18nConfig from './locales/index.js'
 
+import './assets/styles/theme.css'
+
 const i18n = createI18n({
   ...i18nConfig,
   legacy: false,

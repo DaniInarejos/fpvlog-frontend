@@ -64,7 +64,7 @@ const handleCreate = () => {
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ $t('flights.title') }}</h1>
+      <h1 class="text-3xl font-bold text-foreground">{{ $t('flights.title') }}</h1>
       
       <BaseButton
         v-if="showCreateButton"
@@ -101,16 +101,16 @@ const handleCreate = () => {
           <div class="flex justify-between items-start mb-2">
             <div>
               <h3 
-                class="text-lg font-semibold text-gray-900 hover:text-primary-600 cursor-pointer"
+                class="text-lg font-semibold text-foreground hover:text-primary-600 cursor-pointer"
                 @click="emit('showFlightInfo', flight)"
               >
                 {{ flight.title }}
               </h3>
-              <p class="text-sm text-gray-600">{{ formatDate(flight.date) }}</p>
+              <p class="text-sm text-muted-foreground">{{ formatDate(flight.date) }}</p>
             </div>
           </div>
 
-          <div class="text-sm text-gray-600 mb-4">
+          <div class="text-sm text-muted-foreground mb-4">
             <p class="mb-1 flex items-center justify-between">
               <span>
                 <span class="font-medium">{{ t('flights.details.drone') }}:</span>
@@ -138,15 +138,15 @@ const handleCreate = () => {
             <div class="flex items-center gap-4">
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ formatDuration(flight.duration) }}</span>
-                <span class="text-gray-400">{{ t('flights.details.duration') }}</span>
+                <span class="text-muted-foreground/70">{{ t('flights.details.duration') }}</span>
               </div>
               <div class="flex items-center gap-1">
                 <span class="font-medium">{{ flight.batteryUsed }}</span>
-                <span class="text-gray-400">{{ t('flights.details.batteries') }}</span>
+                <span class="text-muted-foreground/70">{{ t('flights.details.batteries') }}</span>
               </div>
             </div>
           </div>
-          <div class="flex items-center gap-1 text-gray-500 mb-4">
+          <div class="flex items-center gap-1 text-muted-foreground/80 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
             </svg>

@@ -78,7 +78,7 @@ const getBrandName = (brandId) => {
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ $t('drones.title') }}</h1>
+      <h1 class="text-3xl font-bold text-foreground">{{ $t('drones.title') }}</h1>
       
       <BaseButton
         v-if="showCreateButton"
@@ -99,7 +99,7 @@ const getBrandName = (brandId) => {
     </div>
 
     <div v-else-if="drones.length === 0" class="text-center py-12">
-      <p class="text-gray-500 mb-4">{{ $t('drones.noDrones') }}</p>
+      <p class="text-muted-foreground mb-4">{{ $t('drones.noDrones') }}</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,28 +116,28 @@ const getBrandName = (brandId) => {
           <div class="flex justify-between items-start mb-2">
             <div>
               <h3 
-                class="text-lg font-semibold text-gray-900 hover:text-primary-600 cursor-pointer"
+                class="text-lg font-semibold text-foreground hover:text-primary-600 cursor-pointer"
                 @click="handleShowInfo(drone)"
               >
                 {{ drone.name }}
               </h3>
               <!-- Usar la función getBrandName en lugar de drone.brand?.name -->
-              <p class="text-sm text-gray-600">{{ getBrandName(drone.brandId) }} {{ drone.model }}</p>
+              <p class="text-sm text-muted-foreground">{{ getBrandName(drone.brandId) }} {{ drone.model }}</p>
             </div>
           </div>
 
-          <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+          <div class="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.weight }}g</span>
-              <span class="text-gray-400">{{ $t('drones.specs.weight') }}</span>
+              <span class="text-muted-foreground/70">{{ $t('drones.specs.weight') }}</span>
             </div>
             <div class="flex items-center gap-1">
               <span class="font-medium">{{ drone.frameSize }}mm</span>
-              <span class="text-gray-400">{{ $t('drones.specs.frame') }}</span>
+              <span class="text-muted-foreground/70">{{ $t('drones.specs.frame') }}</span>
             </div>
           </div>
 
-          <div class="flex items-center gap-1 text-gray-500 mb-4">
+          <div class="flex items-center gap-1 text-muted-foreground/80 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
             </svg>

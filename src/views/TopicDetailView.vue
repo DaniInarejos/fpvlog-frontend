@@ -1,36 +1,81 @@
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
-import groupTopicService from '../services/groupTopicService'
 import groupCommentService from '../services/groupCommentService'
+import groupTopicService from '../services/groupTopicService'
+import groupService from '../services/groupService'
 
-// Components
 import TopicHeader from '../components/group/TopicHeader.vue'
 import TopicComments from '../components/group/TopicComments.vue'
 import CommentForm from '../components/group/CommentForm.vue'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 const { t } = useI18n()
 
-// State
 const topic = ref(null)
 const comments = ref([])
 const isLoading = ref(false)
 const isLoadingComments = ref(false)
 const isSubmittingComment = ref(false)
 const sortOrder = ref('newest')
+const userMembership = ref(null)
 
-const pagination = reactive({
+const pagination = ref({
   currentPage: 1,
-  totalPages: 0,
+  totalPages: 1,
   totalComments: 0,
   hasNextPage: false,
   hasPrevPage: false
 })
 
-// Methods
+// Computed properties para verificar membresía
+const isUserAuthenticated = computed(() => userStore.isAuthenticated)
+const currentUserId = computed(() => userStore.user?._id)
+
+const isMember = computed(() => {
+  if (!userMembership.value) return false
+  const memberRoles = ['OWNER', 'ADMIN', 'MEMBER']
+  return memberRoles.includes(userMembership.value.role)
+})
+
+const canWriteComments = computed(() => {
+  return isUserAuthenticated.value && isMember.value
+})
+
+// Verificar membresía del usuario
+const checkUserMembership = async () => {
+  if (!isUserAuthenticated.value) {
+    userMembership.value = null
+    return
+  }
+  
+  try {
+    const memberResponse = await groupService.getGroupMembers(route.params.groupId, { limit: 100 })
+    const members = memberResponse.members || []
+    
+    userMembership.value = members.find(member => 
+      member.userId?._id === currentUserId.value
+    ) || null
+  } catch (error) {
+    console.error('Error checking membership:', error)
+    userMembership.value = null
+  }
+}
+
+// Función para unirse al grupo
+const handleJoinGroup = async () => {
+  try {
+    await groupService.joinGroup(route.params.groupId)
+    await checkUserMembership() // Recargar membresía
+  } catch (error) {
+    console.error('Error joining group:', error)
+  }
+}
+
 const loadTopic = async () => {
   try {
     isLoading.value = true
@@ -127,6 +172,7 @@ const handleDeleteComment = async (commentId) => {
 // Lifecycle
 onMounted(async () => {
   await loadTopic()
+  await checkUserMembership()
   await loadComments()
 })
 </script>
@@ -188,7 +234,10 @@ onMounted(async () => {
       <!-- Comment Form -->
       <CommentForm
         :is-submitting="isSubmittingComment"
+        :can-write="canWriteComments"
+        :group-id="route.params.groupId"
         @submit="handleSubmitComment"
+        @join-group="handleJoinGroup"
       />
     </div>
   </div>

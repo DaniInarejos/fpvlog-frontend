@@ -16,6 +16,8 @@ export default {
   deleteConfirmation: 'Are you sure you want to delete the group "{name}"?',
   deleteWarning: 'This action cannot be undone. All topics, comments, and members will be deleted.',
   confirmDelete: 'Yes, Delete',
+  joinConfirmation: 'Are you sure you want to join the group "{name}"?',
+  leaveConfirmation: 'Are you sure you want to leave the group "{name}"?',
   joinAndComment: 'Join the group to participate in discussions and comment on topics',
   
   tabs: {
@@ -115,6 +117,7 @@ export default {
     deleteTitle: 'Delete Topic',
     deleteConfirmation: 'Are you sure you want to delete the topic "{title}"?',
     postCount: '{count} posts',
+    lastActivity: 'Last activity',
     comments: 'Comments',
     noComments: 'No comments yet. Be the first to comment!',
     addComment: 'Add Comment',
@@ -145,7 +148,9 @@ export default {
     showReplies: 'Show {count} replies',
     addComment: 'Add Comment',
     writeComment: 'Write a comment...',
-    comment: 'Comment'
+    comment: 'Comment',
+    membershipRequired: 'Membership Required',
+    joinToComment: 'Join the group to comment on topics'
   },
   detail: {
     view: 'View',

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label v-if="label" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+    <label v-if="label" class="block text-sm font-medium text-foreground mb-2">
       {{ label }}
     </label>
     <div class="quill-wrapper" :class="wrapperClasses">
@@ -126,11 +126,10 @@ const editorOptions = computed(() => ({
 }))
 
 const wrapperClasses = computed(() => [
-  'border border-gray-300 rounded-md shadow-sm overflow-hidden',
-  'focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500',
-  'dark:border-gray-600 dark:focus-within:ring-blue-400 dark:focus-within:border-blue-400',
-  'transition-colors duration-200',
-  props.error ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500' : ''
+  'border border-border rounded-xl shadow-sm overflow-hidden bg-card',
+  'focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary',
+  'transition-all duration-200',
+  props.error ? 'border-red-500 focus-within:ring-red-500/20 focus-within:border-red-500' : ''
 ])
 
 const handleTextChange = () => {
@@ -201,48 +200,108 @@ const cleanPastedHtml = (html) => {
 </script>
 
 <style>
-/* Estilos para el tema oscuro */
-.dark .ql-toolbar {
-  @apply bg-gray-700 border-gray-600;
-}
-
-.dark .ql-toolbar .ql-stroke {
-  stroke: #e5e7eb;
-}
-
-.dark .ql-toolbar .ql-fill {
-  fill: #e5e7eb;
-}
-
-.dark .ql-container {
-  @apply bg-gray-800 border-gray-600 text-white;
-}
-
-.dark .ql-editor {
-  @apply text-white;
-}
-
-.dark .ql-editor.ql-blank::before {
-  @apply text-gray-400;
-}
-
-/* Estilos personalizados */
+/* Estilos base para el editor */
 .quill-wrapper .ql-toolbar {
-  @apply border-b border-gray-300 dark:border-gray-600;
+  @apply bg-card border-b border-border;
 }
 
 .quill-wrapper .ql-container {
-  @apply border-0;
+  @apply bg-slate-100 border-0;
 }
 
 .quill-wrapper .ql-editor {
-  font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  @apply text-gray-100 bg-slate-100;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  min-height: inherit;
 }
 
-/* Ajustar altura mínima */
-.quill-wrapper .ql-editor {
-  min-height: inherit;
+.quill-wrapper .ql-editor.ql-blank::before {
+  @apply text-gray-500;
+  font-style: normal;
+}
+
+/* Estilos para la toolbar */
+.quill-wrapper .ql-toolbar .ql-stroke {
+  stroke: hsl(var(--foreground));
+}
+
+.quill-wrapper .ql-toolbar .ql-fill {
+  fill: hsl(var(--foreground));
+}
+
+.quill-wrapper .ql-toolbar button:hover {
+  @apply bg-slate-200;
+}
+
+.quill-wrapper .ql-toolbar button.ql-active {
+  @apply bg-primary text-white;
+}
+
+.quill-wrapper .ql-toolbar button.ql-active .ql-stroke {
+  stroke: white;
+}
+
+.quill-wrapper .ql-toolbar button.ql-active .ql-fill {
+  fill: white;
+}
+
+/* Estilos para dropdowns */
+.quill-wrapper .ql-picker {
+  @apply text-foreground;
+}
+
+.quill-wrapper .ql-picker-options {
+  @apply bg-white border border-border shadow-lg rounded-lg;
+}
+
+.quill-wrapper .ql-picker-item:hover {
+  @apply bg-gray-100;
+}
+
+/* Mejorar contraste del contenido */
+.quill-wrapper .ql-editor h1,
+.quill-wrapper .ql-editor h2,
+.quill-wrapper .ql-editor h3,
+.quill-wrapper .ql-editor h4,
+.quill-wrapper .ql-editor h5,
+.quill-wrapper .ql-editor h6 {
+  @apply text-gray-900 font-semibold;
+}
+
+.quill-wrapper .ql-editor p {
+  @apply text-gray-900;
+}
+
+.quill-wrapper .ql-editor strong {
+  @apply text-gray-900 font-semibold;
+}
+
+.quill-wrapper .ql-editor blockquote {
+  @apply border-l-4 border-primary/30 bg-slate-200 text-gray-800 pl-4 py-2 my-2;
+}
+
+.quill-wrapper .ql-editor code {
+  @apply bg-slate-200 text-gray-900 px-1 py-0.5 rounded text-sm;
+}
+
+.quill-wrapper .ql-editor pre {
+  @apply bg-slate-200 text-gray-900 p-3 rounded-lg overflow-x-auto;
+}
+
+/* Estilos para listas */
+.quill-wrapper .ql-editor ul,
+.quill-wrapper .ql-editor ol {
+  @apply text-gray-900;
+}
+
+.quill-wrapper .ql-editor li {
+  @apply text-gray-900;
+}
+
+/* Enlaces */
+.quill-wrapper .ql-editor a {
+  @apply text-primary hover:text-primary/80 underline;
 }
 </style>

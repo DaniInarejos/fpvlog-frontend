@@ -485,6 +485,8 @@ onMounted(async () => {
   <BaseModal 
     :show="modals.joinGroup" 
     @close="closeModal('joinGroup')"
+    :showAcceptButton="false"
+    :showCancelButton="false"
     :title="t('groups.joinGroup')"
   >
     <p class="mb-4">{{ t('groups.joinConfirmation', { name: group?.name }) }}</p>

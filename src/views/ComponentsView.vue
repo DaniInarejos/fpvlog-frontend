@@ -186,7 +186,7 @@ onMounted(() => {
     <div v-if="!showForm">
       <!-- Título y botón de añadir -->
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">{{ t('components.title') }}</h1>
+        <h1 class="text-3xl font-bold text-foreground">{{ t('components.title') }}</h1>
         <BaseButton
           variant="primary"
           @click="handleCreate(selectedType)"

@@ -125,7 +125,9 @@ tags: 'Etiquetas',
     showReplies: 'Ver {count} respuestas',
     addComment: 'Agregar Comentario',
     writeComment: 'Escribe un comentario...',
-    comment: 'Comentar'
+    comment: 'Comentar',
+    membershipRequired: 'Membresía requerida',
+    joinToComment: 'Únete al grupo para poder comentar en los temas'
   },
   
   posts: {

@@ -105,6 +105,7 @@ const getBrandName = (brandId) => {
     v-if="drone && show"
     :show="show"
     :title="drone.name || ''"
+    :show-cancel-button="false"
     @close="handleClose"
   >
     <div class="space-y-6">

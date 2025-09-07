@@ -43,6 +43,7 @@ defineEmits(['update:modelValue'])
       :type="type"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
+      @change="$emit('update:modelValue', $event.target.value)"
       :placeholder="placeholder"
       :required="required"
       :disabled="disabled"

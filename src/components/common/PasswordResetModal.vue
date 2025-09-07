@@ -1,12 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '../../stores/user'
 import { useI18n } from 'vue-i18n'
 import BaseInput from '../base/BaseInput.vue'
 import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import BaseModal from '../base/BaseModal.vue'
+import { api } from '../../services/api'
 
 const props = defineProps({
   show: {
@@ -15,55 +14,57 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'login-success', 'forgot-password'])
+const emit = defineEmits(['close', 'success'])
 
-const router = useRouter()
-const userStore = useUserStore()
 const { t } = useI18n()
 
 const form = ref({
-  email: '',
-  password: ''
+  email: ''
 })
 
 const error = ref('')
+const success = ref('')
 const loading = ref(false)
 
 const handleSubmit = async () => {
   try {
     loading.value = true
     error.value = ''
-    await userStore.login(form.value)
-    emit('login-success')
-    emit('close')
+    success.value = ''
+    
+    await api.post('/auth/request-password-reset', {
+      email: form.value.email
+    })
+    
+    success.value = 'Se ha enviado un enlace de recuperación a tu correo electrónico'
+    form.value.email = ''
+    
+    // Cerrar modal después de 3 segundos
+    setTimeout(() => {
+      emit('success')
+      emit('close')
+    }, 3000)
+    
   } catch (err) {
-    error.value = 'Credenciales inválidas'
+    error.value = err.response?.data?.message || 'Error al enviar el correo de recuperación'
   } finally {
     loading.value = false
   }
 }
 
 const handleClose = () => {
-  form.value = { email: '', password: '' }
+  form.value = { email: '' }
   error.value = ''
+  success.value = ''
+  loading.value = false
   emit('close')
-}
-
-const goToRegister = () => {
-  emit('close')
-  router.push('/register')
-}
-
-const handleForgotPassword = () => {
-  emit('close')
-  emit('forgot-password')
 }
 </script>
 
 <template>
   <BaseModal
     :show="show"
-    title="Iniciar Sesión"
+    title="Recuperar Contraseña"
     @close="handleClose"
     :show-accept-button="false"
     :show-cancel-button="false"
@@ -84,6 +85,10 @@ const handleForgotPassword = () => {
         </div>
       </div>
 
+      <div class="text-center text-sm text-muted-foreground">
+        Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+      </div>
+
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <BaseAlert
           v-if="error"
@@ -95,21 +100,20 @@ const handleForgotPassword = () => {
           {{ error }}
         </BaseAlert>
 
+        <BaseAlert
+          v-if="success"
+          type="success"
+          class="mb-4"
+        >
+          {{ success }}
+        </BaseAlert>
+
         <div class="space-y-4">
           <BaseInput
             v-model="form.email"
             type="email"
             label="Correo electrónico"
             placeholder="tu@email.com"
-            required
-            class="input"
-          />
-
-          <BaseInput
-            v-model="form.password"
-            type="password"
-            label="Contraseña"
-            placeholder="Tu contraseña"
             required
             class="input"
           />
@@ -120,32 +124,11 @@ const handleForgotPassword = () => {
             type="submit"
             variant="primary"
             class="w-full btn btn-primary"
-            :loading="loading"
           >
-            {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+            {{ loading ? 'Enviando...' : 'Enviar enlace de recuperación' }}
           </BaseButton>
         </div>
       </form>
-
-      <div class="text-center pt-6 border-t border-gray-200/20 dark:border-gray-700/20 space-y-6">
-        <div>
-          <button
-            @click="handleForgotPassword"
-            class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
-        </div>
-        
-        <div class="pt-2">
-          <button
-            @click="goToRegister"
-            class="text-sm transition-colors duration-300 hover:transform hover:-translate-y-1"
-          >
-            ¿No tienes cuenta? <span class="font-medium gradient-text">Registrarse</span>
-          </button>
-        </div>
-      </div>
     </div>
   </BaseModal>
 </template>

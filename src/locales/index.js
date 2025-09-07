@@ -15,6 +15,7 @@ import profile from './profile'
 import spots from './spots'
 import groups from './groups'
 import landing from './landing'
+import restorePassword from './restorePassword'
 
 export const loadViewTranslations = async (viewName, lang) => {
   const messages = await import(`./${viewName}/${lang}.js`)
@@ -44,7 +45,8 @@ export default {
       profile: profile.en,
       spots: spots.en,
       groups: groups.en,
-      landing: landing.en
+      landing: landing.en,
+      restorePassword: restorePassword.en
     },
     es: { 
       login: login.es,
@@ -63,7 +65,8 @@ export default {
       profile: profile.es,
       spots: spots.es,
       groups: groups.es,
-      landing: landing.es
+      landing: landing.es,
+      restorePassword: restorePassword.es
     }
   }
 }

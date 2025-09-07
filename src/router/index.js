@@ -47,6 +47,17 @@ const routes = [
     }
   },
   {
+    path: '/restore-password',
+    name: 'restore-password',
+    component: () => import('../views/RestorePasswordView.vue'),
+    meta: {
+      layout: 'auth',
+      title: 'Restablecer Contraseña',
+      description: 'Restablece tu contraseña de SkySphere de forma segura.',
+      ogImage: '/images/logoSkySphere.png'
+    }
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: () => import('../views/ProfileView.vue'), 

@@ -1,14 +1,29 @@
 <script setup>
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from './stores/user'
 import { useGlobalLoginModal } from './composables/useGlobalLoginModal'
 import NavBar from './components/layout/NavBar.vue'
 import SideMenu from './components/layout/SideMenu.vue'
 import LoginModal from './components/common/LoginModal.vue'
+import PasswordResetModal from './components/common/PasswordResetModal.vue'
 
 const route = useRoute()
 const { showLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
+
+// Estado para el modal de recuperación de contraseña
+const showPasswordResetModal = ref(false)
+
+const handleForgotPassword = () => {
+  showPasswordResetModal.value = true
+}
+
+const closePasswordResetModal = () => {
+  showPasswordResetModal.value = false
+}
+
+const handlePasswordResetSuccess = () => {
+  showPasswordResetModal.value = false
+}
 
 const isAuthPage = computed(() => route.meta.layout === 'auth')
 const isLandingPage = computed(() => route.name === 'landing')
@@ -139,6 +154,14 @@ onMounted(() => {
       :show="showLoginModal"
       @close="closeLoginModal"
       @login-success="handleLoginSuccess"
+      @forgot-password="handleForgotPassword"
+    />
+    
+    <!-- Modal de Recuperación de Contraseña -->
+    <PasswordResetModal
+      :show="showPasswordResetModal"
+      @close="closePasswordResetModal"
+      @success="handlePasswordResetSuccess"
     />
   </div>
 </template>

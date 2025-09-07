@@ -155,7 +155,6 @@
     <div v-if="showLoginModal" class="login-modal-overlay" @click="closeLoginModal">
       <div class="login-modal-container" @click.stop>
         <div class="login-modal-header">
-          <h2 class="login-modal-title gradient-text">{{ $t('landing.modals.login.title') }}</h2>
           <button @click="closeLoginModal" class="modal-close">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -164,51 +163,61 @@
         </div>
         
         <div class="login-modal-content">
-          <p class="login-modal-subtitle">
-            {{ $t('landing.modals.login.subtitle') }}
-          </p>
+          <!-- Logo y título -->
+          <div class="text-center mb-6">
+            <div class="flex flex-col items-center justify-center space-y-3">
+              <img 
+                src="/images/logoSkySphere.png" 
+                alt="SkySphere Logo" 
+                class="h-12 w-12 transition-transform duration-300 hover:scale-110" 
+              />
+              <span class="text-lg font-semibold gradient-text">SkySphere</span>
+            </div>
+          </div>
           
-          <form @submit.prevent="handleLoginSubmit" class="login-modal-form">
-            <div v-if="loginErrors.submit" class="error-alert">
+          <form @submit.prevent="handleLoginSubmit" class="space-y-4">
+            <div v-if="loginErrors.submit" class="error-alert mb-4">
               {{ loginErrors.submit }}
             </div>
-            <div v-if="showLoginSuccessAlert" class="success-alert">
+            <div v-if="showLoginSuccessAlert" class="success-alert mb-4">
               {{ $t('landing.modals.login.success') }}
             </div>
 
-            <div class="form-group">
-              <label for="loginEmail" class="form-label">{{ $t('landing.modals.login.email') }}</label>
-              <input
-                id="loginEmail"
-                v-model="loginForm.email"
-                type="text"
-                class="form-input"
-                :class="{ 'error': loginErrors.email }"
-                :placeholder="$t('landing.modals.login.emailPlaceholder')"
-                required
-              />
-              <span v-if="loginErrors.email" class="error-text">{{ loginErrors.email }}</span>
+            <div class="space-y-4">
+              <div class="form-group">
+                <label for="loginEmail" class="form-label">{{ $t('landing.modals.login.email') }}</label>
+                <input
+                  id="loginEmail"
+                  v-model="loginForm.email"
+                  type="email"
+                  class="form-input"
+                  :class="{ 'error': loginErrors.email }"
+                  :placeholder="$t('landing.modals.login.emailPlaceholder')"
+                  required
+                />
+                <span v-if="loginErrors.email" class="error-text">{{ loginErrors.email }}</span>
+              </div>
+
+              <div class="form-group">
+                <label for="loginPassword" class="form-label">{{ $t('landing.modals.login.password') }}</label>
+                <input
+                  id="loginPassword"
+                  v-model="loginForm.password"
+                  type="password"
+                  class="form-input"
+                  :class="{ 'error': loginErrors.password }"
+                  :placeholder="$t('landing.modals.login.passwordPlaceholder')"
+                  required
+                />
+                <span v-if="loginErrors.password" class="error-text">{{ loginErrors.password }}</span>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="loginPassword" class="form-label">{{ $t('landing.modals.login.password') }}</label>
-              <input
-                id="loginPassword"
-                v-model="loginForm.password"
-                type="password"
-                class="form-input"
-                :class="{ 'error': loginErrors.password }"
-                :placeholder="$t('landing.modals.login.passwordPlaceholder')"
-                required
-              />
-              <span v-if="loginErrors.password" class="error-text">{{ loginErrors.password }}</span>
-            </div>
-
-            <div class="submit-section">
+            <div class="flex justify-center pt-4">
               <button
                 type="submit"
                 :disabled="isLoginLoading"
-                class="login-submit-button"
+                class="login-submit-button w-full"
               >
                 <span v-if="!isLoginLoading">{{ $t('landing.modals.login.submit') }}</span>
                 <span v-else>{{ $t('landing.modals.login.loading') }}</span>
@@ -216,13 +225,26 @@
               </button>
             </div>
           </form>
-          
-          <p class="register-link">
-            {{ $t('landing.modals.login.noAccount') }}
-            <button @click="switchToRegister" class="link-primary">
-              {{ $t('landing.modals.login.registerLink') }}
-            </button>
-          </p>
+
+          <div class="text-center pt-6 border-t border-gray-200/20 dark:border-gray-700/20 space-y-6">
+            <div>
+              <button
+                @click="handleForgotPassword"
+                class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+            
+            <div class="pt-2">
+              <button
+                @click="switchToRegister"
+                class="text-sm transition-colors duration-300 hover:transform hover:-translate-y-1"
+              >
+                ¿No tienes cuenta? <span class="font-medium gradient-text">Registrarse</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -462,6 +484,13 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Recuperación de Contraseña -->
+  <PasswordResetModal
+    :show="showPasswordResetModal"
+    @close="closePasswordResetModal"
+    @success="handlePasswordResetSuccess"
+  />
 </template>
 
 <script setup>
@@ -469,6 +498,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import PasswordResetModal from '../components/common/PasswordResetModal.vue'
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -569,6 +599,7 @@ const stats = ref([
 const showRegisterModal = ref(false)
 const showLoginModal = ref(false)
 const showTermsModal = ref(false)
+const showPasswordResetModal = ref(false)
 const acceptTerms = ref(false)
 
 // Login form data
@@ -679,6 +710,23 @@ const switchToRegister = () => {
 const switchToLogin = () => {
   closeRegisterModal()
   showLoginModal.value = true
+}
+
+// Handle forgot password
+const handleForgotPassword = () => {
+  closeLoginModal()
+  showPasswordResetModal.value = true
+}
+
+// Close password reset modal
+const closePasswordResetModal = () => {
+  showPasswordResetModal.value = false
+}
+
+// Handle password reset success
+const handlePasswordResetSuccess = () => {
+  showPasswordResetModal.value = false
+  // Aquí se podría mostrar un mensaje de éxito
 }
 
 // Handle register form submission

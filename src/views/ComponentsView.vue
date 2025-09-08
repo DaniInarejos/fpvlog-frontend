@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
+import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 import componentService from '../services/componentService'
 import ComponentList from '../components/component/ComponentList.vue'
 import ComponentForm from '../components/component/ComponentForm.vue'
@@ -9,9 +10,11 @@ import ComponentInfo from '../components/component/ComponentInfo.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 import BaseButton from '../components/base/BaseButton.vue'
 import TabSelector from '../components/base/TabSelector.vue'
+import LoginModal from '../components/common/LoginModal.vue'
 
 const userStore = useUserStore()
 const { t } = useI18n()
+const { showLoginModal, openLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
 const components = ref({
   FRAME: [], 
   MOTOR: [], 
@@ -127,6 +130,10 @@ const componentIcons = {
 
 // Agregar las funciones que faltan
 const handleCreate = (type) => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   if (type && type !== 'ALL') {
     selectedType.value = type
     showForm.value = true
@@ -143,6 +150,10 @@ const handleTypeSelect = (typeId) => {
 }
 
 const handleEdit = (component) => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   selectedComponent.value = component
   selectedType.value = component.type
   showForm.value = true
@@ -177,6 +188,10 @@ const handleTabChange = (tabId) => {
 }
 
 onMounted(() => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   fetchComponents()
 })
 </script>
@@ -270,6 +285,13 @@ onMounted(() => {
       :component="selectedComponent"
       :show="showComponentInfo"
       @close="handleCloseComponentInfo"
+    />
+    
+    <!-- Modal de Login Global -->
+    <LoginModal
+      :show="showLoginModal"
+      @close="closeLoginModal"
+      @login-success="handleLoginSuccess"
     />
   </div>
 </template>

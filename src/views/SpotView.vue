@@ -2,13 +2,16 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
+import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 import spotService from '../services/spotService'
 import SpotList from '../components/spot/SpotList.vue'
 import SpotForm from '../components/spot/SpotForm.vue'
 import BaseModal from '../components/base/BaseModal.vue'
+import LoginModal from '../components/common/LoginModal.vue'
 
 const userStore = useUserStore()
 const { t } = useI18n()
+const { showLoginModal, openLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
 const spots = ref([])
 const isLoading = ref(false)
 const showForm = ref(false)
@@ -29,11 +32,19 @@ const fetchSpots = async () => {
 }
 
 const handleCreate = () => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   selectedSpot.value = null
   showForm.value = true
 }
 
 const handleEdit = (spot) => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   selectedSpot.value = spot
   showForm.value = true
 }
@@ -65,6 +76,10 @@ const handleClose = () => {
 }
 
 onMounted(() => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   fetchSpots()
 })
 </script>
@@ -103,5 +118,12 @@ onMounted(() => {
         {{ t('spots.delete.confirmation', { name: spotToDelete?.name }) }}
       </p>
     </BaseModal>
+    
+    <!-- Modal de Login Global -->
+    <LoginModal
+      :show="showLoginModal"
+      @close="closeLoginModal"
+      @login-success="handleLoginSuccess"
+    />
   </div>
 </template>

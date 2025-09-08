@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
+import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 import BaseModal from '../components/base/BaseModal.vue'
+import LoginModal from '../components/common/LoginModal.vue'
 import flightService from '../services/flightService'
 import droneService from '../services/droneService'
 import spotService from '../services/spotService'
@@ -14,6 +16,7 @@ import SpotInfo from '../components/spot/SpotInfo.vue'
 
 const userStore = useUserStore()
 const { t } = useI18n()
+const { showLoginModal, openLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
 const flights = ref([])
 const drones = ref([])
 const spots = ref([])
@@ -115,6 +118,10 @@ const confirmDelete = async () => {
 }
 
 const handleEdit = (flight) => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   selectedFlight.value = flight
   showForm.value = true
 }
@@ -131,6 +138,10 @@ const handleSaved = async () => {
 }
 
 onMounted(() => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
   fetchFlights()
   fetchDrones()
   fetchSpots()
@@ -147,7 +158,7 @@ onMounted(() => {
         :is-loading="isLoading"
         :errors="errors"
         @edit="handleEdit"
-        @create="showForm = true"
+        @create="() => { if (!userStore.isAuthenticated) { openLoginModal(); return; } showForm = true; }"
         @delete="openDeleteModal"
         @showFlightInfo="handleShowFlightInfo"
         @showDroneInfo="handleShowDroneInfo"
@@ -193,6 +204,13 @@ onMounted(() => {
       :spot="selectedSpotInfo"
       :show="showSpotInfo"
       @close="handleCloseSpotInfo"
+    />
+    
+    <!-- Modal de Login Global -->
+    <LoginModal
+      :show="showLoginModal"
+      @close="closeLoginModal"
+      @login-success="handleLoginSuccess"
     />
   </div>
 </template>

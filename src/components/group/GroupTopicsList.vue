@@ -317,7 +317,7 @@ const truncateDescription = (description, wordLimit = 100) => {
             ></div>
             
             <div class="flex items-center gap-4 text-sm text-gray-500">
-              <span>{{ t('groups.topics.postCount', { count: topic.postCount || 0 }) }}</span>
+              <span>{{ t('groups.topics.comments') }}: {{ topic.chatCount || 0 }}</span>
               <span v-if="topic.lastActivity">
                 {{ t('groups.topics.lastActivity') }}: {{ formatLastActivity(topic.lastActivity) }}
               </span>

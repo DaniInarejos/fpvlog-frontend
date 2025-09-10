@@ -1,6 +1,6 @@
 export default {
   title: 'Groups',
-  topicsn: 'Topics',
+  topicsn: '{count} topic | {count} topics',
   subtitle: 'Connect with other FPV pilots',
   createGroup: 'Create Group',
   editGroup: 'Edit Group',
@@ -72,6 +72,7 @@ export default {
   },
   
   memberCount: '{count} member | {count} members',
+  postsCount: '{count} post | {count} posts',
   createdBy: 'Created by {owner}',
   joinedOn: 'Joined on {date}',
   members: 'Members',

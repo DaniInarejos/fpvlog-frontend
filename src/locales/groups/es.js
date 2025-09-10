@@ -1,6 +1,6 @@
 export default {
   title: 'Grupos',
-  topicsn: 'Temas',
+  topicsn: '{count} tema | {count} temas',
   subtitle: 'Conecta con otros pilotos de FPV',
   createGroup: 'Crear Grupo',
   editGroup: 'Editar Grupo',
@@ -15,6 +15,7 @@ export default {
   private: 'Privado',
   joinAndComment: 'Únete al grupo para participar en discusiones y comentar en los temas',
   memberCount: '{count} miembro | {count} miembros',
+  postsCount: '{count} post | {count} posts',
   createdBy: 'Creado por {owner}',
   owner: 'Propietario',
   description: 'Descripción',

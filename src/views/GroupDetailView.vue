@@ -214,6 +214,17 @@ const handleDeleteGroup = async () => {
   }
 }
 
+// Methods - Topic Handlers
+const handleTopicCreated = async () => {
+  // Actualizar los datos del grupo para reflejar el nuevo número de topics
+  await fetchGroup()
+}
+
+const handleTopicDeleted = async () => {
+  // Actualizar los datos del grupo para reflejar el nuevo número de topics
+  await fetchGroup()
+}
+
 // Methods - UI Handlers
 const handleTabChange = (tabId) => {
   activeTab.value = tabId
@@ -254,6 +265,20 @@ onMounted(async () => {
 
   <!-- Group content -->
   <div v-else class="max-w-4xl mx-auto">
+    <!-- Breadcrumb Navigation -->
+    <nav class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+      <button 
+        @click="$router.push({ name: 'groups' })"
+        class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+      >
+        {{ t('groups.title') }}
+      </button>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="text-gray-900 dark:text-white font-medium">{{ group.name }}</span>
+    </nav>
+
     <!-- Group Header Card -->
     <div class="bg-gradient-to-br from-blue-50/90 to-indigo-50/90 dark:from-gray-800/90 dark:to-gray-900/90 rounded-xl shadow-lg overflow-hidden mb-6 border border-blue-200/30 dark:border-gray-700/30">
       <!-- Banner Section -->
@@ -293,7 +318,7 @@ onMounted(async () => {
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between">
           <!-- Left side - Group details -->
           <div class="flex-1">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ group?.name || '' }}</h1>
+            <h1 class="text-3xl font-bold text-gray-100 dark:text-white mb-2">{{ group?.name || '' }}</h1>
             <p v-if="group?.description" class="text-gray-600 mb-4 leading-relaxed">{{ group.description }}</p>
             
             <!-- Stats Row -->
@@ -310,7 +335,7 @@ onMounted(async () => {
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"/>
                 </svg>
-                <span class="font-medium">{{ group?.topicsCount || 0 }}</span>
+                <span class="font-medium">{{ group?.postsCount || 0 }}</span>
                 <span class="ml-1">{{ t('groups.topicsn') }}</span>
               </div>
               
@@ -427,6 +452,8 @@ onMounted(async () => {
             :can-manage="isMember || isOwner"
             :user-role="userRole"
             :current-user-id="currentUserId"
+            @topic-created="handleTopicCreated"
+            @topic-deleted="handleTopicDeleted"
           />
           <div v-else class="text-center py-8">
             <p class="text-gray-500">{{ t('groups.privateGroupMessage') }}</p>

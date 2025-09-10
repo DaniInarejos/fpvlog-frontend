@@ -1,12 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
-import groupCommentService from '../services/groupCommentService'
+import { useUserStore } from '../stores/user'
 import groupTopicService from '../services/groupTopicService'
+import groupCommentService from '../services/groupCommentService'
 import groupService from '../services/groupService'
-
 import TopicHeader from '../components/group/TopicHeader.vue'
 import TopicComments from '../components/group/TopicComments.vue'
 import CommentForm from '../components/group/CommentForm.vue'
@@ -44,6 +43,16 @@ const isMember = computed(() => {
 
 const canWriteComments = computed(() => {
   return isUserAuthenticated.value && isMember.value
+})
+
+const canEditTopic = computed(() => {
+  if (!userStore.user || !topic.value) return false
+  
+  // Owner can edit any topic
+  if (userMembership.value?.role === 'OWNER') return true
+  
+  // Topic creator can edit their own topic
+  return topic.value.createdBy?._id === userStore.user._id
 })
 
 // Verificar membresía del usuario
@@ -124,7 +133,8 @@ const handleSubmitComment = async (content) => {
     isSubmittingComment.value = true
     await groupCommentService.createComment(route.params.groupId, route.params.topicId, { content })
     
-    // Reload comments and go to last page if new comment was added
+    // Reload topic to update chatCount and comments
+    await loadTopic()
     await loadComments(pagination.totalPages)
   } catch (error) {
     console.error('Error submitting comment:', error)
@@ -162,10 +172,27 @@ const handleEditComment = async (commentId, newContent) => {
 const handleDeleteComment = async (commentId) => {
   try {
     await groupCommentService.deleteComment(route.params.groupId, commentId)
-    // Reload current page to remove deleted comment
+    // Reload topic to update chatCount and comments
+    await loadTopic()
     await loadComments(pagination.currentPage)
   } catch (error) {
     console.error('Error deleting comment:', error)
+  }
+}
+
+// Topic management handlers
+const handleEditTopic = () => {
+  // Navigate to edit topic (could be implemented later)
+  console.log('Edit topic functionality not implemented yet')
+}
+
+const handleDeleteTopic = async () => {
+  try {
+    await groupTopicService.deleteTopic(route.params.groupId, route.params.topicId)
+    // Navigate back to group detail after deletion
+    router.push({ name: 'group-detail', params: { id: route.params.groupId } })
+  } catch (error) {
+    console.error('Error deleting topic:', error)
   }
 }
 
@@ -214,7 +241,9 @@ onMounted(async () => {
         :topic="topic"
         :group-id="route.params.groupId"
         :total-comments="pagination.totalComments"
-        :can-edit="false"
+        :can-edit="canEditTopic"
+        @edit="handleEditTopic"
+        @delete="handleDeleteTopic"
       />
 
       <!-- Comments Section -->

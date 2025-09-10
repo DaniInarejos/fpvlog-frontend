@@ -103,9 +103,10 @@ const isOwner = (group) => {
                 >
                   {{ group.name }}
                 </h3>
-                <p class="text-sm text-gray-500">
-                  {{ getMemberCountText(group.membersCount || 0) }}
-                </p>
+                <div class="text-sm text-gray-500 space-y-1">
+                  <p>{{ getMemberCountText(group.membersCount || 0) }}</p>
+                  <p>{{ t('groups.postsCount', { count: group.postsCount || 0 }) }}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -566,6 +566,8 @@ onMounted(async () => {
   <!-- Delete Group Modal -->
   <BaseModal 
     :show="modals.deleteGroup" 
+    :showCancelButton="false"
+    :showAcceptButton="false"
     @close="closeModal('deleteGroup')"
     :title="t('groups.deleteGroup')"
   >

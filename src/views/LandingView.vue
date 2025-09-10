@@ -543,7 +543,7 @@ const drones = ref([
   {
     name: 'Perfil',
     type: 'Personaliza tu perfil',
-    image: '/images/perfil.jpg '
+    image: '/images/perfil.png '
   },
   {
     name: 'Componentes',
@@ -568,6 +568,10 @@ const features = ref([
   {
     key: 'safety',
     icon: 'fas fa-shield-alt'
+  },
+  {
+    key: 'profile',
+    icon: 'fas fa-user'
   }
 ])
 
@@ -1287,9 +1291,18 @@ onUnmounted(() => {
   margin-bottom: 1rem;
 }
 
-.drone-image img {
+.drone-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 120px;
   height: 120px;
+  margin: 0 auto;
+}
+
+.drone-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 12px;
   filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.3));

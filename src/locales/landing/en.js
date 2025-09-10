@@ -38,6 +38,10 @@ export default {
       safety: {
         title: 'Safety First',
         description: 'Safety tools and regulatory compliance to fly responsibly'
+      },
+      profile: {
+        title: 'Pilot Profile',
+        description: 'Create and customize your unique FPV pilot profile with your achievements and statistics'
       }
     },
     manage: {

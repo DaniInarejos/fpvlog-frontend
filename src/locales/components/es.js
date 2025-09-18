@@ -5,6 +5,9 @@ export default {
   noComponentsOfType: 'No hay componentes de este tipo',
   addFirst: 'Añadir {type}',
   selectType: 'Seleccionar tipo de componente',
+  addFavorite: 'Añadir a favoritos',
+  removeFavorite: 'Quitar de favoritos',
+  viewProduct: 'Ver producto',
   form: {
     name: 'Nombre',
     brand: 'Marca',

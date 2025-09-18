@@ -6,6 +6,7 @@ import about from './about'
 import dashboard from './dashboard'
 import common from './common'
 import components from './components'
+import equipmentItems from './equipmentItems'
 import drones from './drones'
 import feed from './feed'
 import flights from './flights'
@@ -37,6 +38,7 @@ export default {
       dashboard: dashboard.en,
       common: common.en,
       components: components.en,
+      equipmentItems: equipmentItems.en,
       drones: drones.en,
       feed: feed.en,
       flights: flights.en,
@@ -57,6 +59,7 @@ export default {
       dashboard: dashboard.es,
       common: common.es,
       components: components.es,
+      equipmentItems: equipmentItems.es,
       drones: drones.es,
       feed: feed.es,
       flights: flights.es,

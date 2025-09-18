@@ -103,8 +103,7 @@ onMounted(() => {
                 v-for="item in [
                   { name: $t('nav.spots'), path: '/spots' },
                   { name: $t('nav.flights'), path: '/flights' },
-                  { name: $t('nav.drones'), path: '/drones' },
-                  { name: $t('nav.components'), path: '/components' },
+                  { name: $t('nav.equipmentItems'), path: '/equipment-items' },
                 ]"
                 :key="item.path"
                 :to="item.path"
@@ -220,8 +219,7 @@ onMounted(() => {
             v-for="item in [
               { name: $t('nav.spots'), path: '/spots' },
               { name: $t('nav.flights'), path: '/flights' },
-              { name: $t('nav.drones'), path: '/drones' },
-              { name: $t('nav.components'), path: '/components' },
+              { name: $t('nav.equipmentItems'), path: '/equipment-items' },
             ]"
             :key="item.path"
             :to="item.path"

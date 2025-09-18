@@ -53,7 +53,7 @@ const handleSubmit = async () => {
     if (props.component) {
       await componentService.updateComponent(props.component._id, formDataToSubmit)
     } else {
-      await componentService.createComponent(formDataToSubmit)
+      await componentService.createUserComponent(userStore.user._id, formDataToSubmit)
     }
     emit('saved')
   } catch (error) {

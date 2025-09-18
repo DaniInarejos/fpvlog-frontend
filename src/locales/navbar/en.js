@@ -15,6 +15,7 @@ export default {
       following: 'Following',
       feed: 'Feed',
       components: 'Components',
+      equipmentItems: 'Equipment',
       spots: 'Spots',
       groups: 'Groups'
     }

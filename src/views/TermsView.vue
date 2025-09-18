@@ -44,32 +44,6 @@ const downloadPdf = () => {
         </p>
       </div>
 
-      <!-- Controles Expandidos -->
-      <div class="flex flex-wrap justify-between items-center gap-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl print:hidden">
-        <div class="flex flex-wrap gap-4">
-          <button
-            @click="showPrintVersion = !showPrintVersion"
-            class="px-4 py-2 text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg transition-colors"
-          >
-            {{ showPrintVersion ? t('terms.viewNormal') : t('terms.viewPrint') }}
-          </button>
-          <button
-            @click="printTerms"
-            class="px-4 py-2 text-sm bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
-          >
-            {{ t('terms.print') }}
-          </button>
-          <button
-            @click="downloadPdf"
-            class="px-4 py-2 text-sm bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-colors"
-          >
-            {{ t('terms.downloadPdf') }}
-          </button>
-        </div>
-        <div class="text-sm text-gray-600 dark:text-gray-400">
-          {{ t('terms.lastReview') }}: {{ t('terms.updateDate') }}
-        </div>
-      </div>
 
       <!-- Contenido Expandido de los términos -->
       <div class="space-y-8">

@@ -5,8 +5,13 @@ export default {
   editItem: 'Editar Equipamiento',
   noItems: 'No hay equipamiento registrado',
   noItemsOfType: 'No hay equipamiento de este tipo',
+  noItemsDescription: 'Comienza añadiendo tu primer equipamiento para llevar un registro completo de tus herramientas de FPV.',
   addFirst: 'Añadir {type}',
+  addFirstItem: 'Añadir primer equipamiento',
   addFirstDescription: 'Comienza añadiendo tu primer equipamiento para llevar un registro completo.',
+  showing: 'Mostrando {count} de {total} elementos',
+  noResults: 'No se encontraron resultados',
+  noResultsDescription: 'Intenta ajustar los filtros de búsqueda o añade nuevo equipamiento.',
   selectType: 'Seleccionar tipo de equipamiento',
   addFavorite: 'Añadir a favoritos',
   removeFavorite: 'Quitar de favoritos',
@@ -16,6 +21,22 @@ export default {
   confirmDelete: 'Confirmar eliminación',
   deleteWarning: '¿Estás seguro de que quieres eliminar "{name}"? Esta acción no se puede deshacer.',
   loginDescription: 'Inicia sesión para gestionar tu equipamiento y herramientas de FPV.',
+  statistics: 'Estadísticas',
+  total: 'Total',
+  loadingStats: 'Cargando estadísticas...',
+  noImage: 'Sin imagen',
+  metadata: 'Información del Sistema',
+  
+  stats: {
+    total: 'Total de Elementos',
+    byStatus: 'Por Estado',
+    count: 'Cantidad',
+    percentage: 'Porcentaje'
+  },
+  
+  search: {
+    placeholder: 'Buscar equipamiento...'
+  },
   
   types: {
     all: 'Todos',
@@ -30,7 +51,18 @@ export default {
   conditions: {
     new: 'Nuevo',
     used: 'Usado',
-    refurbished: 'Reacondicionado'
+    refurbished: 'Reacondicionado',
+    likeNew: 'Como Nuevo',
+    good: 'Bueno',
+    fair: 'Regular',
+    poor: 'Malo'
+  },
+  
+  status: {
+    active: 'Activo',
+    archived: 'Archivado', 
+    sold: 'Vendido',
+    lost: 'Perdido'
   },
   
   form: {
@@ -40,6 +72,7 @@ export default {
     model: 'Modelo',
     brandModel: 'Marca y Modelo',
     condition: 'Estado',
+    status: 'Estado',
     price: 'Precio',
     currency: 'Moneda',
     purchaseDate: 'Fecha de compra',
@@ -50,7 +83,19 @@ export default {
     sourceUrl: 'URL de compra',
     description: 'Descripción',
     notes: 'Notas',
-    
+    image: 'Imagen',
+    favorite: 'Favorito',
+    productLink: 'Enlace del Producto',
+    basicInfo: 'Información Básica',
+    multimedia: 'Enlaces y Multimedia',
+    options: 'Opciones Adicionales',
+    selectEquipmentType: '¿Qué tipo de equipamiento quieres añadir?',
+    selectEquipmentTypeDescription: 'Selecciona el tipo de equipamiento para continuar',
+    imagePreview: 'Vista previa de imagen',
+    steps: {
+      selectType: 'Seleccionar Tipo',
+      fillDetails: 'Completar Detalles'
+    },
     placeholders: {
       name: 'Ej: DJI FPV Drone',
       brand: 'Ej: DJI',
@@ -60,7 +105,10 @@ export default {
       location: 'Ej: Caja de herramientas, Estante A',
       sourceUrl: 'https://...',
       description: 'Describe las características principales...',
-      notes: 'Notas adicionales, estado, observaciones...'
+      notes: 'Notas adicionales, estado, observaciones...',
+      imageUrl: 'URL de la imagen del producto',
+      productLink: 'https://tienda.com/producto',
+      image: 'URL de la imagen del producto'
     },
     
     typePlaceholder: 'Selecciona un tipo'

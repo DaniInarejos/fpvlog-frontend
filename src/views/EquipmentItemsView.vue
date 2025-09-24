@@ -1,256 +1,228 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useUserStore } from '../stores/user'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
-import equipmentItemService from '../services/equipmentItemService'
-import EquipmentItemList from '../components/equipmentItem/EquipmentItemList.vue'
+import { useUserStore } from '../stores/user'
+import { useEquipmentItemStore } from '../stores/equipmentItem'
+import { useRouter } from 'vue-router'
 import EquipmentItemForm from '../components/equipmentItem/EquipmentItemForm.vue'
 import EquipmentItemInfo from '../components/equipmentItem/EquipmentItemInfo.vue'
+import EquipmentTypeFilter from '../components/equipmentItem/EquipmentTypeFilter.vue'
+import EquipmentHeader from '../components/equipmentItem/EquipmentHeader.vue'
+import EquipmentCard from '../components/equipmentItem/EquipmentCard.vue'
+// import EquipmentStats from '../components/equipmentItem/EquipmentStats.vue'
 import BaseModal from '../components/base/BaseModal.vue'
-import BaseButton from '../components/base/BaseButton.vue'
-import TabSelector from '../components/base/TabSelector.vue'
-import LoginModal from '../components/common/LoginModal.vue'
+import { EQUIPMENT_TYPES } from '../types/equipmentItem'
 
-const userStore = useUserStore()
 const { t } = useI18n()
-const { showLoginModal, openLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
+const userStore = useUserStore()
+const equipmentItemStore = useEquipmentItemStore()
+const router = useRouter()
 
-const equipmentItems = ref({
-  DRONE: [],
-  RADIO: [],
-  GOGGLES: [],
-  BATTERY: [],
-  CHARGER: [],
-  OTHERS: []
+const showForm = ref(false)
+const editingItem = ref(null)
+const selectedType = ref('ALL')
+const showInfoModal = ref(false)
+const selectedItem = ref(null)
+
+const isAuthenticated = computed(() => userStore.isAuthenticated)
+const allItems = computed(() => equipmentItemStore.allItems)
+const equipmentItems = computed(() => {
+    return equipmentItemStore.equipmentItems
+  })
+
+const typeOptions = computed(() => [
+  { value: 'ALL', label: t('equipmentItems.types.all') },
+  ...Object.keys(EQUIPMENT_TYPES).map(type => ({
+    value: type,
+    label: t(`equipmentItems.types.${type.toLowerCase()}`)
+  }))
+])
+
+// const equipmentStats = computed(() => {
+//   return equipmentItemStore.stats || { total: 0, byType: {}, byStatus: { active: 0, archived: 0, sold: 0, lost: 0 } }
+// })
+
+const filteredAndSortedItems = computed(() => {
+  if (selectedType.value === 'ALL') {
+    return allItems.value
+  }
+  
+  // Filtrar por tipo específico usando el getter itemsByType del store
+  return equipmentItemStore.itemsByType(selectedType.value)
 })
 
-const isLoading = ref(false)
-const showForm = ref(false)
-const selectedType = ref('ALL')
-const showDeleteModal = ref(false)
-const equipmentItemToDelete = ref(null)
-const errors = ref({})
-const showEquipmentItemInfo = ref(false)
-const selectedEquipmentItem = ref(null)
-
-// Configuración de pestañas
-const tabs = [
-  { id: 'ALL', label: t('equipmentItems.types.all') },
-  { id: 'DRONE', label: t('equipmentItems.types.drone') },
-  { id: 'RADIO', label: t('equipmentItems.types.radio') },
-  { id: 'GOGGLES', label: t('equipmentItems.types.goggles') },
-  { id: 'BATTERY', label: t('equipmentItems.types.battery') },
-  { id: 'CHARGER', label: t('equipmentItems.types.charger') },
-  { id: 'OTHERS', label: t('equipmentItems.types.others') }
-]
-
-const fetchEquipmentItems = async () => {
-  isLoading.value = true
-  try {
-    const response = await equipmentItemService.getUserEquipmentItems(userStore.user._id)
-    // Asegurarnos de que cada tipo tenga al menos un array vacío
-    equipmentItems.value = {
-      DRONE: response.DRONE || [],
-      RADIO: response.RADIO || [],
-      GOGGLES: response.GOGGLES || [],
-      BATTERY: response.BATTERY || [],
-      CHARGER: response.CHARGER || [],
-      OTHERS: response.OTHERS || []
-    }
-  } catch (error) {
-    errors.value.fetch = error.message
-  } finally {
-    isLoading.value = false
-  }
+const handleLogin = () => {
+  router.push('/login')
 }
 
-const openDeleteModal = (equipmentItem) => {
-  equipmentItemToDelete.value = equipmentItem
-  showDeleteModal.value = true
-}
-
-const confirmDelete = async () => {
-  if (!equipmentItemToDelete.value) return
-  
-  isLoading.value = true
-  try {
-    await equipmentItemService.deleteEquipmentItem(equipmentItemToDelete.value._id)
-    await fetchEquipmentItems()
-    showDeleteModal.value = false
-    equipmentItemToDelete.value = null
-  } catch (error) {
-    errors.value.delete = error.message
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Variables para el selector de tipo
-const showTypeSelector = ref(false)
-
-// Definir tipos de equipmentItems e iconos
-const equipmentTypes = [
-  { _id: 'DRONE', name: t('equipmentItems.types.drone') },
-  { _id: 'RADIO', name: t('equipmentItems.types.radio') },
-  { _id: 'GOGGLES', name: t('equipmentItems.types.goggles') },
-  { _id: 'BATTERY', name: t('equipmentItems.types.battery') },
-  { _id: 'CHARGER', name: t('equipmentItems.types.charger') },
-  { _id: 'OTHERS', name: t('equipmentItems.types.others') }
-]
-
-const typeIcons = {
-  DRONE: '🚁',
-  RADIO: '📡',
-  GOGGLES: '🥽',
-  BATTERY: '🔋',
-  CHARGER: '🔌',
-  OTHERS: '📋'
-}
-
-// Funciones de manejo
-const handleCreate = (type) => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
+const handleCreateItem = (type = null) => {
+  if (!isAuthenticated.value) {
+    handleLogin()
     return
   }
+  
+  editingItem.value = null
   if (type && type !== 'ALL') {
     selectedType.value = type
-    showForm.value = true
-  } else {
-    showTypeSelector.value = true
   }
-}
-
-const handleTypeSelect = (typeId) => {
-  selectedType.value = typeId
-  showForm.value = true
-  showTypeSelector.value = false
-}
-
-const handleEdit = (equipmentItem) => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
-    return
-  }
-  selectedEquipmentItem.value = equipmentItem
-  selectedType.value = equipmentItem.type
   showForm.value = true
 }
 
-const handleClose = () => {
-  showForm.value = false
-  selectedType.value = 'ALL'
-  selectedEquipmentItem.value = null
+const handleEditItem = (item) => {
+  editingItem.value = item
+  showForm.value = true
 }
 
-const handleSaved = async () => {
-  showForm.value = false
-  selectedType.value = 'ALL'
-  selectedEquipmentItem.value = null
-  await fetchEquipmentItems()
-}
-
-// Funciones para el modal de información
-const handleShowEquipmentItemInfo = (equipmentItem) => {
-  selectedEquipmentItem.value = equipmentItem
-  showEquipmentItemInfo.value = true
-}
-
-const handleCloseEquipmentItemInfo = () => {
-  showEquipmentItemInfo.value = false
-  selectedEquipmentItem.value = null
-}
-
-const handleTabChange = (tabId) => {
-  selectedType.value = tabId
-}
-
-// Función para manejar toggle de favoritos
-const handleToggleFavorite = async (equipmentItemId) => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
-    return
-  }
-  
-  try {
-    await equipmentItemService.toggleFavorite(userStore.user._id, equipmentItemId)
-    // Actualizar el estado local del equipmentItem
-    for (const type in equipmentItems.value) {
-      const itemIndex = equipmentItems.value[type].findIndex(item => item._id === equipmentItemId)
-      if (itemIndex !== -1) {
-        equipmentItems.value[type][itemIndex].favorite = !equipmentItems.value[type][itemIndex].favorite
-        break
-      }
+const handleDeleteItem = async (item) => {
+  if (confirm(t('equipmentItems.confirmDelete'))) {
+    try {
+      await equipmentItemStore.deleteEquipmentItem(item._id)
+      // Refrescar el listado después de eliminar
+      await equipmentItemStore.fetchEquipmentItems()
+    } catch (error) {
+      console.error('Error deleting item:', error)
     }
-  } catch (error) {
-    errors.value.toggleFavorite = error.message
   }
 }
 
-onMounted(() => {
-  if (userStore.isAuthenticated) {
-    fetchEquipmentItems()
+const handleToggleFavorite = async (item) => {
+  try {
+    await equipmentItemStore.toggleFavorite(item._id)
+    // Refrescar el listado después de cambiar favorito
+    await equipmentItemStore.fetchEquipmentItems()
+  } catch (error) {
+    console.error('Error toggling favorite:', error)
+  }
+}
+
+const handleViewItem = (item) => {
+  selectedItem.value = item
+  showInfoModal.value = true
+}
+
+const handleCloseInfoModal = () => {
+  showInfoModal.value = false
+  selectedItem.value = null
+}
+
+const handleEditFromModal = (item) => {
+  showInfoModal.value = false
+  selectedItem.value = null
+  handleEditItem(item)
+}
+
+const handleDeleteFromModal = (item) => {
+  showInfoModal.value = false
+  selectedItem.value = null
+  handleDeleteItem(item)
+}
+
+const handleFormSubmit = async (formData) => {
+  try {
+    if (editingItem.value) {
+      await equipmentItemStore.updateEquipmentItem(editingItem.value._id, formData)
+    } else {
+      await equipmentItemStore.createEquipmentItem(formData)
+    }
+    
+    // Refrescar el listado después de la operación
+    await equipmentItemStore.fetchEquipmentItems()
+    
+    showForm.value = false
+    editingItem.value = null
+  } catch (error) {
+    console.error('Error saving item:', error)
+  }
+}
+
+const handleFormCancel = () => {
+  showForm.value = false
+  editingItem.value = null
+}
+
+const handleTypeChange = (type) => {
+  selectedType.value = type
+}
+
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    try {
+      await equipmentItemStore.fetchEquipmentItems()
+      // await equipmentItemStore.fetchEquipmentItemStats() // Eliminado
+    } catch (error) {
+      console.error('Error fetching equipment items:', error)
+    }
   }
 })
 </script>
-
 <template>
   <div class="container mx-auto px-4 py-8">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          {{ t('equipmentItems.title') }}
-        </h1>
-        <p class="mt-2 text-gray-600 dark:text-gray-400">
-          {{ t('equipmentItems.description') }}
-        </p>
-      </div>
-      
-      <BaseButton
-        v-if="userStore.isAuthenticated"
-        @click="handleCreate(selectedType)"
-        class="flex items-center gap-2"
-      >
-        <span>➕</span>
-        {{ selectedType && selectedType !== 'ALL' 
-          ? t('equipmentItems.addItem', { type: t(`equipmentItems.types.${selectedType.toLowerCase()}`) })
-          : t('equipmentItems.addItem') }}
-      </BaseButton>
-      
-      <BaseButton
-        v-else
-        @click="openLoginModal"
-        class="flex items-center gap-2"
-      >
-        <span>🔐</span>
-        {{ t('auth.loginToManage') }}
-      </BaseButton>
-    </div>
+    <EquipmentHeader
+      :is-authenticated="isAuthenticated"
+      :selected-type="selectedType"
+      :equipment-items="equipmentItems"
+      @create="handleCreateItem"
+      @login="handleLogin"
+    />
 
-    <!-- Tabs de tipos -->
-    <div class="mb-6">
-      <TabSelector
-        :tabs="tabs"
-        :active-tab="selectedType"
-        @tab-change="handleTabChange"
+    <!-- Filtros y búsqueda -->
+    <div class="mb-6 space-y-4 mt-8">
+      <!-- Estadísticas eliminadas -->
+      <!-- <EquipmentStats 
+        v-if="isAuthenticated && allItems.length > 0"
+        :stats="equipmentStats"
+      /> -->
+      
+      <!-- Filtro de tipos -->
+      <EquipmentTypeFilter
+        :selected-type="selectedType"
+        @type-change="handleTypeChange"
       />
     </div>
 
-    <!-- Lista de equipmentItems -->
-    <EquipmentItemList
-      v-if="userStore.isAuthenticated"
-      :equipment-items="equipmentItems"
-      :selected-type="selectedType"
-      :is-loading="isLoading"
-      :errors="errors"
-      @create="handleCreate"
-      @edit="handleEdit"
-      @delete="openDeleteModal"
-      @show-info="handleShowEquipmentItemInfo"
-      @toggle-favorite="handleToggleFavorite"
-    />
+    <!-- Lista de equipos -->
+    <div v-if="isAuthenticated" class="space-y-4">
+      <!-- Contador de filtros -->
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        {{ t('equipmentItems.showing', { 
+          count: filteredAndSortedItems.length,
+          total: allItems.length 
+        }) }}
+      </div>
+
+      <!-- Grid de equipos -->
+      <div v-if="filteredAndSortedItems.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <EquipmentCard
+          v-for="item in filteredAndSortedItems"
+          :key="item._id"
+          :item="item"
+          :is-authenticated="isAuthenticated"
+          @edit="handleEditItem"
+          @delete="handleDeleteItem"
+          @toggle-favorite="handleToggleFavorite"
+          @view="handleViewItem"
+        />
+      </div>
+
+      <!-- Estado vacío -->
+      <div v-else class="text-center py-12">
+        <div class="text-6xl mb-4">📦</div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+          {{ t('equipmentItems.noItems') }}
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          {{ t('equipmentItems.noItemsDescription') }}
+        </p>
+        <button
+          @click="handleCreateItem()"
+          class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <span class="mr-2">➕</span>
+          {{ t('equipmentItems.addFirstItem') }}
+        </button>
+      </div>
+    </div>
 
     <!-- Estado no autenticado -->
     <div v-else class="text-center py-12">
@@ -261,90 +233,42 @@ onMounted(() => {
       <p class="text-gray-600 dark:text-gray-400 mb-6">
         {{ t('equipmentItems.loginDescription') }}
       </p>
-      <BaseButton @click="openLoginModal">
+      <button
+        @click="handleLogin"
+        class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        <span class="mr-2">🔐</span>
         {{ t('auth.login') }}
-      </BaseButton>
+      </button>
     </div>
 
-    <!-- Modal de formulario -->
-    <BaseModal
-      :show="showForm"
-      :title="selectedEquipmentItem 
-        ? t('equipmentItems.editItem') 
-        : t('equipmentItems.addItem', { type: selectedType !== 'ALL' ? t(`equipmentItems.types.${selectedType.toLowerCase()}`) : '' })"
-      size="lg"
-      @close="handleClose"
-    >
-      <EquipmentItemForm
-        :equipment-item="selectedEquipmentItem"
-        :selected-type="selectedType !== 'ALL' ? selectedType : null"
-        @saved="handleSaved"
-        @close="handleClose"
+    <!-- Modal para formulario -->
+    <Teleport to="body">
+      <BaseModal
+        v-if="showForm"
+        :show="showForm"
+        :title="editingItem ? t('equipmentItems.editItem') : t('equipmentItems.addItem')"
+        :show-accept-button="false"
+        :show-cancel-button="false"
+        :show-close-button="true"
+        :require-double-click="true"
+        size="full"
+        @close="handleFormCancel"
+      >
+        <EquipmentItemForm
+          :equipment-item="editingItem"
+          :selected-type="selectedType !== 'ALL' ? selectedType : null"
+          @close="handleFormCancel"
+          @saved="handleFormSubmit"
+        />
+      </BaseModal>
+
+      <!-- Modal para información del equipamiento -->
+      <EquipmentItemInfo
+        :show="showInfoModal"
+        :equipment-item="selectedItem"
+        @close="handleCloseInfoModal"
       />
-    </BaseModal>
-
-    <!-- Modal selector de tipo -->
-    <BaseModal
-      :show="showTypeSelector"
-      :title="t('equipmentItems.selectType')"
-      @close="showTypeSelector = false"
-    >
-      <div class="grid grid-cols-2 gap-3">
-        <button
-          v-for="type in equipmentTypes"
-          :key="type._id"
-          @click="handleTypeSelect(type._id)"
-          class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-        >
-          <span class="text-2xl">{{ typeIcons[type._id] }}</span>
-          <span class="text-sm font-medium">{{ type.name }}</span>
-        </button>
-      </div>
-    </BaseModal>
-
-    <!-- Modal de confirmación de eliminación -->
-    <BaseModal
-      :show="showDeleteModal"
-      :title="t('equipmentItems.confirmDelete')"
-      @close="showDeleteModal = false"
-    >
-      <div class="text-center">
-        <div class="text-6xl mb-4">⚠️</div>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-          {{ t('equipmentItems.deleteWarning', { name: equipmentItemToDelete?.name }) }}
-        </p>
-        <div class="flex items-center justify-center gap-3">
-          <BaseButton
-            variant="outline"
-            @click="showDeleteModal = false"
-          >
-            {{ t('common.cancel') }}
-          </BaseButton>
-          <BaseButton
-            @click="confirmDelete"
-            :loading="isLoading"
-            class="bg-red-600 hover:bg-red-700 text-white"
-          >
-            {{ t('common.delete') }}
-          </BaseButton>
-        </div>
-      </div>
-    </BaseModal>
-
-    <!-- Modal de información del equipmentItem -->
-    <EquipmentItemInfo
-      :equipment-item="selectedEquipmentItem"
-      :show="showEquipmentItemInfo"
-      @close="handleCloseEquipmentItemInfo"
-      @edit="handleEdit"
-      @delete="openDeleteModal"
-    />
-
-    <!-- Modal de login -->
-    <LoginModal
-      :show="showLoginModal"
-      @close="closeLoginModal"
-      @success="handleLoginSuccess"
-    />
+    </Teleport>
   </div>
 </template>

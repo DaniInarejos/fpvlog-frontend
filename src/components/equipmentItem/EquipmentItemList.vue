@@ -40,13 +40,12 @@ const equipmentTypes = [
 
 const typeIcons = {
   DRONE: '🚁',
-  RADIO: '📡',
+  RADIO: '🎮',
   GOGGLES: '🥽',
   BATTERY: '🔋',
   CHARGER: '🔌',
   OTHERS: '📋'
 }
-
 const conditionColors = {
   NEW: 'text-green-600',
   USED: 'text-yellow-600',
@@ -136,7 +135,7 @@ const formatDate = (date) => {
               <div>
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ item.name }}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  {{ t(`equipmentItems.types.${item.type.toLowerCase()}`) }}
+                  {{ item.type ? t(`equipmentItems.types.${item.type.toLowerCase()}`) : '-' }}
                 </p>
               </div>
             </div>
@@ -177,7 +176,7 @@ const formatDate = (date) => {
             <div class="flex items-center gap-2 text-sm">
               <span class="text-gray-500 dark:text-gray-400">{{ t('equipmentItems.form.condition') }}:</span>
               <span :class="conditionColors[item.condition]">
-                {{ t(`equipmentItems.conditions.${item.condition.toLowerCase()}`) }}
+                {{ item.condition ? t(`equipmentItems.conditions.${item.condition.toLowerCase()}`) : '-' }}
               </span>
             </div>
 
@@ -190,9 +189,9 @@ const formatDate = (date) => {
           </div>
 
           <!-- Descripción -->
-          <div v-if="item.description" class="mb-4">
+          <div v-if="item.notes" class="mb-4">
             <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-              {{ item.description }}
+              {{ item.notes }}
             </p>
           </div>
 

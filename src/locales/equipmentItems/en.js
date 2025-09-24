@@ -5,8 +5,13 @@ export default {
   editItem: 'Edit Equipment',
   noItems: 'No equipment registered',
   noItemsOfType: 'No equipment of this type',
+  noItemsDescription: 'Start by adding your first equipment to keep a complete record of your FPV tools.',
   addFirst: 'Add {type}',
+  addFirstItem: 'Add first equipment',
   addFirstDescription: 'Start by adding your first equipment to keep a complete record.',
+  showing: 'Showing {count} of {total} items',
+  noResults: 'No results found',
+  noResultsDescription: 'Try adjusting your search filters or add new equipment.',
   selectType: 'Select equipment type',
   addFavorite: 'Add to favorites',
   removeFavorite: 'Remove from favorites',
@@ -16,6 +21,20 @@ export default {
   confirmDelete: 'Confirm deletion',
   deleteWarning: 'Are you sure you want to delete "{name}"? This action cannot be undone.',
   loginDescription: 'Log in to manage your FPV equipment and tools.',
+  statistics: 'Statistics',
+  total: 'Total',
+  loadingStats: 'Loading statistics...',
+  
+  stats: {
+    total: 'Total Items',
+    byStatus: 'By Status',
+    count: 'Count',
+    percentage: 'Percentage'
+  },
+  
+  search: {
+    placeholder: 'Search equipment...'
+  },
   
   types: {
     all: 'All',
@@ -30,7 +49,18 @@ export default {
   conditions: {
     new: 'New',
     used: 'Used',
-    refurbished: 'Refurbished'
+    refurbished: 'Refurbished',
+    likeNew: 'Like New',
+    good: 'Good',
+    fair: 'Fair',
+    poor: 'Poor'
+  },
+  
+  status: {
+    active: 'Active',
+    archived: 'Archived',
+    sold: 'Sold', 
+    lost: 'Lost'
   },
   
   form: {
@@ -40,6 +70,7 @@ export default {
     model: 'Model',
     brandModel: 'Brand and Model',
     condition: 'Condition',
+    status: 'Status',
     price: 'Price',
     currency: 'Currency',
     purchaseDate: 'Purchase date',
@@ -50,7 +81,19 @@ export default {
     sourceUrl: 'Purchase URL',
     description: 'Description',
     notes: 'Notes',
-    
+    image: 'Image',
+    favorite: 'Favorite',
+    productLink: 'Product Link',
+    basicInfo: 'Basic Information',
+    multimedia: 'Links and Multimedia',
+    options: 'Additional Options',
+    selectEquipmentType: 'What type of equipment do you want to add?',
+    selectEquipmentTypeDescription: 'Select the equipment type to continue',
+    imagePreview: 'Image preview',
+    steps: {
+      selectType: 'Select Type',
+      fillDetails: 'Fill Details'
+    },
     placeholders: {
       name: 'Ex: DJI FPV Drone',
       brand: 'Ex: DJI',
@@ -60,7 +103,10 @@ export default {
       location: 'Ex: Toolbox, Shelf A',
       sourceUrl: 'https://...',
       description: 'Describe the main features...',
-      notes: 'Additional notes, condition, observations...'
+      notes: 'Additional notes, condition, observations...',
+      imageUrl: 'Product image URL',
+      productLink: 'https://store.com/product',
+      image: 'Product image URL'
     },
     
     typePlaceholder: 'Select a type'

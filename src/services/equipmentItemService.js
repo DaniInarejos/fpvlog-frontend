@@ -29,13 +29,12 @@ const equipmentItemService = {
   },
 
   /**
-   * Crear un nuevo equipmentItem para un usuario específico
-   * @param {string} userId - ID del usuario
+   * Crear un nuevo equipmentItem
    * @param {Object} equipmentItemData - Datos del equipmentItem
    * @returns {Promise} Response con el equipmentItem creado
    */
-  createUserEquipmentItem(userId, equipmentItemData) {
-    return api.post(`/users/${userId}/equipment-items`, equipmentItemData)
+  createEquipmentItem(equipmentItemData) {
+    return api.post('/equipment-items', equipmentItemData)
   },
 
   /**
@@ -45,7 +44,7 @@ const equipmentItemService = {
    * @returns {Promise} Response con el equipmentItem actualizado
    */
   updateEquipmentItem(id, equipmentItemData) {
-    return api.put(`/equipment-items/${id}`, equipmentItemData)
+    return api.patch(`/equipment-items/${id}`, equipmentItemData)
   },
 
   /**
@@ -68,14 +67,58 @@ const equipmentItemService = {
   },
 
   /**
-   * Buscar equipmentItems por filtros
+   * Buscar equipmentItems de un usuario con filtros
    * @param {string} userId - ID del usuario
    * @param {Object} filters - Filtros de búsqueda
    * @returns {Promise} Response con equipmentItems filtrados
    */
   searchUserEquipmentItems(userId, filters) {
-    const params = new URLSearchParams(filters)
-    return api.get(`/users/${userId}/equipment-items/search?${params}`)
+    return api.get(`/users/${userId}/equipment-items/search`, { params: filters })
+  },
+
+  /**
+   * Calcular estadísticas de equipamiento desde los datos
+   * @param {Array} equipmentItems - Array de equipmentItems
+   * @returns {Object} Estadísticas calculadas
+   */
+  calculateStats(equipmentItems) {
+    if (!Array.isArray(equipmentItems)) {
+      return { 
+        total: 0, 
+        byType: {},
+        byStatus: {
+          active: 0,
+          archived: 0,
+          sold: 0,
+          lost: 0
+        }
+      }
+    }
+
+    const stats = {
+      total: equipmentItems.length,
+      byType: {},
+      byStatus: {
+        active: 0,
+        archived: 0,
+        sold: 0,
+        lost: 0
+      }
+    }
+
+    // Contar por tipo y estado
+    equipmentItems.forEach(item => {
+      const type = item.type || 'UNKNOWN'
+      const status = item.status || 'active'
+      
+      stats.byType[type] = (stats.byType[type] || 0) + 1
+      
+      if (stats.byStatus.hasOwnProperty(status)) {
+        stats.byStatus[status]++
+      }
+    })
+
+    return stats
   }
 }
 

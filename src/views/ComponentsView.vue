@@ -187,6 +187,27 @@ const handleTabChange = (tabId) => {
   selectedType.value = tabId
 }
 
+// Función para manejar toggle de favoritos
+const handleToggleFavorite = async (component) => {
+  if (!userStore.isAuthenticated) {
+    openLoginModal()
+    return
+  }
+  
+  try {
+    await componentService.toggleFavorite(userStore.user._id, component._id)
+    // Actualizar el estado local del componente
+    const componentType = component.type
+    const componentIndex = components.value[componentType].findIndex(c => c._id === component._id)
+    if (componentIndex !== -1) {
+      components.value[componentType][componentIndex].favorite = !components.value[componentType][componentIndex].favorite
+    }
+  } catch (error) {
+    console.error('Error toggling favorite:', error)
+    errors.value.favorite = error.message
+  }
+}
+
 onMounted(() => {
   if (!userStore.isAuthenticated) {
     openLoginModal()
@@ -235,6 +256,7 @@ onMounted(() => {
         @edit="handleEdit"
         @delete="openDeleteModal"
         @showInfo="handleShowComponentInfo"
+        @toggleFavorite="handleToggleFavorite"
       />
     </div>
 

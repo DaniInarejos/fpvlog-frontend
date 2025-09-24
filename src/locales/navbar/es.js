@@ -15,6 +15,7 @@ export default {
       following: 'Seguidos',
       feed: 'Novedades',
       components: 'Componentes',
+      equipmentItems: 'Equipamiento',
       spots: 'Spots',
       groups: 'Grupos'
     }

@@ -6,6 +6,7 @@ import about from './about'
 import dashboard from './dashboard'
 import common from './common'
 import components from './components'
+import equipmentItems from './equipmentItems'
 import drones from './drones'
 import feed from './feed'
 import flights from './flights'
@@ -16,6 +17,7 @@ import spots from './spots'
 import groups from './groups'
 import landing from './landing'
 import restorePassword from './restorePassword'
+import auth from './auth'
 
 export const loadViewTranslations = async (viewName, lang) => {
   const messages = await import(`./${viewName}/${lang}.js`)
@@ -37,6 +39,7 @@ export default {
       dashboard: dashboard.en,
       common: common.en,
       components: components.en,
+      equipmentItems: equipmentItems.en,
       drones: drones.en,
       feed: feed.en,
       flights: flights.en,
@@ -46,7 +49,8 @@ export default {
       spots: spots.en,
       groups: groups.en,
       landing: landing.en,
-      restorePassword: restorePassword.en
+      restorePassword: restorePassword.en,
+      auth: auth.en
     },
     es: { 
       login: login.es,
@@ -57,6 +61,7 @@ export default {
       dashboard: dashboard.es,
       common: common.es,
       components: components.es,
+      equipmentItems: equipmentItems.es,
       drones: drones.es,
       feed: feed.es,
       flights: flights.es,
@@ -66,7 +71,8 @@ export default {
       spots: spots.es,
       groups: groups.es,
       landing: landing.es,
-      restorePassword: restorePassword.es
+      restorePassword: restorePassword.es,
+      auth: auth.es
     }
   }
 }

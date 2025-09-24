@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '../../stores/user'
 import componentService from '../../services/componentService'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const props = defineProps({
   modelValue: {
@@ -48,7 +50,7 @@ const fetchComponents = async () => {
   isLoading.value = true
   loadError.value = ''
   try {
-    const response = await componentService.getComponents()
+    const response = await componentService.getUserComponents(userStore.user._id)
     components.value = response.filter(comp => comp.type === props.type)
   } catch (error) {
     loadError.value = error.message

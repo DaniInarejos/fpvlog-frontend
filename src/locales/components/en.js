@@ -5,6 +5,9 @@ export default {
   noComponentsOfType: 'Don\'t havent component of this type.',
   addFirst: 'Add {type}',
   selectType: 'Select component type',
+  addFavorite: 'Add to favorites',
+  removeFavorite: 'Remove from favorites',
+  viewProduct: 'View product',
   form: {
     name: 'Name',
     brand: 'Brand',

@@ -144,11 +144,22 @@ const routes = [
   {
     path: '/components',
     name: 'components',
-    component: () => import('../views/ComponentsView.vue'), 
+    component: () => import('../views/ComponentsView.vue'),
     meta: {
       requiresAuth: true,
       title: 'Componentes',
       description: 'Explora y gestiona componentes para tus drones FPV',
+      ogImage: '/images/logoSkySphere.png'
+    }
+  },
+  {
+    path: '/equipment-items',
+    name: 'equipment-items',
+    component: () => import('../views/EquipmentItemsView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'Equipamiento',
+      description: 'Gestiona tu equipamiento y accesorios FPV',
       ogImage: '/images/logoSkySphere.png'
     }
   },

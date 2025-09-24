@@ -72,7 +72,7 @@ const handleCreateComponent = async (typeComponent, inputValue) => {
       createdBy: userStore.user._id
     }
     
-    const createdComponent = await componentService.createComponent(newComponent)
+    const createdComponent = await componentService.createUserComponent(userStore.user._id, newComponent)
     
     if (createdComponent) {
       components.value[typeComponent] = [...components.value[typeComponent], createdComponent]

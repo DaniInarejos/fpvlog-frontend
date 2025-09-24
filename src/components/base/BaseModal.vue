@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, ref } from 'vue'
 import BaseButton from './BaseButton.vue'
 
 const props = defineProps({
@@ -51,15 +51,42 @@ const props = defineProps({
   closeOnClickOutside: {
     type: Boolean,
     default: true
+  },
+  requireDoubleClick: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['close', 'confirm', 'accept'])
 
+// Estado para manejar el doble click
+const clickCount = ref(0)
+const clickTimer = ref(null)
+
 // Función para manejar el clic en el overlay
 const handleOverlayClick = (event) => {
-  // Solo cerrar si se hace clic directamente en el overlay (no en el contenido del modal)
-  if (props.closeOnClickOutside && event.target === event.currentTarget) {
+  // Solo procesar si se hace clic directamente en el overlay (no en el contenido del modal)
+  if (!props.closeOnClickOutside || event.target !== event.currentTarget) {
+    return
+  }
+
+  if (props.requireDoubleClick) {
+    clickCount.value++
+    
+    if (clickCount.value === 1) {
+      // Primer click - iniciar timer
+      clickTimer.value = setTimeout(() => {
+        clickCount.value = 0
+      }, 300) // 300ms para detectar doble click
+    } else if (clickCount.value === 2) {
+      // Segundo click - cerrar modal
+      clearTimeout(clickTimer.value)
+      clickCount.value = 0
+      emit('close')
+    }
+  } else {
+    // Comportamiento normal - cerrar con un click
     emit('close')
   }
 }
@@ -80,7 +107,7 @@ const handleOverlayClick = (event) => {
       @click="handleOverlayClick"
     >
       <!-- Backdrop -->
-      <div class="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity" />
+      <div class="fixed inset-0 bg-black/60 backdrop-blur-md transition-all duration-300" />
       
       <!-- Modal container -->
       <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -94,10 +121,10 @@ const handleOverlayClick = (event) => {
         >
           <div
             v-if="show"
-            class="relative transform overflow-hidden rounded-lg bg-card border border-border text-left shadow-xl transition-all sm:my-8 w-full"
+            class="relative transform overflow-hidden rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 text-left shadow-2xl shadow-black/25 transition-all sm:my-8 w-full ring-1 ring-white/10"
             :class="{
               'sm:max-w-lg sm:p-6 px-4 pb-4 pt-5': size === 'default',
-              'sm:max-w-[95%] sm:p-8 px-6 pb-6 pt-6': size === 'full'
+              'sm:max-w-4xl sm:max-h-[85vh] sm:p-8 px-6 pb-6 pt-6 overflow-y-auto': size === 'full'
             }"
             @click.stop
           >

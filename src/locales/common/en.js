@@ -1,41 +1,66 @@
 export default {
-  loading: 'Loading...',
-  error: 'An error has occurred',
-  success: 'Operation successful',
+  // Common actions
   save: 'Save',
   cancel: 'Cancel',
   delete: 'Delete',
   edit: 'Edit',
-  select: 'Select',
-  likes: 'Likes',
-  filters: 'Filters',
-  info: 'Info',
-  today: 'Today',
-  yesterday: 'Yesterday',
-  daysAgo: '{days} days ago',
   create: 'Create',
   update: 'Update',
-  unknown: 'Unknown',
+  add: 'Add',
+  remove: 'Remove',
   close: 'Close',
-  submitting: 'Submitting...',
-  sending: 'Sending...',
-  sortBy: 'Sort by',
-  newest: 'Newest',
-  oldest: 'Oldest',
-  views: 'Views',
-  viewSource: 'View Source',
+  open: 'Open',
+  view: 'View',
+  search: 'Search',
+  filter: 'Filter',
+  sort: 'Sort',
+  clear: 'Clear',
+  reset: 'Reset',
+  submit: 'Submit',
+  confirm: 'Confirm',
+  back: 'Back',
+  next: 'Next',
+  
+  // States
+  loading: 'Loading...',
+  saving: 'Saving...',
+  deleting: 'Deleting...',
+  success: 'Success',
+  error: 'Error',
+  warning: 'Warning',
+  info: 'Information',
+  
+  // Common messages
+  noData: 'No data available',
+  noResults: 'No results found',
+  confirmDelete: 'Are you sure you want to delete this item?',
+  unsavedChanges: 'You have unsaved changes. Are you sure you want to leave?',
+  
+  // Validation
+  required: 'This field is required',
+  invalid: 'The entered value is not valid',
+  tooShort: 'The value is too short',
+  tooLong: 'The value is too long',
+  
+  // Time
+  today: 'Today',
+  yesterday: 'Yesterday',
+  tomorrow: 'Tomorrow',
+  now: 'Now',
+  
+  // Navigation
+  home: 'Home',
+  profile: 'Profile',
+  settings: 'Settings',
+  help: 'Help',
+  about: 'About',
+  
+  // Others
+  yes: 'Yes',
+  no: 'No',
+  ok: 'OK',
+  optional: 'Optional',
+  required_field: 'Required field',
   welcome: 'Welcome',
-  guestMode: 'Guest mode',
-  user: 'User',
-  error: {
-    generic: 'An error occurred. Please try again.'
-  },
-  pagination: {
-    showing: 'Showing',
-    to: 'to', 
-    of: 'of',
-    results: 'results'
-  },
-  previous: 'Previous',
-  next: 'Next'
+  guestMode: 'Guest mode'
 }

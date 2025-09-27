@@ -7,12 +7,12 @@ export default {
       },
       stats: {
         drones: 'Drones',
-        flights: 'Vuelos',
+        flights: 'Sesiones & Media',
         followers: 'Seguidores',
         following: 'Siguiendo'
       },
       flights: {
-        title: 'Vuelos',
+        title: 'Mis Sesiones & Media',
         noFlights: 'No hay vuelos ',
         duration: 'min',
         location: 'Ubicación'

@@ -6,10 +6,9 @@ import { useEquipmentItemStore } from '../stores/equipmentItem'
 import { useRouter } from 'vue-router'
 import EquipmentItemForm from '../components/equipmentItem/EquipmentItemForm.vue'
 import EquipmentItemInfo from '../components/equipmentItem/EquipmentItemInfo.vue'
-import EquipmentTypeFilter from '../components/equipmentItem/EquipmentTypeFilter.vue'
-import EquipmentHeader from '../components/equipmentItem/EquipmentHeader.vue'
-import EquipmentCard from '../components/equipmentItem/EquipmentCard.vue'
-// import EquipmentStats from '../components/equipmentItem/EquipmentStats.vue'
+import EquipmentPageHeader from '../components/equipmentItem/EquipmentPageHeader.vue'
+import EquipmentFilters from '../components/equipmentItem/EquipmentFilters.vue'
+import EquipmentCardGlass from '../components/equipmentItem/EquipmentCardGlass.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 import { EQUIPMENT_TYPES } from '../types/equipmentItem'
 
@@ -158,24 +157,20 @@ onMounted(async () => {
 <template>
   <div class="container mx-auto px-4 py-8">
     <!-- Header -->
-    <EquipmentHeader
+    <EquipmentPageHeader
+      :title="t('equipmentItems.title')"
+      :description="t('equipmentItems.description')"
       :is-authenticated="isAuthenticated"
       :selected-type="selectedType"
-      :equipment-items="equipmentItems"
+      color="blue"
       @create="handleCreateItem"
       @login="handleLogin"
     />
 
     <!-- Filtros y búsqueda -->
     <div class="mb-6 space-y-4 mt-8">
-      <!-- Estadísticas eliminadas -->
-      <!-- <EquipmentStats 
-        v-if="isAuthenticated && allItems.length > 0"
-        :stats="equipmentStats"
-      /> -->
-      
       <!-- Filtro de tipos -->
-      <EquipmentTypeFilter
+      <EquipmentFilters
         :selected-type="selectedType"
         @type-change="handleTypeChange"
       />
@@ -183,8 +178,8 @@ onMounted(async () => {
 
     <!-- Lista de equipos -->
     <div v-if="isAuthenticated" class="space-y-4">
-      <!-- Contador de filtros -->
-      <div class="text-sm text-gray-600 dark:text-gray-400">
+      <!-- Contador de filtros con glassmorphism -->
+      <div class="text-sm text-gray-700 dark:text-gray-300 backdrop-blur-sm bg-white/20 dark:bg-gray-900/20 rounded-lg px-4 py-2 border border-white/30 dark:border-gray-700/30 shadow-sm">
         {{ t('equipmentItems.showing', { 
           count: filteredAndSortedItems.length,
           total: allItems.length 
@@ -193,11 +188,12 @@ onMounted(async () => {
 
       <!-- Grid de equipos -->
       <div v-if="filteredAndSortedItems.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <EquipmentCard
+        <EquipmentCardGlass
           v-for="item in filteredAndSortedItems"
           :key="item._id"
           :item="item"
           :is-authenticated="isAuthenticated"
+          color="blue"
           @edit="handleEditItem"
           @delete="handleDeleteItem"
           @toggle-favorite="handleToggleFavorite"
@@ -205,41 +201,45 @@ onMounted(async () => {
         />
       </div>
 
-      <!-- Estado vacío -->
+      <!-- Estado vacío con glassmorphism -->
       <div v-else class="text-center py-12">
-        <div class="text-6xl mb-4">📦</div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-          {{ t('equipmentItems.noItems') }}
-        </h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-          {{ t('equipmentItems.noItemsDescription') }}
-        </p>
-        <button
-          @click="handleCreateItem()"
-          class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <span class="mr-2">➕</span>
-          {{ t('equipmentItems.addFirstItem') }}
-        </button>
+        <div class="backdrop-blur-md bg-white/20 dark:bg-gray-900/20 rounded-2xl p-8 border border-white/30 dark:border-gray-700/30 shadow-xl">
+          <div class="text-6xl mb-4">📦</div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            {{ t('equipmentItems.noItems') }}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ t('equipmentItems.noItemsDescription') }}
+          </p>
+          <button
+            @click="handleCreateItem()"
+            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors backdrop-blur-sm border border-blue-500/30 shadow-lg"
+          >
+            <span class="mr-2">➕</span>
+            {{ t('equipmentItems.addFirstItem') }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Estado no autenticado -->
+    <!-- Estado no autenticado con glassmorphism -->
     <div v-else class="text-center py-12">
-      <div class="text-6xl mb-4">🔐</div>
-      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        {{ t('auth.loginRequired') }}
-      </h3>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">
-        {{ t('equipmentItems.loginDescription') }}
-      </p>
-      <button
-        @click="handleLogin"
-        class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        <span class="mr-2">🔐</span>
-        {{ t('auth.login') }}
-      </button>
+      <div class="backdrop-blur-md bg-white/20 dark:bg-gray-900/20 rounded-2xl p-8 border border-white/30 dark:border-gray-700/30 shadow-xl">
+        <div class="text-6xl mb-4">🔐</div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+          {{ t('auth.loginRequired') }}
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          {{ t('equipmentItems.loginDescription') }}
+        </p>
+        <button
+          @click="handleLogin"
+          class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors backdrop-blur-sm border border-blue-500/30 shadow-lg"
+        >
+          <span class="mr-2">🔐</span>
+          {{ t('auth.login') }}
+        </button>
+      </div>
     </div>
 
     <!-- Modal para formulario -->

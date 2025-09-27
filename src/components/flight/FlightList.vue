@@ -1,7 +1,7 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import BaseCard from '../base/BaseCard.vue'
+import CardGlassBase from '../base/CardGlassBase.vue'
 import BaseButton from '../base/BaseButton.vue'
 
 const { t } = useI18n()
@@ -19,13 +19,45 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  activeFilter: {
+    type: String,
+    default: 'ALL'
+  },
   showCreateButton: {
     type: Boolean,
     default: true
+  },
+  isAuthenticated: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['edit', 'delete', 'showDroneInfo', 'showFlightInfo', 'showSpotInfo', 'create'])
+const emit = defineEmits(['edit', 'delete', 'showDroneInfo', 'showFlightInfo', 'showSpotInfo', 'create', 'view'])
+
+// Vuelos filtrados basados en el filtro activo recibido como prop
+const filteredFlights = computed(() => {
+  if (props.activeFilter === 'ALL') {
+    return props.flights
+  }
+  
+  return props.flights.filter(flight => {
+    switch (props.activeFilter) {
+      case 'PUBLIC':
+        return flight.visibility === 'PUBLIC' || flight.visibility === 'public'
+      case 'FOLLOWERS':
+        return flight.visibility === 'FOLLOWERS' || flight.visibility === 'followers'
+      case 'PRIVATE':
+        return flight.visibility === 'PRIVATE' || flight.visibility === 'private'
+      case 'WITH_VIDEO':
+        return flight.videoUrl && flight.videoUrl.trim() !== ''
+      case 'FAVORITES':
+        return flight.favorite
+      default:
+        return true
+    }
+  })
+})
 
 const formatDate = (date) => {
   if (!date) return ''
@@ -43,17 +75,69 @@ const formatDuration = (duration) => {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
+// Función para obtener el spot de un vuelo
+const getSpot = (flight) => {
+  return props.spots.find(s => s._id === flight.spotId)
+}
+
+// Función para obtener thumbnail de YouTube
 const getYouTubeThumbnail = (url) => {
   if (!url) return null
-  // Soporte para videos normales y shorts
   const videoId = url.match(/(?:youtube\.com\/(?:shorts\/|(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))|youtu\.be\/)([^"&?\/ ]{11})/)?.[1]
   return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null
 }
 
-const getSpotName = (spotId) => {
-  if (!spotId) return t('flights.details.notSpecified')
-  const spot = props.spots.find(s => s._id === spotId)
-  return spot ? spot.name : t('flights.details.notSpecified')
+// Función para extraer el valor de visibility (maneja tanto string como objeto)
+const getVisibilityValue = (visibility) => {
+  if (!visibility) return null
+  
+  // Si es un string, lo devolvemos directamente
+  if (typeof visibility === 'string') {
+    return visibility
+  }
+  
+  // Si es un objeto, extraemos el valor basado en las propiedades
+  if (typeof visibility === 'object') {
+    if (visibility.isPublic || visibility.public) {
+      return 'public'
+    } else if (visibility.isVisibleToFollowers || visibility.visibleToFollowersOnly) {
+      return 'followers'
+    } else {
+      return 'private'
+    }
+  }
+  
+  return null
+}
+
+// Función para obtener el icono de visibilidad
+const getVisibilityIcon = (visibility) => {
+  const value = getVisibilityValue(visibility)
+  switch (value) {
+    case 'public':
+      return '🌍'
+    case 'followers':
+      return '👥'
+    case 'private':
+      return '🔒'
+    default:
+      return '👁️'
+  }
+}
+
+// Función para obtener la imagen del vuelo
+const getFlightImage = (flight) => {
+  // Prioridad 1: Imagen subida (posterUrl)
+  if (flight.posterUrl) {
+    return flight.posterUrl
+  }
+  
+  // Prioridad 2: Video thumbnail de YouTube
+  if (flight.videoUrl && getYouTubeThumbnail(flight.videoUrl)) {
+    return getYouTubeThumbnail(flight.videoUrl)
+  }
+  
+  return null
 }
 
 const handleCreate = () => {
@@ -63,113 +147,48 @@ const handleCreate = () => {
 
 <template>
   <div>
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-foreground">{{ $t('flights.title') }}</h1>
-      
-      <BaseButton
-        v-if="showCreateButton"
-        @click="handleCreate"
-      >
-        {{ $t('flights.addFlight') }}
-      </BaseButton>
-    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <BaseCard v-for="flight in flights" :key="flight._id" class="overflow-hidden">
-        <!-- Resto del contenido de la tarjeta sin cambios -->
-        <div class="relative aspect-[4/3] overflow-hidden rounded-t-lg">
-          <template v-if="flight.urlVideo">
-            <img
-              :src="getYouTubeThumbnail(flight.urlVideo)"
-              :alt="flight.title"
-              class="w-full h-full object-cover"
-            />
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
-              </svg>
-            </div>
-          </template>
-          <img
-            v-else
-            :src="flight.image || '/images/placeholder.png'"
-            :alt="flight.title"
-            class="w-full h-full object-cover"
-          />
-        </div>
-        <div class="p-4">
-          <div class="flex justify-between items-start mb-2">
-            <div>
-              <h3 
-                class="text-lg font-semibold text-foreground hover:text-primary-600 cursor-pointer"
-                @click="emit('showFlightInfo', flight)"
-              >
-                {{ flight.title }}
-              </h3>
-              <p class="text-sm text-muted-foreground">{{ formatDate(flight.date) }}</p>
-            </div>
+      <CardGlassBase 
+        v-for="flight in filteredFlights" 
+        :key="flight._id"
+        :title="flight.title || t('flights.untitled')"
+        :subtitle="formatDate(flight.date)"
+        :image="getFlightImage(flight)"
+        fallback-icon="✈️"
+        :is-authenticated="isAuthenticated"
+        edit-icon="✏️"
+        delete-icon="🗑️"
+        edit-button-color="green"
+        delete-button-color="red"
+        @edit="emit('edit', flight)"
+        @delete="emit('delete', flight)"
+        @view="emit('view', flight)"
+      >
+        <template #info-icons>
+          <!-- Icono de visibilidad -->
+          <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <span class="text-lg">{{ getVisibilityIcon(flight.visibility) }}</span>
           </div>
 
-          <div class="text-sm text-muted-foreground mb-4">
-            <p class="mb-1 flex items-center justify-between">
-              <span>
-                <span class="font-medium">{{ t('flights.details.drone') }}:</span>
-                <span 
-                  v-if="flight.droneId"
-                  class="hover:text-primary-600 cursor-pointer"
-                  @click="emit('showDroneInfo', flight.droneId)"
-                >
-                  {{ drones.find(d => d._id === flight.droneId)?.name }}
-                </span>
-                <span v-else>{{ t('flights.details.notSpecified') }}</span>
-              </span>
-            </p>
-            <p class="mb-1">
-              <span class="font-medium">{{ t('flights.details.location') }}:</span>
-              <span 
-                v-if="flight.spotId"
-                class="hover:text-primary-600 cursor-pointer"
-                @click="emit('showSpotInfo', flight.spotId)"
-              >
-                {{ getSpotName(flight.spotId) }}
-              </span>
-              <span v-else>{{ t('flights.details.notSpecified') }}</span>
-            </p>
-            <div class="flex items-center gap-4">
-              <div class="flex items-center gap-1">
-                <span class="font-medium">{{ formatDuration(flight.duration) }}</span>
-                <span class="text-muted-foreground/70">{{ t('flights.details.duration') }}</span>
-              </div>
-              <div class="flex items-center gap-1">
-                <span class="font-medium">{{ flight.batteryUsed }}</span>
-                <span class="text-muted-foreground/70">{{ t('flights.details.batteries') }}</span>
-              </div>
-            </div>
+          <!-- Icono de spot -->
+          <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <span class="text-lg" :class="getSpot(flight) ? 'opacity-100' : 'opacity-40'">📍</span>
           </div>
-          <div class="flex items-center gap-1 text-muted-foreground/80 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+
+          <!-- Icono de destacado -->
+          <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <span class="text-lg" :class="flight.featured ? 'text-yellow-400' : 'opacity-40'">⭐</span>
+          </div>
+
+          <!-- Icono de video si tiene YouTube -->
+          <div v-if="flight.videoUrl && getYouTubeThumbnail(flight.videoUrl)" class="flex items-center justify-center w-8 h-8 rounded-full bg-red-600/80 backdrop-blur-sm border border-white/30 shadow-lg">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
             </svg>
-            {{flight.likesCount || 0 }}
           </div>
-          <div class="flex justify-end space-x-2">
-            <BaseButton
-              size="sm"
-              variant="secondary"
-              @click="emit('edit', flight)"
-            >
-              {{ t('common.edit') }}
-            </BaseButton>
-            <BaseButton
-              size="sm"
-              variant="danger"
-              @click="emit('delete', flight)"
-            >
-              {{ t('common.delete') }}
-            </BaseButton>
-          </div>
-        </div>
-      </BaseCard>
+        </template>
+      </CardGlassBase>
     </div>
   </div>
 </template>

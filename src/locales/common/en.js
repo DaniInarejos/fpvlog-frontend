@@ -20,6 +20,7 @@ export default {
   confirm: 'Confirm',
   back: 'Back',
   next: 'Next',
+  select: 'Select',
   
   // States
   loading: 'Loading...',
@@ -47,20 +48,28 @@ export default {
   yesterday: 'Yesterday',
   tomorrow: 'Tomorrow',
   now: 'Now',
+  createdAt: 'Created on',
+  updatedAt: 'Updated on',
   
   // Navigation
   home: 'Home',
   profile: 'Profile',
   settings: 'Settings',
-  help: 'Help',
-  about: 'About',
+  logout: 'Logout',
+  
+  // Pagination
+  page: 'Page',
+  of: 'of',
+  previous: 'Previous',
+  first: 'First',
+  last: 'Last',
   
   // Others
   yes: 'Yes',
   no: 'No',
   ok: 'OK',
-  optional: 'Optional',
-  required_field: 'Required field',
+  or: 'or',
+  and: 'and',
   welcome: 'Welcome',
   guestMode: 'Guest mode'
 }

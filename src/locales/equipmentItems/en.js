@@ -90,6 +90,7 @@ export default {
     selectEquipmentType: 'What type of equipment do you want to add?',
     selectEquipmentTypeDescription: 'Select the equipment type to continue',
     imagePreview: 'Image preview',
+    fillDetails: 'Fill Details',
     steps: {
       selectType: 'Select Type',
       fillDetails: 'Fill Details'

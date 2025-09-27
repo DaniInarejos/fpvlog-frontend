@@ -1,13 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 import BaseModal from '../components/base/BaseModal.vue'
 import LoginModal from '../components/common/LoginModal.vue'
 import flightService from '../services/flightService'
 import droneService from '../services/droneService'
 import spotService from '../services/spotService'
+import FlightPageHeader from '../components/flight/FlightPageHeader.vue'
+import FlightFilters from '../components/flight/FlightFilters.vue'
 import FlightList from '../components/flight/FlightList.vue'
 import FlightForm from '../components/flight/FlightForm.vue'
 import FlightInfo from '../components/flight/FlightInfo.vue'
@@ -16,7 +19,9 @@ import SpotInfo from '../components/spot/SpotInfo.vue'
 
 const userStore = useUserStore()
 const { t } = useI18n()
+const router = useRouter()
 const { showLoginModal, openLoginModal, closeLoginModal, handleLoginSuccess } = useGlobalLoginModal()
+
 const flights = ref([])
 const drones = ref([])
 const spots = ref([])
@@ -32,6 +37,23 @@ const showDroneInfo = ref(false)
 const selectedDroneInfo = ref(null)
 const showSpotInfo = ref(false)
 const selectedSpotInfo = ref(null)
+const selectedFilter = ref('ALL')
+
+const isAuthenticated = computed(() => userStore.isAuthenticated)
+
+const handleLogin = () => {
+  router.push('/login')
+}
+
+const handleCreateFlight = () => {
+  if (!isAuthenticated.value) {
+    handleLogin()
+    return
+  }
+  
+  selectedFlight.value = null
+  showForm.value = true
+}
 
 const handleShowFlightInfo = (flight) => {
   selectedFlightInfo.value = flight
@@ -137,11 +159,13 @@ const handleSaved = async () => {
   await fetchFlights()
 }
 
+const handleFilterChange = (filter) => {
+  selectedFilter.value = filter
+}
+
 onMounted(() => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
-    return
-  }
+  // Cargar datos independientemente del estado de autenticación
+  // Si no está autenticado, mostrará la interfaz de login manual
   fetchFlights()
   fetchDrones()
   fetchSpots()
@@ -150,32 +174,86 @@ onMounted(() => {
 
 <template>
   <div class="container mx-auto px-4 py-8">
-    <div v-if="!showForm">
+    <!-- Header -->
+    <FlightPageHeader
+      :title="t('flights.title')"
+      :description="t('flights.description')"
+      :is-authenticated="isAuthenticated"
+      color="purple"
+      @create="handleCreateFlight"
+      @login="handleLogin"
+    />
+
+    <!-- Filtros y búsqueda -->
+    <div class="mb-6 space-y-4 mt-8">
+      <!-- Filtro de tipos -->
+      <FlightFilters
+        :selected-filter="selectedFilter"
+        :flights="flights"
+        @filter-change="handleFilterChange"
+      />
+    </div>
+
+    <!-- Lista de vuelos -->
+    <div v-if="isAuthenticated" class="space-y-4">
       <FlightList
         :flights="flights"
         :drones="drones"
         :spots="spots"
-        :is-loading="isLoading"
-        :errors="errors"
+        :active-filter="selectedFilter"
+        :is-authenticated="isAuthenticated"
         @edit="handleEdit"
-        @create="() => { if (!userStore.isAuthenticated) { openLoginModal(); return; } showForm = true; }"
         @delete="openDeleteModal"
-        @showFlightInfo="handleShowFlightInfo"
-        @showDroneInfo="handleShowDroneInfo"
-        @showSpotInfo="handleShowSpotInfo"
+        @view="handleShowFlightInfo"
+        @show-drone-info="handleShowDroneInfo"
+        @show-spot-info="handleShowSpotInfo"
       />
     </div>
 
-    <div v-else>
-      <FlightForm
-        :flight="selectedFlight"
-        :drones="drones"
-        :spots="spots"
+    <!-- Estado no autenticado con glassmorphism -->
+    <div v-else class="text-center py-12">
+      <div class="backdrop-blur-md bg-white/20 dark:bg-gray-900/20 rounded-2xl p-8 border border-white/30 dark:border-gray-700/30 shadow-xl">
+        <div class="text-6xl mb-4">🔐</div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+          {{ t('auth.loginRequired') }}
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          {{ t('flights.loginDescription') }}
+        </p>
+        <button
+          @click="handleLogin"
+          class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors backdrop-blur-sm border border-purple-500/30 shadow-lg"
+        >
+          <span class="mr-2">🔐</span>
+          {{ t('auth.login') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal para formulario -->
+    <Teleport to="body">
+      <BaseModal
+        v-if="showForm"
+        :show="showForm"
+        :title="selectedFlight ? t('flights.editFlight') : t('flights.addFlight')"
+        :show-accept-button="false"
+        :show-cancel-button="false"
+        :show-close-button="true"
+        :require-double-click="true"
+        size="full"
         @close="handleClose"
-        @saved="handleSaved"
-      />
-    </div>
+      >
+        <FlightForm
+          :flight="selectedFlight"
+          :drones="drones"
+          :spots="spots"
+          @close="handleClose"
+          @saved="handleSaved"
+        />
+      </BaseModal>
+    </Teleport>
 
+    <!-- Modal de confirmación de eliminación -->
     <BaseModal
       :show="showDeleteModal"
       :title="t('flights.delete.title')"
@@ -186,9 +264,11 @@ onMounted(() => {
       @confirm="confirmDelete"
     >
       <p class="text-sm text-gray-500">
-        {{ t('flights.delete.confirmation', { title: flightToDelete?.title }) }}
+        {{ t('flights.delete.confirmation', { title: flightToDelete?.title || t('flights.untitled') }) }}
       </p>
     </BaseModal>
+
+    <!-- Modales de información -->
     <FlightInfo
       :flight="selectedFlightInfo"
       :spots="spots"

@@ -1,7 +1,6 @@
 export default {
       home: 'Inicio',
-      flights: 'Vuelos',
-      drones: 'Drones',
+      flights: 'Mis Sesiones & Media',
       profile: 'Perfil',
       dashboard: 'Panel de Control',
       logout: 'Cerrar Sesión',
@@ -9,13 +8,10 @@ export default {
       register: 'Registrarse',
       about: 'Acerca de',
       myData: 'Mis Datos',
-      droneBrands: 'Marcas de Drones',
-      droneTypes: 'Tipos de Drones',
       followers: 'Seguidores',
       following: 'Seguidos',
       feed: 'Novedades',
-      components: 'Componentes',
-      equipmentItems: 'Equipamiento',
-      spots: 'Spots',
+      equipmentItems: 'Mi Equipo',
+      spots: 'Mis Spots',
       groups: 'Grupos'
     }

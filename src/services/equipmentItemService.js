@@ -77,6 +77,20 @@ const equipmentItemService = {
   },
 
   /**
+   * Subir imagen para un equipmentItem
+   * @param {string} equipmentItemId - ID del equipmentItem
+   * @param {FormData} formData - FormData con la imagen
+   * @returns {Promise} Response con la imagen subida
+   */
+  uploadEquipmentItemImage(equipmentItemId, formData) {
+    return api.post(`/equipment-items/${equipmentItemId}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+
+  /**
    * Calcular estadísticas de equipamiento desde los datos
    * @param {Array} equipmentItems - Array de equipmentItems
    * @returns {Object} Estadísticas calculadas

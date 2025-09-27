@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import BaseCard from '../base/BaseCard.vue'
+import CardGlassBase from '../base/CardGlassBase.vue'
 import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
 import BaseModal from '../base/BaseModal.vue'
@@ -46,6 +46,74 @@ const typeIcons = {
   CHARGER: '🔌',
   OTHERS: '📋'
 }
+
+// Función para obtener las clases de color glassmorphism por tipo
+const getTypeColorClasses = (typeId) => {
+  const colorMap = {
+    DRONE: {
+      gradient: 'from-blue-400/20 to-blue-500/20',
+      selectedBg: 'bg-gradient-to-r from-blue-100/10 to-blue-200/10',
+      selectedRing: 'ring-blue-400/50',
+      indicator: 'from-blue-400/60 to-blue-500/60',
+      counter: 'from-blue-400/30 to-blue-500/30',
+      hover: 'hover:from-blue-300/25 hover:to-blue-400/25',
+      border: 'border-blue-400/30',
+      text: 'text-blue-700 dark:text-blue-300'
+    },
+    RADIO: {
+      gradient: 'from-green-400/20 to-green-500/20',
+      selectedBg: 'bg-gradient-to-r from-green-100/10 to-green-200/10',
+      selectedRing: 'ring-green-400/50',
+      indicator: 'from-green-400/60 to-green-500/60',
+      counter: 'from-green-400/30 to-green-500/30',
+      hover: 'hover:from-green-300/25 hover:to-green-400/25',
+      border: 'border-green-400/30',
+      text: 'text-green-700 dark:text-green-300'
+    },
+    GOGGLES: {
+      gradient: 'from-purple-400/20 to-purple-500/20',
+      selectedBg: 'bg-gradient-to-r from-purple-100/10 to-purple-200/10',
+      selectedRing: 'ring-purple-400/50',
+      indicator: 'from-purple-400/60 to-purple-500/60',
+      counter: 'from-purple-400/30 to-purple-500/30',
+      hover: 'hover:from-purple-300/25 hover:to-purple-400/25',
+      border: 'border-purple-400/30',
+      text: 'text-purple-700 dark:text-purple-300'
+    },
+    BATTERY: {
+      gradient: 'from-yellow-400/20 to-yellow-500/20',
+      selectedBg: 'bg-gradient-to-r from-yellow-100/10 to-yellow-200/10',
+      selectedRing: 'ring-yellow-400/50',
+      indicator: 'from-yellow-400/60 to-yellow-500/60',
+      counter: 'from-yellow-400/30 to-yellow-500/30',
+      hover: 'hover:from-yellow-300/25 hover:to-yellow-400/25',
+      border: 'border-yellow-400/30',
+      text: 'text-yellow-700 dark:text-yellow-300'
+    },
+    CHARGER: {
+      gradient: 'from-red-400/20 to-red-500/20',
+      selectedBg: 'bg-gradient-to-r from-red-100/10 to-red-200/10',
+      selectedRing: 'ring-red-400/50',
+      indicator: 'from-red-400/60 to-red-500/60',
+      counter: 'from-red-400/30 to-red-500/30',
+      hover: 'hover:from-red-300/25 hover:to-red-400/25',
+      border: 'border-red-400/30',
+      text: 'text-red-700 dark:text-red-300'
+    },
+    OTHERS: {
+      gradient: 'from-indigo-400/20 to-indigo-500/20',
+      selectedBg: 'bg-gradient-to-r from-indigo-100/10 to-indigo-200/10',
+      selectedRing: 'ring-indigo-400/50',
+      indicator: 'from-indigo-400/60 to-indigo-500/60',
+      counter: 'from-indigo-400/30 to-indigo-500/30',
+      hover: 'hover:from-indigo-300/25 hover:to-indigo-400/25',
+      border: 'border-indigo-400/30',
+      text: 'text-indigo-700 dark:text-indigo-300'
+    }
+  }
+  return colorMap[typeId] || colorMap.OTHERS
+}
+
 const conditionColors = {
   NEW: 'text-green-600',
   USED: 'text-yellow-600',
@@ -122,124 +190,72 @@ const formatDate = (date) => {
 
     <!-- Equipment items grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <BaseCard
+      <CardGlassBase
         v-for="item in filteredEquipmentItems"
         :key="item._id"
-        class="relative overflow-hidden hover:shadow-lg transition-shadow duration-200"
+        :title="item.name"
+        :subtitle="item.type ? t(`equipmentItems.types.${item.type.toLowerCase()}`) : '-'"
+        :image="item.image"
+        :fallback-icon="typeIcons[item.type] || '📋'"
+        :is-authenticated="true"
+        edit-icon="✏️"
+        delete-icon="🗑️"
+        edit-button-color="green"
+        delete-button-color="red"
+        @edit="emit('edit', item)"
+        @delete="emit('delete', item)"
+        @view="emit('showInfo', item)"
       >
-        <div class="p-4">
-          <!-- Header con icono y botón de favorito -->
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span class="text-2xl">{{ typeIcons[item.type] }}</span>
-              <div>
-                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ item.name }}</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                  {{ item.type ? t(`equipmentItems.types.${item.type.toLowerCase()}`) : '-' }}
-                </p>
-              </div>
-            </div>
+        <template #info-icons>
+          <!-- Icono de condición -->
+          <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <div :class="[
+              'w-3 h-3 rounded-full',
+              item.condition === 'NEW' ? 'bg-green-500' : 
+              item.condition === 'USED' ? 'bg-yellow-500' : 
+              item.condition === 'REFURBISHED' ? 'bg-blue-500' : 'bg-gray-500'
+            ]"></div>
+          </div>
 
-            <!-- Botón de favorito -->
+          <!-- Icono de precio -->
+          <div v-if="item.price" class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <span class="text-sm font-bold text-green-600">€</span>
+          </div>
+
+          <!-- Icono de favorito -->
+          <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
             <button
-              @click="emit('toggleFavorite', item._id)"
+              @click.stop="emit('toggleFavorite', item._id)"
               :class="[
-                'p-1 rounded-full transition-colors',
+                'transition-colors',
                 item.favorite 
-                  ? 'text-yellow-500 hover:text-yellow-600' 
-                  : 'text-gray-400 hover:text-yellow-500'
+                  ? 'text-yellow-400' 
+                  : 'text-gray-400 opacity-60'
               ]"
               :title="item.favorite ? t('equipmentItems.removeFavorite') : t('equipmentItems.addFavorite')"
             >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             </button>
           </div>
 
-          <!-- Información del item -->
-          <div class="space-y-2 mb-4">
-            <div v-if="item.brand || item.model" class="flex items-center gap-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('equipmentItems.form.brand') }}:</span>
-              <span class="text-gray-900 dark:text-gray-100">
-                {{ [item.brand, item.model].filter(Boolean).join(' ') }}
-              </span>
-            </div>
-
-            <div v-if="item.price" class="flex items-center gap-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('equipmentItems.form.price') }}:</span>
-              <span class="text-gray-900 dark:text-gray-100 font-medium">
-                {{ formatPrice(item.price, item.currency) }}
-              </span>
-            </div>
-
-            <div class="flex items-center gap-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('equipmentItems.form.condition') }}:</span>
-              <span :class="conditionColors[item.condition]">
-                {{ item.condition ? t(`equipmentItems.conditions.${item.condition.toLowerCase()}`) : '-' }}
-              </span>
-            </div>
-
-            <div v-if="item.purchaseDate" class="flex items-center gap-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('equipmentItems.form.purchaseDate') }}:</span>
-              <span class="text-gray-900 dark:text-gray-100">
-                {{ formatDate(item.purchaseDate) }}
-              </span>
-            </div>
+          <!-- Icono de enlace externo si tiene sourceUrl -->
+          <div v-if="item.sourceUrl" class="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+            <a
+              :href="item.sourceUrl"
+              target="_blank"
+              @click.stop
+              class="text-blue-400 hover:text-blue-300 transition-colors"
+              :title="t('equipmentItems.viewProduct')"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
           </div>
-
-          <!-- Descripción -->
-          <div v-if="item.notes" class="mb-4">
-            <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-              {{ item.notes }}
-            </p>
-          </div>
-
-          <!-- Enlaces y acciones -->
-          <div class="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center gap-2">
-              <a
-                v-if="item.sourceUrl"
-                :href="item.sourceUrl"
-                target="_blank"
-                class="text-primary-600 hover:text-primary-700 text-sm font-medium"
-              >
-                {{ t('equipmentItems.viewProduct') }}
-              </a>
-            </div>
-
-            <div class="flex items-center gap-1">
-              <BaseButton
-                variant="ghost"
-                size="sm"
-                @click="emit('showInfo', item)"
-                :title="t('common.viewDetails')"
-              >
-                👁️
-              </BaseButton>
-              
-              <BaseButton
-                variant="ghost"
-                size="sm"
-                @click="emit('edit', item)"
-                :title="t('common.edit')"
-              >
-                ✏️
-              </BaseButton>
-              
-              <BaseButton
-                variant="ghost"
-                size="sm"
-                @click="emit('delete', item)"
-                :title="t('common.delete')"
-                class="text-red-600 hover:text-red-700"
-              >
-                🗑️
-              </BaseButton>
-            </div>
-          </div>
-        </div>
-      </BaseCard>
+        </template>
+      </CardGlassBase>
     </div>
 
     <!-- Modal selector de tipo -->
@@ -253,10 +269,26 @@ const formatDate = (date) => {
           v-for="type in equipmentTypes"
           :key="type._id"
           @click="handleTypeSelect(type._id)"
-          class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          :class="[
+            'group relative flex items-center gap-3 p-4 rounded-xl transition-all duration-300 backdrop-blur-sm',
+            'border shadow-lg transform hover:scale-105 hover:shadow-xl',
+            `bg-gradient-to-r ${getTypeColorClasses(type._id).gradient}`,
+            `${getTypeColorClasses(type._id).border}`,
+            `${getTypeColorClasses(type._id).hover}`,
+            `${getTypeColorClasses(type._id).text}`
+          ]"
         >
-          <span class="text-2xl">{{ typeIcons[type._id] }}</span>
-          <span class="text-sm font-medium">{{ type.name }}</span>
+          <!-- Efecto de brillo en hover -->
+          <div :class="[
+            'absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300',
+            `bg-gradient-to-r ${getTypeColorClasses(type._id).indicator}`
+          ]"></div>
+          
+          <!-- Contenido del botón -->
+          <div class="relative z-10 flex items-center gap-3">
+            <span class="text-2xl filter drop-shadow-sm">{{ typeIcons[type._id] }}</span>
+            <span class="text-sm font-semibold">{{ type.name }}</span>
+          </div>
         </button>
       </div>
     </BaseModal>

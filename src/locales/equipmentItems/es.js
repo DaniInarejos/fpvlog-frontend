@@ -92,6 +92,7 @@ export default {
     selectEquipmentType: '¿Qué tipo de equipamiento quieres añadir?',
     selectEquipmentTypeDescription: 'Selecciona el tipo de equipamiento para continuar',
     imagePreview: 'Vista previa de imagen',
+    fillDetails: 'Completa los detalles',
     steps: {
       selectType: 'Seleccionar Tipo',
       fillDetails: 'Completar Detalles'

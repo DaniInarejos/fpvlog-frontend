@@ -1,5 +1,6 @@
 export default {
   title: 'Mis Spots',
+  spot: 'Spot',
   addSpot: 'Añadir Spot',
   editSpot: 'Editar Spot',
   createSpot: 'Crear Spot',

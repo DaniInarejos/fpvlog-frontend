@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { useGlobalLoginModal } from '../composables/useGlobalLoginModal'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
@@ -24,11 +23,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('auth_token')
       
-      // Verificar si el mensaje de error es específicamente "No autorizado"
-      if (error.response?.data?.error === 'No autorizado') {
-        const { openLoginModal } = useGlobalLoginModal()
-        openLoginModal()
-      }
+      // No mostrar modal automáticamente - dejar que cada vista maneje la autenticación según su contexto
+      // Las vistas pueden decidir si mostrar el modal o simplemente mostrar contenido público
     }
     return Promise.reject(error)
   }

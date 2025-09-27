@@ -76,10 +76,8 @@ const handleClose = () => {
 }
 
 onMounted(() => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
-    return
-  }
+  // Cargar spots independientemente del estado de autenticación
+  // Los usuarios no autenticados pueden ver los spots pero no interactuar
   fetchSpots()
 })
 </script>

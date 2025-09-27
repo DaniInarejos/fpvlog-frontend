@@ -209,10 +209,8 @@ const handleToggleFavorite = async (component) => {
 }
 
 onMounted(() => {
-  if (!userStore.isAuthenticated) {
-    openLoginModal()
-    return
-  }
+  // Cargar componentes independientemente del estado de autenticación
+  // Los usuarios no autenticados pueden ver los componentes pero no interactuar
   fetchComponents()
 })
 </script>

@@ -87,7 +87,7 @@ const selectedOptionName = computed(() => {
 
 <template>
   <div class="form-group relative">
-    <label class="block text-sm font-medium text-gray-700 mb-2">
+    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">
       {{ label }}
     </label>
     

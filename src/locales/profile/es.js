@@ -2,7 +2,7 @@ export default {
   title: 'Mi Perfil',
   uploadPhoto: 'Cambiar foto',
   stats: {
-    flights: 'Vuelos',
+    flights: 'Sesiones & Media',
     followers: 'Seguidores',
     following: 'Siguiendo'
   },

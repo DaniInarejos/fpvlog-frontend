@@ -74,19 +74,8 @@ const routes = [
     component: () => import('../views/FlightView.vue'), 
     meta: {
       requiresAuth: true,
-      title: 'Vuelos',
+      title: 'Sesiones & Media',
       description: 'Explora y gestiona tus vuelos de drones FPV',
-      ogImage: '/images/logoSkySphere.png'
-    }
-  },
-  {
-    path: '/drones',
-    name: 'drones',
-    component: () => import('../views/DroneView.vue'), 
-    meta: {
-      requiresAuth: true,
-      title: 'Mis Drones',
-      description: 'Gestiona tu colección de drones FPV',
       ogImage: '/images/logoSkySphere.png'
     }
   },

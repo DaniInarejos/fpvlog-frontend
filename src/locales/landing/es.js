@@ -20,7 +20,7 @@ export default {
         description: 'Únete a una comunidad apasionada de pilotos FPV de todo el mundo'
       },
       tracking: {
-        title: 'Registra tus Vuelos',
+        title: 'Registra tus Videos o Sesiones',
         description: 'Documenta cada vuelo con ubicación, duración y experiencias únicas'
       },
       spots: {
@@ -49,8 +49,8 @@ export default {
       description: 'Registra y organiza todos tus drones FPV con detalles técnicos completos'
     },
     flights: {
-      title: 'Registra tus Vuelos',
-      description: 'Documenta cada vuelo con ubicación, duración y experiencias únicas'
+      title: 'Registra tus Sesiones con videos',
+      description: 'Documenta cada sesión con ubicación, duración y experiencias únicas'
     },
     community: {
       title: 'Conecta con Pilotos',
@@ -60,7 +60,7 @@ export default {
   stats: {
     title: 'Únete a nuestra comunidad',
     pilots: 'Pilotos Activos',
-    flights: 'Vuelos Registrados',
+    flights: 'Sesiones Registradas',
     spots: 'Spots Descubiertos',
     countries: 'Países',
     drones: 'Drones Registrados'

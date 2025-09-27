@@ -584,7 +584,7 @@ const stats = ref([
   {
     number: 5000,
     suffix: '+',
-    label: 'Vuelos Registrados'
+    label: 'Sesiones Registradas'
   },
   {
     number: 200,

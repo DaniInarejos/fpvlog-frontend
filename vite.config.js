@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Sitemap from 'vite-plugin-sitemap'
+import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue(),
@@ -22,6 +23,11 @@ export default defineConfig({
       ],
     })
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
+  },
   base: '/',
   build: {
     outDir: 'dist',

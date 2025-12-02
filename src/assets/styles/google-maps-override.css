@@ -1,0 +1,49 @@
+/* Ocultar información de Google Maps */
+
+/* Ocultar logo de Google */
+.gm-style .gmnoprint a,
+.gm-style .gmnoprint span,
+.gm-style .gm-style-cc {
+  display: none !important;
+}
+
+/* Ocultar términos y condiciones */
+.gm-style-cc {
+  display: none !important;
+}
+
+/* Ocultar enlaces de términos */
+.gm-style .gm-style-cc a {
+  display: none !important;
+}
+
+/* Ocultar botón de Google Maps */
+.gm-style .gmnoprint div {
+  display: none !important;
+}
+
+/* Ocultar controles adicionales */
+.gm-style .gm-svpc {
+  display: none !important;
+}
+
+/* Ocultar información de copyright */
+.gm-style .gm-style-cc span {
+  display: none !important;
+}
+
+/* Ocultar cualquier texto relacionado con Google */
+.gm-style div[style*="font-family: Roboto"] {
+  display: none !important;
+}
+
+/* Ocultar el contenedor de información legal */
+.gm-style .gm-style-cc {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Asegurar que no aparezcan elementos de UI por defecto */
+.gm-style .gmnoprint {
+  display: none !important;
+}

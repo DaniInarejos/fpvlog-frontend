@@ -1,31 +1,38 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '../../stores/user'
-import spotService from '../../services/spotService'
-import aeronauticsService from '../../services/aeronauticsService'
-import BaseInput from '../base/BaseInput.vue'
-import BaseButton from '../base/BaseButton.vue'
 import BaseAlert from '../base/BaseAlert.vue'
-import BaseCard from '../base/BaseCard.vue'
-import BaseDivider from '../base/BaseDivider.vue'
-import BaseMap from '../base/BaseMap.vue'
+import SpotFormStep1 from './SpotFormStep1.vue'
+import SpotFormStep2 from './SpotFormStep2.vue'
+import spotService from '../../services/spotService'
+
+const { t } = useI18n()
+const userStore = useUserStore()
 
 const props = defineProps({
   spot: {
     type: Object,
     default: null
+  },
+  isLoading: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['close', 'saved'])
-const { t } = useI18n()
-const userStore = useUserStore()
+const emit = defineEmits(['submit', 'close', 'saved'])
 
-const form = ref({
-  name: props.spot?.name || '',
-  description: props.spot?.description || '',
-  location: props.spot?.location || {
+// Estado del formulario multi-paso
+const currentStep = ref(1)
+const totalSteps = 2
+const errors = ref({})
+const isSubmitting = ref(false)
+
+const formData = ref({
+  name: '',
+  description: '',
+  location: {
     type: 'Point',
     coordinates: [],
     address: '',
@@ -33,317 +40,235 @@ const form = ref({
     country: '',
     placeId: ''
   },
-  visibility: props.spot?.visibility || {
+  visibility: {
     public: true,
     visibleToFollowersOnly: false
   },
-  legalStatus: props.spot?.legalStatus || 'WITHOUT_ANALIZED'
+  legalStatus: 'WITHOUT_ANALIZED'
 })
 
-const errors = ref({})
-const isLoading = ref(false)
-const isCalculatingLegalStatus = ref(false)
-const aeronauticalData = ref(null)
-
-// Reglas de clasificación de zonas (reutilizadas de SpotList original)
-const ZONE_RULES = [
-  { keywords: ['no permitido el vuelo', 'prohibido el vuelo', 'zona geográfica de uas prohibida'], style: 'red' },
-  { keywords: ['danger', 'peligro', 'military', 'militar'], style: 'red' },
-  { heightCheck: (h) => h === 0, style: 'red' },
-  { keywords: ['req_authorization', 'tma', 'ctr', 'restricted'], style: 'yellow' },
-  { keywords: [''], style: 'yellow' }
-]
-
-// Convertir altura a metros
-const convertHeight = (height, uom) => {
-  const numHeight = Number(height)
-  if (isNaN(numHeight)) return NaN
-  return uom?.toUpperCase() === 'FT' ? numHeight * 0.3048 : numHeight
-}
-
-// Detectar zona aeronáutica para las coordenadas del spot
-const detectAeronauticalZoneForCoordinates = (lat, lng) => {
-  if (!aeronauticalData.value?.features || !window.google?.maps?.geometry) {
-    return { status: 'unknown', zones: [] }
+// Validaciones por paso
+const validateStep1 = () => {
+  const stepErrors = {}
+  
+  if (!formData.value.name?.trim()) {
+    stepErrors.name = t('spots.form.errors.nameRequired')
   }
   
-  const point = new google.maps.LatLng(lat, lng)
-  let detectedZones = []
+  if (formData.value.name && formData.value.name.length > 100) {
+    stepErrors.name = t('spots.form.errors.nameTooLong')
+  }
   
-  aeronauticalData.value.features.forEach(feature => {
-    try {
-      const geometry = feature.geometry
-      
-      if (geometry && (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon')) {
-        let isInside = false
-        
-        if (geometry.type === 'Polygon') {
-          const coordinates = geometry.coordinates[0]
-          const pathsArray = coordinates.map(coord => ({ lat: coord[1], lng: coord[0] }))
-          const tempPolygon = new google.maps.Polygon({ paths: [pathsArray] })
-          isInside = google.maps.geometry.poly.containsLocation(point, tempPolygon)
-        } else if (geometry.type === 'MultiPolygon') {
-          for (let i = 0; i < geometry.coordinates.length; i++) {
-            const coordinates = geometry.coordinates[i][0]
-            const pathsArray = coordinates.map(coord => ({ lat: coord[1], lng: coord[0] }))
-            const tempPolygon = new google.maps.Polygon({ paths: [pathsArray] })
-            if (google.maps.geometry.poly.containsLocation(point, tempPolygon)) {
-              isInside = true
-              break
-            }
-          }
-        }
-        
-        if (isInside) {
-          const name = feature.properties?.Name || 'Zona sin nombre'
-          const type = feature.properties?.Type || 'Sin tipo'
-          const zoneType = type.toLowerCase()
-          const zoneName = name.toLowerCase()
-          const upperHeight = convertHeight(feature.properties?.Upper, feature.properties?.UOM)
-          
-          let zoneColor = 'yellow'
-          
-          for (const rule of ZONE_RULES) {
-            let ruleMatches = false
-            
-            if (rule.keywords && rule.keywords.some(keyword => 
-              zoneType.includes(keyword) || zoneName.includes(keyword)
-            )) {
-              ruleMatches = true
-            }
-            
-            if (rule.heightCheck && !isNaN(upperHeight) && rule.heightCheck(upperHeight)) {
-              ruleMatches = true
-            }
-            
-            if (ruleMatches) {
-              zoneColor = rule.style
-              break
-            }
-          }
-          
-          detectedZones.push({ name, type, color: zoneColor })
-        }
-      }
-    } catch (error) {
-      console.warn('Error procesando feature aeronáutico:', error)
-    }
-  })
+  if (formData.value.description && formData.value.description.length > 500) {
+    stepErrors.description = t('spots.form.errors.descriptionTooLong')
+  }
   
-  // Determinar el estado general
-  const hasRedZones = detectedZones.some(zone => zone.color === 'red')
-  const hasYellowZones = detectedZones.some(zone => zone.color === 'yellow')
-  
-  let status = 'clear'
-  if (hasRedZones) status = 'prohibited'
-  else if (hasYellowZones) status = 'restricted'
-  
-  return { status, zones: detectedZones }
+  errors.value = stepErrors
+  return Object.keys(stepErrors).length === 0
 }
 
-// Mapear estado interno a legalStatus del API
-const mapInternalStatusToLegalStatus = (internalStatus) => {
-  switch (internalStatus) {
-    case 'clear':
-      return 'NORESTRICTIONS'
-    case 'restricted':
-      return 'RESTRICTEDZONE'
-    case 'prohibited':
-      return 'PROHIBITEDZONE'
-    default:
-      return 'WITHOUT_ANALIZED'
+const validateStep2 = () => {
+  const stepErrors = {}
+  
+  if (!formData.value.location?.coordinates || formData.value.location.coordinates.length !== 2) {
+    stepErrors.location = t('spots.form.errors.locationRequired')
+  }
+  
+  errors.value = stepErrors
+  return Object.keys(stepErrors).length === 0
+}
+
+// Navegación entre pasos
+const nextStep = () => {
+  let isValid = false
+  
+  switch (currentStep.value) {
+    case 1:
+      isValid = validateStep1()
+      break
+    case 2:
+      isValid = validateStep2()
+      break
+  }
+  
+  if (isValid && currentStep.value < totalSteps) {
+    currentStep.value++
   }
 }
 
-// Calcular legalStatus basado en las coordenadas
-const calculateLegalStatus = async () => {
-  if (!form.value.location.coordinates || form.value.location.coordinates.length !== 2) {
-    form.value.legalStatus = 'WITHOUT_ANALIZED'
-    return
-  }
-  
-  isCalculatingLegalStatus.value = true
-  
-  try {
-    // Cargar datos aeronáuticos si no están disponibles
-    if (!aeronauticalData.value) {
-      const response = await aeronauticsService.getAeronauticsData()
-      if (response.success && response.data) {
-        aeronauticalData.value = response.data
-      }
-    }
-    
-    // Esperar a que Google Maps esté disponible
-    if (!window.google?.maps?.geometry) {
-      // Intentar esperar un poco para que se cargue Google Maps
-      await new Promise(resolve => {
-        const checkGoogleMaps = () => {
-          if (window.google?.maps?.geometry) {
-            resolve()
-          } else {
-            setTimeout(checkGoogleMaps, 100)
-          }
-        }
-        checkGoogleMaps()
-        // Timeout después de 5 segundos
-        setTimeout(() => resolve(), 5000)
-      })
-    }
-    
-    if (aeronauticalData.value && window.google?.maps?.geometry) {
-      const lat = form.value.location.coordinates[1]
-      const lng = form.value.location.coordinates[0]
-      const zoneInfo = detectAeronauticalZoneForCoordinates(lat, lng)
-      form.value.legalStatus = mapInternalStatusToLegalStatus(zoneInfo.status)
-    } else {
-      form.value.legalStatus = 'WITHOUT_ANALIZED'
-    }
-  } catch (error) {
-    console.error('Error calculando legalStatus:', error)
-    form.value.legalStatus = 'WITHOUT_ANALIZED'
-  } finally {
-    isCalculatingLegalStatus.value = false
+const prevStep = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--
   }
 }
 
-// Observar cambios en las coordenadas para recalcular legalStatus
-watch(
-  () => form.value.location.coordinates,
-  (newCoordinates) => {
-    if (newCoordinates && newCoordinates.length === 2) {
-      // Debounce para evitar cálculos excesivos
-      setTimeout(() => {
-        calculateLegalStatus()
-      }, 500)
-    }
-  },
-  { deep: true }
-)
+// Inicializar datos si se está editando
+if (props.spot) {
+  formData.value = {
+    name: props.spot.name || '',
+    description: props.spot.description || '',
+    location: props.spot.location || {
+      type: 'Point',
+      coordinates: [],
+      address: '',
+      city: '',
+      country: '',
+      placeId: ''
+    },
+    visibility: props.spot.visibility || {
+      public: true,
+      visibleToFollowersOnly: false
+    },
+    legalStatus: props.spot.legalStatus || 'WITHOUT_ANALIZED'
+  }
+}
 
+// Manejo del envío del formulario
 const handleSubmit = async () => {
-  isLoading.value = true
-  errors.value = {}
-
+  // Validar el paso actual antes de enviar
+  let isValid = false
+  switch (currentStep.value) {
+    case 1:
+      isValid = validateStep1()
+      break
+    case 2:
+      isValid = validateStep2()
+      break
+  }
+  
+  if (!isValid) return
+  
+  isSubmitting.value = true
   try {
-    // Asegurar que legalStatus esté calculado antes de enviar
-    if (form.value.location.coordinates && form.value.location.coordinates.length === 2) {
-      await calculateLegalStatus()
-    }
+    // Preparar los datos para envío
+    const dataToSend = { ...formData.value }
     
     if (props.spot) {
-      await spotService.updateSpot(props.spot._id, form.value)
+      await spotService.updateSpot(props.spot._id, dataToSend)
     } else {
       const spotData = {
-        ...form.value,
+        ...dataToSend,
         submittedBy: userStore.user._id
       }
       await spotService.createSpot(spotData)
     }
+    
     emit('saved')
   } catch (error) {
-    errors.value = error.response?.data?.errors || { general: error.message }
+    errors.value.submit = error.response?.data?.message || error.message
   } finally {
-    isLoading.value = false
+    isSubmitting.value = false
   }
 }
 </script>
 
 <template>
-  <BaseCard class="p-6">
-    <h2 class="text-xl font-semibold mb-4">
-      {{ props.spot ? t('spots.editSpot') : t('spots.addSpot') }}
-    </h2>
-    <form @submit.prevent="handleSubmit" class="space-y-6">
+  <div class="space-y-6 glass-scrollbar">
+    <!-- Progress Indicator -->
+    <div class="flex justify-center items-center space-x-4 mb-8">
+      <div 
+        v-for="step in 2" 
+        :key="step"
+        class="flex items-center"
+      >
+        <div 
+          :class="[
+            'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300',
+            currentStep >= step 
+              ? 'bg-green-600 text-white shadow-lg' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+          ]"
+        >
+          {{ step }}
+        </div>
+        <div 
+          v-if="step < 2"
+          :class="[
+            'w-16 h-0.5 mx-2 transition-all duration-300',
+            currentStep > step 
+              ? 'bg-green-600' 
+              : 'bg-gray-200 dark:bg-gray-700'
+          ]"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form @submit.prevent="handleSubmit" class="space-y-8">
       <BaseAlert
-        v-if="errors.general"
+        v-if="errors.submit"
         type="error"
-        :message="errors.general"
+        :message="errors.submit"
+        class="mb-6"
       />
 
-      <BaseDivider title="Información Básica" />
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <BaseInput
-          v-model="form.name"
-          :label="t('spots.form.name')"
-          :error="errors.name"
-          required
-        />
-
-        <BaseInput
-          v-model="form.description"
-          :label="t('spots.form.description')"
-          :error="errors.description"
-          type="textarea"
-        />
-      </div>
-
-      <BaseDivider title="Ubicación" />
-
-      <div class="space-y-2">
-        <BaseMap
-          v-model="form.location"
-          :error="errors.location"
-          :show-aeronautical-zones="true"
+      <!-- Step Content -->
+      <div class="min-h-[500px]">
+        <SpotFormStep1
+          v-if="currentStep === 1"
+          v-model="formData"
+          :errors="errors"
         />
         
-        <!-- Indicador de estado legal -->
-        <div v-if="form.location.coordinates && form.location.coordinates.length === 2" class="mt-3">
-          <div class="flex items-center space-x-2">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado Legal:</span>
-            <div v-if="isCalculatingLegalStatus" class="flex items-center space-x-2">
-              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
-              <span class="text-sm text-gray-500">Calculando...</span>
+        <SpotFormStep2
+          v-if="currentStep === 2"
+          v-model="formData"
+          :errors="errors"
+        />
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="flex justify-between items-center p-6">
+        <div class="flex space-x-4">
+          <!-- Back Button -->
+          <button
+            v-if="currentStep > 1"
+            type="button"
+            @click="prevStep"
+            class="group relative px-6 py-3 bg-gradient-to-r from-gray-100/80 to-gray-200/80 dark:from-gray-700/80 dark:to-gray-600/80 backdrop-blur-sm border border-gray-300/50 dark:border-gray-600/50 rounded-xl text-gray-700 dark:text-gray-200 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 active:scale-95"
+          >
+            <div class="flex items-center space-x-2">
+              <svg class="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>{{ t('common.previous') }}</span>
             </div>
-            <div v-else :class="[
-              'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border',
-              form.legalStatus === 'NORESTRICTIONS' ? 'bg-green-50 text-green-600 border-green-200' :
-              form.legalStatus === 'RESTRICTEDZONE' ? 'bg-yellow-50 text-yellow-600 border-yellow-200' :
-              form.legalStatus === 'PROHIBITEDZONE' ? 'bg-red-50 text-red-600 border-red-200' :
-              'bg-gray-50 text-gray-600 border-gray-200'
-            ]">
-              <span class="mr-1">
-                {{ form.legalStatus === 'NORESTRICTIONS' ? '✅' :
-                   form.legalStatus === 'RESTRICTEDZONE' ? '⚠️' :
-                   form.legalStatus === 'PROHIBITEDZONE' ? '🚫' : '❓' }}
-              </span>
-              {{ form.legalStatus === 'NORESTRICTIONS' ? 'Sin restricciones' :
-                 form.legalStatus === 'RESTRICTEDZONE' ? 'Zona restringida' :
-                 form.legalStatus === 'PROHIBITEDZONE' ? 'Zona prohibida' : 'Sin analizar' }}
+          </button>
+        </div>
+
+        <div class="flex space-x-4">
+          <!-- Next Button -->
+          <button
+            v-if="currentStep < totalSteps"
+            type="button"
+            @click="nextStep"
+            class="group relative px-6 py-3 bg-gradient-to-r from-green-500/90 to-emerald-600/90 hover:from-green-600/90 hover:to-emerald-700/90 backdrop-blur-sm border border-green-400/50 dark:border-emerald-500/50 rounded-xl text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 dark:hover:shadow-emerald-500/30 active:scale-95"
+          >
+            <div class="flex items-center space-x-2">
+              <span>{{ t('common.next') }}</span>
+              <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
             </div>
-          </div>
+          </button>
+
+          <!-- Submit Button -->
+          <button
+            v-if="currentStep === totalSteps"
+            type="submit"
+            :disabled="isSubmitting"
+            class="group relative px-6 py-3 bg-gradient-to-r from-green-500/90 to-emerald-600/90 hover:from-green-600/90 hover:to-emerald-700/90 disabled:from-gray-400/90 disabled:to-gray-500/90 backdrop-blur-sm border border-green-400/50 dark:border-emerald-500/50 disabled:border-gray-400/50 rounded-xl text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 dark:hover:shadow-emerald-500/30 active:scale-95 disabled:hover:scale-100 disabled:hover:shadow-none disabled:cursor-not-allowed"
+          >
+            <div class="flex items-center space-x-2">
+              <svg v-if="isSubmitting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ spot ? t('common.save') : t('spots.form.create') }}</span>
+            </div>
+          </button>
         </div>
       </div>
-
-    <!--  <BaseDivider title="Privacidad" />
-
-      <div class="space-y-3">
-        <BaseCheckbox
-          v-model="form.visibility.public"
-          :label="t('spots.form.public')"
-        />
-        <BaseCheckbox
-          v-model="form.visibility.visibleToFollowersOnly"
-          :label="t('spots.form.visibleToFollowersOnly')"
-        />
-      </div>
-    -->
-      <div class="flex justify-end space-x-4 mt-6">
-        <BaseButton
-          type="button"
-          variant="secondary"
-          @click="emit('close')"
-        >
-          {{ t('common.cancel') }}
-        </BaseButton>
-        <BaseButton
-          type="submit"
-          :loading="isLoading || isCalculatingLegalStatus"
-          :disabled="isCalculatingLegalStatus"
-        >
-          {{ props.spot ? t('common.save') : t('spots.form.create') }}
-        </BaseButton>
-      </div>
     </form>
-  </BaseCard>
+  </div>
 </template>

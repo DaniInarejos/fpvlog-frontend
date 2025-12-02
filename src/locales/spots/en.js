@@ -1,38 +1,103 @@
 export default {
-  title: 'My Spots',
-  spot: 'Spot',
-  addSpot: 'Add Spot',
-  editSpot: 'Edit Spot',
+  // Titles and navigation
+  title: 'Spots',
+  mySpots: 'My Spots',
+  allSpots: 'All Spots',
+  favoriteSpots: 'Favorite Spots',
+  
+  // States
+  noSpots: 'No spots available',
+  noSpotsDescription: 'You haven\'t created any spots yet. Create your first spot to get started!',
+  addFirstSpot: 'Create first spot',
+  showing: 'Showing {count} of {total} spots',
+  
+  // Actions
   createSpot: 'Create Spot',
+  editSpot: 'Edit Spot',
   deleteSpot: 'Delete Spot',
-  noSpots: 'You don\'t have any spots registered yet',
-  deleteConfirmation: 'Are you sure you want to delete the spot "{name}"? This action cannot be undone.',
-  public: 'Public',
-  followersOnly: 'Followers only',
-  private: 'Private',
-  details: 'Details',
-  location: 'Location',
+  viewSpot: 'View Spot',
+  addToFavorites: 'Add to favorites',
+  removeFromFavorites: 'Remove from favorites',
+  
+  // Spot properties
+  name: 'Name',
   description: 'Description',
-  visibility: 'Visibility',
+  type: 'Type',
+  difficulty: 'Difficulty',
+  coordinates: 'Coordinates',
+  noLocation: 'No location',
+  
+  // Visibility
+  public: 'Public',
+  private: 'Private',
+  followersOnly: 'Followers only',
+  
+  // Spot types
+  types: {
+    mountain: 'Mountain',
+    beach: 'Beach',
+    forest: 'Forest',
+    urban: 'Urban',
+    field: 'Field',
+    desert: 'Desert',
+    lake: 'Lake',
+    river: 'River',
+    other: 'Other'
+  },
+  
+  // Difficulties
+  difficulty: {
+    title: 'Difficulty',
+    easy: 'Easy',
+    medium: 'Medium',
+    hard: 'Hard',
+    expert: 'Expert'
+  },
+  
+  // Legal statuses
+  legalStatus: {
+    noRestrictions: 'No restrictions',
+    restrictedZone: 'Restricted zone',
+    prohibitedZone: 'Prohibited zone',
+    notAnalyzed: 'Not analyzed',
+    noRestrictionsDescription: 'This spot has no known aeronautical restrictions.',
+    restrictedZoneDescription: 'This spot is in a zone with aeronautical restrictions.',
+    prohibitedZoneDescription: 'This spot is in a prohibited flight zone.',
+    notAnalyzedDescription: 'The aeronautical status of this spot has not been analyzed.'
+  },
+  
+  // Form
   form: {
-    name: 'Name',
+    title: 'Spot Information',
+    name: 'Spot name',
     description: 'Description',
     location: 'Location',
-    searchLocation: 'Search location...',
+    selectLocation: 'Select location',
+    locationHelp: 'Click on the map to select the spot location',
+    legalStatus: 'Legal Status',
+    calculatingLegalStatus: 'Calculating legal status...',
     visibility: 'Visibility',
-    public: 'Public',
-    visibleToFollowersOnly: 'Visible to followers only',
-    create: 'Create Spot'
+    sections: {
+      basic: 'Basic Information',
+      location: 'Location',
+      privacy: 'Privacy'
+    },
+    namePlaceholder: 'Spot name',
+    descriptionPlaceholder: 'Describe your spot...',
+    publicDescription: 'Visible to all users',
+    visibleToFollowersOnlyDescription: 'Only visible to your followers'
   },
+  
+  // Deletion
   delete: {
     title: 'Delete Spot',
-    confirmation: 'Are you sure you want to delete the spot "{name}"? This action cannot be undone.',
+    confirmation: 'Are you sure you want to delete "{name}"?',
     success: 'Spot deleted successfully',
     error: 'Error deleting spot'
   },
-  map: {
-    restrictedZone: 'Restricted Zone',
-    limitedZone: 'Limited Zone',
-    allowedZone: 'Allowed Zone'
-  }
+  
+  // Success/error messages
+  created: 'Spot created successfully',
+  updated: 'Spot updated successfully',
+  error: 'Error processing request'
 }
